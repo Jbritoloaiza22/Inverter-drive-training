@@ -24,8 +24,8 @@ C_DEPS :=
 SUBDIRS := \
 Application/User/Core \
 Application/User/Startup \
-Drivers/CMSIS \
-Drivers/STM32G0xx_HAL_Driver \
+Core/Src \
+Drivers/STM32G0xx_HAL_Driver/Src \
 src/APP \
 src/APP/Interface \
 src/APP/Inverter \
