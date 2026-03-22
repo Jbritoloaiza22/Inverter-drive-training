@@ -1,7 +1,7 @@
 
-#*.o
-#*.d
-#*.elf
+*.o
+*.d
+*.elf
 *.bin
 *.hex
 *.map
@@ -9,5 +9,5 @@
 *.tmp
 
 
-#Debug/
+Debug/
 Release/
