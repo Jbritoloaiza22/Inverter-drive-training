@@ -56,6 +56,7 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#include "kernel.h"
 
 /* USER CODE END 0 */
 
@@ -90,6 +91,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  STM32Kernel_Main();
 
   /* USER CODE END 2 */
 
