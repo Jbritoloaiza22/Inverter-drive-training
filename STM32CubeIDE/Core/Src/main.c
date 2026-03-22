@@ -21,6 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "kernel.h"
 
 /* USER CODE END Includes */
 
@@ -56,7 +57,6 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#include "kernel.h"
 
 /* USER CODE END 0 */
 
