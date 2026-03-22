@@ -1,4 +1,4 @@
-# Ignora objetos y binarios
+
 *.o
 *.d
 *.elf
@@ -8,19 +8,14 @@
 *.log
 *.tmp
 
-# Ignora carpetas de build por defecto
+
 Debug/
 Release/
 
-# Excepciones: deja pasar los archivos de build
+# Exceptions for build files
 !STM32CubeIDE/Debug/makefile
 !STM32CubeIDE/Debug/*.mk
 !STM32CubeIDE/Debug/*.list
-!STM32CubeIDE/Debug/src/
-!STM32CubeIDE/Debug/Drivers/
 !STM32CubeIDE/Release/makefile
 !STM32CubeIDE/Release/*.mk
 !STM32CubeIDE/Release/*.list
-!STM32CubeIDE/Release/src/
-!STM32CubeIDE/Release/Drivers/
-
