@@ -23,11 +23,12 @@ jobs:
 
       - name: Build Debug configuration
         run: |
-          cd firmware/inverter_drive/Debug
+          ls STM32CubeIDE
+          cd STM32CubeIDE/Debug
           make -j$(nproc)
 
       - name: Upload ELF artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-elf
-          path: firmware/inverter_drive/Debug/*.elf
+          path: firmware/inverter_drive/STM32CubeIDE/Debug/*.elf
