@@ -66,6 +66,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 inverter_drive.list \
 
+OBJCOPY_HEX += \
+inverter_drive.hex \
+
+OBJCOPY_BIN += \
+inverter_drive.bin \
+
 
 # All Target
 all: main-build
@@ -89,12 +95,22 @@ inverter_drive.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+inverter_drive.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "inverter_drive.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+inverter_drive.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "inverter_drive.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) default.size.stdout inverter_drive.elf inverter_drive.list inverter_drive.map
+	-$(RM) default.size.stdout inverter_drive.bin inverter_drive.elf inverter_drive.hex inverter_drive.list inverter_drive.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

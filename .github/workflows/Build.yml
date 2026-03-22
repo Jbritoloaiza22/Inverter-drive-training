@@ -16,19 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install ARM toolchain
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-arm-none-eabi make
+      - name: Build with STM32CubeIDE Action
+        uses: xanderhendriks/action-build-stm32cubeide@v15.0
+        with:
+          project-path: STM32CubeIDE/
+          build-config: Debug
 
-      - name: Build Debug configuration
-        run: |
-          ls STM32CubeIDE
-          cd STM32CubeIDE/Debug
-          make -j$(nproc) all
-
-      - name: Upload ELF artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-elf
-          path: firmware/inverter_drive/STM32CubeIDE/Debug/*.elf
+          name: firmware-build
+          path: |
+            STM32CubeIDE/Debug/*.elf
+            STM32CubeIDE/Debug/*.map
+            STM32CubeIDE/Debug/*.list
