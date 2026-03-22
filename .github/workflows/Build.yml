@@ -2,27 +2,32 @@ name: Build STM32CubeIDE Project
 
 on:
   push:
-    branches: [ main, dev ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ main, dev ]
+    branches:
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clonar el repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Instalar toolchain ARM
       - name: Install ARM toolchain
         run: |
           sudo apt-get update
           sudo apt-get install -y gcc-arm-none-eabi make
 
-      # 3. Compilar usando el Makefile que genera CubeIDE
-      - name: Build firmware
+      - name: Build Debug configuration
         run: |
-          cd firmware/inverter_drive
+          cd firmware/inverter_drive/Debug
           make -j$(nproc)
+
+      - name: Upload ELF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware-elf
+          path: firmware/inverter_drive/Debug/*.elf
