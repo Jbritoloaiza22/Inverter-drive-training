@@ -16,12 +16,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Paso de debug: mostrar estructura del repo
+      - name: Debug repo structure
+        run: |
+          echo "Current working directory:"
+          pwd
+          ls -la
+          ls -la STM32CubeIDE
+          echo "Listing STM32CubeIDE:"
+          ls -la STM32CubeIDE || echo "Directory not found"
+
+      # Paso de debug: verificar si existe el archivo .project
+      - name: Check for .project file
+        run: |
+          if [ -f STM32CubeIDE/.project ]; then
+            echo ".project found!"
+          else
+            echo "ERROR: .project not found in STM32CubeIDE"
+          fi
+
+      # Compilación con el Action oficial
       - name: Build with STM32CubeIDE Action
         uses: xanderhendriks/action-build-stm32cubeide@v15.0
         with:
-          project-path: STM32CubeIDE/
-          build-config: Debug
+          project-path: STM32CubeIDE
+          project-target: inverter_drive
 
+      # Subir artefactos generados
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
