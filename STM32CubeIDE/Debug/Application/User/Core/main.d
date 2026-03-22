@@ -29,8 +29,7 @@ Application/User/Core/main.o: \
  ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h \
  ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h \
  ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim.h \
- ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h \
- C:/Users/Jesus\ Daniel\ B/OneDrive/Documentos/Drives\ from\ scratch/firmware/inverter_drive/STM32CubeIDE/src_STM32Kernel/kernel.h
+ ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h
 ../../Core/Inc/main.h:
 ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
 ../../Core/Inc/stm32g0xx_hal_conf.h:
@@ -61,4 +60,3 @@ Application/User/Core/main.o: \
 ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h:
 ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim.h:
 ../../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h:
-C:/Users/Jesus\ Daniel\ B/OneDrive/Documentos/Drives\ from\ scratch/firmware/inverter_drive/STM32CubeIDE/src_STM32Kernel/kernel.h:

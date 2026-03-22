@@ -79,7 +79,6 @@ inverter_drive.elf inverter_drive.map: $(OBJS) $(USER_OBJS) ../STM32G031C8TX_FLA
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-
 default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-size  $(EXECUTABLES)
 	@echo 'Finished building: $@'

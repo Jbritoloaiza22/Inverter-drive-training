@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "kernel.h"
+//#include "kernel.h"
 
 /* USER CODE END Includes */
 
@@ -91,7 +91,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  STM32Kernel_Main();
+  //STM32Kernel_Main();
   /* USER CODE END 2 */
 
   /* Infinite loop */
