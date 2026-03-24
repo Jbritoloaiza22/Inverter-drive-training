@@ -57,7 +57,11 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint32_t counter_i = 0;
+void IncCounterToPWM(void)
+{
+	counter_i++;
+}
 /* USER CODE END 0 */
 
 /**
@@ -68,7 +72,18 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	unsigned short sin_table[64] = {
+	    491, 980, 1467, 1951, 2430, 2903, 3369, 3827, 4276, 4714,
+	    5141, 5556, 5957, 6344, 6716, 7071, 7410, 7730, 8032, 8315,
+	    8577, 8819, 9040, 9239, 9415, 9569, 9700, 9808, 9892, 9952,
+	    9988, 10000, 9988, 9952, 9892, 9808, 9700, 9569, 9415, 9239,
+	    9040, 8819, 8577, 8315, 8032, 7730, 7410, 7071, 6716, 6344,
+	    5957, 5556, 5141, 4714, 4276, 3827, 3369, 2903, 2430, 1951,
+	    1467, 980, 491
+	};
 
+
+  uint32_t i = 0, flag_i = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -91,7 +106,14 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  STM32Kernel_Main();
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+  //STM32Kernel_Main();
 
   /* USER CODE END 2 */
 
@@ -102,6 +124,35 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if (!flag_i)
+    {
+      if (counter_i > 0)
+      {
+        uint8_t index_a = i;
+        uint8_t index_b = (i + 43) % 64;
+        uint8_t index_c = (i + 85) % 64;
+
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, sin_table[index_a]);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, sin_table[index_b]);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, sin_table[index_c]);
+
+        i++;
+        if (i >= 62)
+        {
+          i = 0;
+        }
+
+        counter_i = 0;
+      }
+    }
+    else
+    {
+      if (counter_i > 100)
+      {
+        counter_i = 0;
+        flag_i = 0;
+      }
+    }
   }
   /* USER CODE END 3 */
 }
