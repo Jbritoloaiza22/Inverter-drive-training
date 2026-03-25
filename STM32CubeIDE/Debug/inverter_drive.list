@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000028  00000000  00000000  0000400c  2**0
                   CONTENTS, READONLY
- 12 .debug_line   0000c370  00000000  00000000  00004034  2**0
+ 12 .debug_line   0000c312  00000000  00000000  00004034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_line_str 0000009f  00000000  00000000  000103a4  2**0
+ 13 .debug_line_str 0000009f  00000000  00000000  00010346  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_info   0000983e  00000000  00000000  00010443  2**0
+ 14 .debug_info   00009826  00000000  00000000  000103e5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_abbrev 00001a40  00000000  00000000  00019c81  2**0
+ 15 .debug_abbrev 00001a22  00000000  00000000  00019c0b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_aranges 00000ac8  00000000  00000000  0001b6c8  2**3
+ 16 .debug_aranges 00000ac8  00000000  00000000  0001b630  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_str    00089ca0  00000000  00000000  0001c190  2**0
+ 17 .debug_str    00089ca0  00000000  00000000  0001c0f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_rnglists 00000859  00000000  00000000  000a5e30  2**0
+ 18 .debug_rnglists 00000859  00000000  00000000  000a5d98  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_macro  0001423d  00000000  00000000  000a6689  2**0
+ 19 .debug_macro  0001423d  00000000  00000000  000a65f1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  000ba8c6  2**0
+ 20 .comment      00000043  00000000  00000000  000ba82e  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  0000266c  00000000  00000000  000ba90c  2**2
+ 21 .debug_frame  0000266c  00000000  00000000  000ba874  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1723,16 +1723,16 @@ void SystemInit(void)
  8000a86:	bd80      	pop	{r7, pc}
 
 08000a88 <HAL_Init>:
-  *         each 1ms in the SysTick_Handler() interrupt handler.
-  *
-  * @retval HAL status
-  */
-HAL_StatusTypeDef HAL_Init(void)
-{
+ *         Once done, time base tick starts incrementing: the tick variable counter is incremented
+ *         each 1ms in the SysTick_Handler() interrupt handler.
+ *
+ * @retval HAL status
+ */
+HAL_StatusTypeDef HAL_Init(void) {
  8000a88:	b580      	push	{r7, lr}
  8000a8a:	b082      	sub	sp, #8
  8000a8c:	af00      	add	r7, sp, #0
-  HAL_StatusTypeDef  status = HAL_OK;
+	HAL_StatusTypeDef status = HAL_OK;
  8000a8e:	1dfb      	adds	r3, r7, #7
  8000a90:	2200      	movs	r2, #0
  8000a92:	701a      	strb	r2, [r3, #0]
@@ -1741,7 +1741,7 @@ HAL_StatusTypeDef HAL_Init(void)
 #endif /* INSTRUCTION_CACHE_ENABLE */
 
 #if (PREFETCH_ENABLE != 0U)
-  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+	__HAL_FLASH_PREFETCH_BUFFER_ENABLE();
  8000a94:	4b0b      	ldr	r3, [pc, #44]	@ (8000ac4 <HAL_Init+0x3c>)
  8000a96:	681a      	ldr	r2, [r3, #0]
  8000a98:	4b0a      	ldr	r3, [pc, #40]	@ (8000ac4 <HAL_Init+0x3c>)
@@ -1751,28 +1751,25 @@ HAL_StatusTypeDef HAL_Init(void)
  8000aa0:	601a      	str	r2, [r3, #0]
 #endif /* PREFETCH_ENABLE */
 
-  /* Use SysTick as time base source and configure 1ms tick (default clock after Reset is HSI) */
-  if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
+	/* Use SysTick as time base source and configure 1ms tick (default clock after Reset is HSI) */
+	if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK) {
  8000aa2:	2003      	movs	r0, #3
  8000aa4:	f000 f810 	bl	8000ac8 <HAL_InitTick>
  8000aa8:	1e03      	subs	r3, r0, #0
  8000aaa:	d003      	beq.n	8000ab4 <HAL_Init+0x2c>
-  {
-    status = HAL_ERROR;
+		status = HAL_ERROR;
  8000aac:	1dfb      	adds	r3, r7, #7
  8000aae:	2201      	movs	r2, #1
  8000ab0:	701a      	strb	r2, [r3, #0]
  8000ab2:	e001      	b.n	8000ab8 <HAL_Init+0x30>
-  }
-  else
-  {
-  /* Init the low level hardware */
-  HAL_MspInit();
+	} else {
+		/* Init the low level hardware */
+		HAL_MspInit();
  8000ab4:	f7ff ff0a 	bl	80008cc <HAL_MspInit>
-  }
+	}
 
-  /* Return function status */
-  return status;
+	/* Return function status */
+	return status;
  8000ab8:	1dfb      	adds	r3, r7, #7
  8000aba:	781b      	ldrb	r3, [r3, #0]
 }
@@ -1783,33 +1780,33 @@ HAL_StatusTypeDef HAL_Init(void)
  8000ac4:	40022000 	.word	0x40022000
 
 08000ac8 <HAL_InitTick>:
-  *       implementation  in user file.
-  * @param TickPriority Tick interrupt priority.
-  * @retval HAL status
-  */
-__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-{
+ *       The function is declared as __weak  to be overwritten  in case of other
+ *       implementation  in user file.
+ * @param TickPriority Tick interrupt priority.
+ * @retval HAL status
+ */
+__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
  8000ac8:	b590      	push	{r4, r7, lr}
  8000aca:	b085      	sub	sp, #20
  8000acc:	af00      	add	r7, sp, #0
  8000ace:	6078      	str	r0, [r7, #4]
-  HAL_StatusTypeDef  status = HAL_OK;
+	HAL_StatusTypeDef status = HAL_OK;
  8000ad0:	230f      	movs	r3, #15
  8000ad2:	18fb      	adds	r3, r7, r3
  8000ad4:	2200      	movs	r2, #0
  8000ad6:	701a      	strb	r2, [r3, #0]
 
-  /* Check uwTickFreq for MisraC 2012 (even if uwTickFreq is a enum type that doesn't take the value zero)*/ 
-  if ((uint32_t)uwTickFreq != 0U)
+	/* Check uwTickFreq for MisraC 2012 (even if uwTickFreq is a enum type that doesn't take the value zero)*/
+	if ((uint32_t) uwTickFreq != 0U) {
  8000ad8:	4b1d      	ldr	r3, [pc, #116]	@ (8000b50 <HAL_InitTick+0x88>)
  8000ada:	781b      	ldrb	r3, [r3, #0]
  8000adc:	2b00      	cmp	r3, #0
  8000ade:	d02b      	beq.n	8000b38 <HAL_InitTick+0x70>
-  {
-    /*Configure the SysTick to have interrupt in 1ms time basis*/
-    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U /(uint32_t)uwTickFreq)) == 0U)
+		/*Configure the SysTick to have interrupt in 1ms time basis*/
+		if (HAL_SYSTICK_Config(
  8000ae0:	4b1c      	ldr	r3, [pc, #112]	@ (8000b54 <HAL_InitTick+0x8c>)
  8000ae2:	681c      	ldr	r4, [r3, #0]
+				SystemCoreClock / (1000U / (uint32_t) uwTickFreq)) == 0U) {
  8000ae4:	4b1a      	ldr	r3, [pc, #104]	@ (8000b50 <HAL_InitTick+0x88>)
  8000ae6:	781b      	ldrb	r3, [r3, #0]
  8000ae8:	0019      	movs	r1, r3
@@ -1817,6 +1814,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
  8000aec:	0098      	lsls	r0, r3, #2
  8000aee:	f7ff fb09 	bl	8000104 <__udivsi3>
  8000af2:	0003      	movs	r3, r0
+		if (HAL_SYSTICK_Config(
  8000af4:	0019      	movs	r1, r3
  8000af6:	0020      	movs	r0, r4
  8000af8:	f7ff fb04 	bl	8000104 <__udivsi3>
@@ -1825,57 +1823,49 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
  8000b00:	f000 f8ef 	bl	8000ce2 <HAL_SYSTICK_Config>
  8000b04:	1e03      	subs	r3, r0, #0
  8000b06:	d112      	bne.n	8000b2e <HAL_InitTick+0x66>
-    {
-      /* Configure the SysTick IRQ priority */
-      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+			/* Configure the SysTick IRQ priority */
+			if (TickPriority < (1UL << __NVIC_PRIO_BITS)) {
  8000b08:	687b      	ldr	r3, [r7, #4]
  8000b0a:	2b03      	cmp	r3, #3
  8000b0c:	d80a      	bhi.n	8000b24 <HAL_InitTick+0x5c>
-      {
-        HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
+				HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
  8000b0e:	6879      	ldr	r1, [r7, #4]
  8000b10:	2301      	movs	r3, #1
  8000b12:	425b      	negs	r3, r3
  8000b14:	2200      	movs	r2, #0
  8000b16:	0018      	movs	r0, r3
  8000b18:	f000 f8ce 	bl	8000cb8 <HAL_NVIC_SetPriority>
-        uwTickPrio = TickPriority;
+				uwTickPrio = TickPriority;
  8000b1c:	4b0e      	ldr	r3, [pc, #56]	@ (8000b58 <HAL_InitTick+0x90>)
  8000b1e:	687a      	ldr	r2, [r7, #4]
  8000b20:	601a      	str	r2, [r3, #0]
  8000b22:	e00d      	b.n	8000b40 <HAL_InitTick+0x78>
-      }
-      else
-      {
-        status = HAL_ERROR;
+			} else {
+				status = HAL_ERROR;
  8000b24:	230f      	movs	r3, #15
  8000b26:	18fb      	adds	r3, r7, r3
  8000b28:	2201      	movs	r2, #1
  8000b2a:	701a      	strb	r2, [r3, #0]
  8000b2c:	e008      	b.n	8000b40 <HAL_InitTick+0x78>
-      }
-    }
-    else
-    {
-      status = HAL_ERROR;
+			}
+		} else {
+			status = HAL_ERROR;
  8000b2e:	230f      	movs	r3, #15
  8000b30:	18fb      	adds	r3, r7, r3
  8000b32:	2201      	movs	r2, #1
  8000b34:	701a      	strb	r2, [r3, #0]
  8000b36:	e003      	b.n	8000b40 <HAL_InitTick+0x78>
-    }
-  }
-  else
-  {
-    status = HAL_ERROR;
+		}
+	} else {
+		status = HAL_ERROR;
  8000b38:	230f      	movs	r3, #15
  8000b3a:	18fb      	adds	r3, r7, r3
  8000b3c:	2201      	movs	r2, #1
  8000b3e:	701a      	strb	r2, [r3, #0]
-  }
+	}
 
-  /* Return function status */
-  return status;
+	/* Return function status */
+	return status;
  8000b40:	230f      	movs	r3, #15
  8000b42:	18fb      	adds	r3, r7, r3
  8000b44:	781b      	ldrb	r3, [r3, #0]
@@ -1890,15 +1880,15 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
  8000b58:	20000004 	.word	0x20000004
 
 08000b5c <HAL_IncTick>:
-  * @note This function is declared as __weak to be overwritten in case of other
-  *      implementations in user file.
-  * @retval None
-  */
-__weak void HAL_IncTick(void)
-{
+ *       in SysTick ISR.
+ * @note This function is declared as __weak to be overwritten in case of other
+ *      implementations in user file.
+ * @retval None
+ */
+__weak void HAL_IncTick(void) {
  8000b5c:	b580      	push	{r7, lr}
  8000b5e:	af00      	add	r7, sp, #0
-  uwTick += (uint32_t)uwTickFreq;
+	uwTick += (uint32_t) uwTickFreq;
  8000b60:	4b05      	ldr	r3, [pc, #20]	@ (8000b78 <HAL_IncTick+0x1c>)
  8000b62:	781b      	ldrb	r3, [r3, #0]
  8000b64:	001a      	movs	r2, r3
@@ -1916,15 +1906,15 @@ __weak void HAL_IncTick(void)
  8000b7c:	20000078 	.word	0x20000078
 
 08000b80 <HAL_GetTick>:
-  * @note This function is declared as __weak to be overwritten in case of other
-  *       implementations in user file.
-  * @retval tick value
-  */
-__weak uint32_t HAL_GetTick(void)
-{
+ * @brief Provides a tick value in millisecond.
+ * @note This function is declared as __weak to be overwritten in case of other
+ *       implementations in user file.
+ * @retval tick value
+ */
+__weak uint32_t HAL_GetTick(void) {
  8000b80:	b580      	push	{r7, lr}
  8000b82:	af00      	add	r7, sp, #0
-  return uwTick;
+	return uwTick;
  8000b84:	4b02      	ldr	r3, [pc, #8]	@ (8000b90 <HAL_GetTick+0x10>)
  8000b86:	681b      	ldr	r3, [r3, #0]
 }
@@ -2178,30 +2168,29 @@ uint32_t HAL_SYSTICK_Config(uint32_t TicksNumb)
  8000cfa:	bd80      	pop	{r7, pc}
 
 08000cfc <HAL_GPIO_Init>:
-  * @param  GPIO_Init pointer to a GPIO_InitTypeDef structure that contains
-  *         the configuration information for the specified GPIO peripheral.
-  * @retval None
-  */
-void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
-{
+ * @param  GPIOx where x can be (A..F) to select the GPIO peripheral for STM32G0xx family
+ * @param  GPIO_Init pointer to a GPIO_InitTypeDef structure that contains
+ *         the configuration information for the specified GPIO peripheral.
+ * @retval None
+ */
+void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init) {
  8000cfc:	b580      	push	{r7, lr}
  8000cfe:	b086      	sub	sp, #24
  8000d00:	af00      	add	r7, sp, #0
  8000d02:	6078      	str	r0, [r7, #4]
  8000d04:	6039      	str	r1, [r7, #0]
-  uint32_t position = 0x00u;
+	uint32_t position = 0x00u;
  8000d06:	2300      	movs	r3, #0
  8000d08:	617b      	str	r3, [r7, #20]
-  assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
-  assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
-  assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
+	assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
+	assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
+	assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
 
-  /* Configure the port pins */
-  while (((GPIO_Init->Pin) >> position) != 0x00u)
+	/* Configure the port pins */
+	while (((GPIO_Init->Pin) >> position) != 0x00u) {
  8000d0a:	e147      	b.n	8000f9c <HAL_GPIO_Init+0x2a0>
-  {
-    /* Get current io position */
-    iocurrent = (GPIO_Init->Pin) & (1uL << position);
+		/* Get current io position */
+		iocurrent = (GPIO_Init->Pin) & (1uL << position);
  8000d0c:	683b      	ldr	r3, [r7, #0]
  8000d0e:	681b      	ldr	r3, [r3, #0]
  8000d10:	2101      	movs	r1, #1
@@ -2211,37 +2200,36 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000d18:	4013      	ands	r3, r2
  8000d1a:	60fb      	str	r3, [r7, #12]
 
-    if (iocurrent != 0x00u)
+		if (iocurrent != 0x00u) {
  8000d1c:	68fb      	ldr	r3, [r7, #12]
  8000d1e:	2b00      	cmp	r3, #0
  8000d20:	d100      	bne.n	8000d24 <HAL_GPIO_Init+0x28>
  8000d22:	e138      	b.n	8000f96 <HAL_GPIO_Init+0x29a>
-    {
-      /*--------------------- GPIO Mode Configuration ------------------------*/
-      /* In case of Output or Alternate function mode selection */
-      if (((GPIO_Init->Mode & GPIO_MODE) == MODE_OUTPUT) || ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF))
+			/*--------------------- GPIO Mode Configuration ------------------------*/
+			/* In case of Output or Alternate function mode selection */
+			if (((GPIO_Init->Mode & GPIO_MODE) == MODE_OUTPUT)
  8000d24:	683b      	ldr	r3, [r7, #0]
  8000d26:	685b      	ldr	r3, [r3, #4]
  8000d28:	2203      	movs	r2, #3
  8000d2a:	4013      	ands	r3, r2
  8000d2c:	2b01      	cmp	r3, #1
  8000d2e:	d005      	beq.n	8000d3c <HAL_GPIO_Init+0x40>
+					|| ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF)) {
  8000d30:	683b      	ldr	r3, [r7, #0]
  8000d32:	685b      	ldr	r3, [r3, #4]
  8000d34:	2203      	movs	r2, #3
  8000d36:	4013      	ands	r3, r2
  8000d38:	2b02      	cmp	r3, #2
  8000d3a:	d130      	bne.n	8000d9e <HAL_GPIO_Init+0xa2>
-      {
-        /* Check the Speed parameter */
-        assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
+				/* Check the Speed parameter */
+				assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
 
-        /* Configure the IO Speed */
-        temp = GPIOx->OSPEEDR;
+				/* Configure the IO Speed */
+				temp = GPIOx->OSPEEDR;
  8000d3c:	687b      	ldr	r3, [r7, #4]
  8000d3e:	689b      	ldr	r3, [r3, #8]
  8000d40:	613b      	str	r3, [r7, #16]
-        temp &= ~(GPIO_OSPEEDR_OSPEED0 << (position * 2u));
+				temp &= ~(GPIO_OSPEEDR_OSPEED0 << (position * 2u));
  8000d42:	697b      	ldr	r3, [r7, #20]
  8000d44:	005b      	lsls	r3, r3, #1
  8000d46:	2203      	movs	r2, #3
@@ -2251,7 +2239,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000d4e:	693b      	ldr	r3, [r7, #16]
  8000d50:	4013      	ands	r3, r2
  8000d52:	613b      	str	r3, [r7, #16]
-        temp |= (GPIO_Init->Speed << (position * 2u));
+				temp |= (GPIO_Init->Speed << (position * 2u));
  8000d54:	683b      	ldr	r3, [r7, #0]
  8000d56:	68da      	ldr	r2, [r3, #12]
  8000d58:	697b      	ldr	r3, [r7, #20]
@@ -2261,17 +2249,17 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000d60:	693a      	ldr	r2, [r7, #16]
  8000d62:	4313      	orrs	r3, r2
  8000d64:	613b      	str	r3, [r7, #16]
-        GPIOx->OSPEEDR = temp;
+				GPIOx->OSPEEDR = temp;
  8000d66:	687b      	ldr	r3, [r7, #4]
  8000d68:	693a      	ldr	r2, [r7, #16]
  8000d6a:	609a      	str	r2, [r3, #8]
 
-        /* Configure the IO Output Type */
-        temp = GPIOx->OTYPER;
+				/* Configure the IO Output Type */
+				temp = GPIOx->OTYPER;
  8000d6c:	687b      	ldr	r3, [r7, #4]
  8000d6e:	685b      	ldr	r3, [r3, #4]
  8000d70:	613b      	str	r3, [r7, #16]
-        temp &= ~(GPIO_OTYPER_OT0 << position) ;
+				temp &= ~(GPIO_OTYPER_OT0 << position);
  8000d72:	2201      	movs	r2, #1
  8000d74:	697b      	ldr	r3, [r7, #20]
  8000d76:	409a      	lsls	r2, r3
@@ -2280,41 +2268,42 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000d7c:	693b      	ldr	r3, [r7, #16]
  8000d7e:	4013      	ands	r3, r2
  8000d80:	613b      	str	r3, [r7, #16]
-        temp |= (((GPIO_Init->Mode & OUTPUT_TYPE) >> OUTPUT_TYPE_Pos) << position);
+				temp |= (((GPIO_Init->Mode & OUTPUT_TYPE) >> OUTPUT_TYPE_Pos)
  8000d82:	683b      	ldr	r3, [r7, #0]
  8000d84:	685b      	ldr	r3, [r3, #4]
  8000d86:	091b      	lsrs	r3, r3, #4
  8000d88:	2201      	movs	r2, #1
  8000d8a:	401a      	ands	r2, r3
+						<< position);
  8000d8c:	697b      	ldr	r3, [r7, #20]
  8000d8e:	409a      	lsls	r2, r3
  8000d90:	0013      	movs	r3, r2
+				temp |= (((GPIO_Init->Mode & OUTPUT_TYPE) >> OUTPUT_TYPE_Pos)
  8000d92:	693a      	ldr	r2, [r7, #16]
  8000d94:	4313      	orrs	r3, r2
  8000d96:	613b      	str	r3, [r7, #16]
-        GPIOx->OTYPER = temp;
+				GPIOx->OTYPER = temp;
  8000d98:	687b      	ldr	r3, [r7, #4]
  8000d9a:	693a      	ldr	r2, [r7, #16]
  8000d9c:	605a      	str	r2, [r3, #4]
-      }
+			}
 
-      if ((GPIO_Init->Mode & GPIO_MODE) != MODE_ANALOG)
+			if ((GPIO_Init->Mode & GPIO_MODE) != MODE_ANALOG) {
  8000d9e:	683b      	ldr	r3, [r7, #0]
  8000da0:	685b      	ldr	r3, [r3, #4]
  8000da2:	2203      	movs	r2, #3
  8000da4:	4013      	ands	r3, r2
  8000da6:	2b03      	cmp	r3, #3
  8000da8:	d017      	beq.n	8000dda <HAL_GPIO_Init+0xde>
-      {
-        /* Check the Pull parameter */
-        assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
+				/* Check the Pull parameter */
+				assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
 
-        /* Activate the Pull-up or Pull down resistor for the current IO */
-        temp = GPIOx->PUPDR;
+				/* Activate the Pull-up or Pull down resistor for the current IO */
+				temp = GPIOx->PUPDR;
  8000daa:	687b      	ldr	r3, [r7, #4]
  8000dac:	68db      	ldr	r3, [r3, #12]
  8000dae:	613b      	str	r3, [r7, #16]
-        temp &= ~(GPIO_PUPDR_PUPD0 << (position * 2u));
+				temp &= ~(GPIO_PUPDR_PUPD0 << (position * 2u));
  8000db0:	697b      	ldr	r3, [r7, #20]
  8000db2:	005b      	lsls	r3, r3, #1
  8000db4:	2203      	movs	r2, #3
@@ -2324,7 +2313,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000dbc:	693b      	ldr	r3, [r7, #16]
  8000dbe:	4013      	ands	r3, r2
  8000dc0:	613b      	str	r3, [r7, #16]
-        temp |= ((GPIO_Init->Pull) << (position * 2u));
+				temp |= ((GPIO_Init->Pull) << (position * 2u));
  8000dc2:	683b      	ldr	r3, [r7, #0]
  8000dc4:	689a      	ldr	r2, [r3, #8]
  8000dc6:	697b      	ldr	r3, [r7, #20]
@@ -2334,26 +2323,26 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000dce:	693a      	ldr	r2, [r7, #16]
  8000dd0:	4313      	orrs	r3, r2
  8000dd2:	613b      	str	r3, [r7, #16]
-        GPIOx->PUPDR = temp;
+				GPIOx->PUPDR = temp;
  8000dd4:	687b      	ldr	r3, [r7, #4]
  8000dd6:	693a      	ldr	r2, [r7, #16]
  8000dd8:	60da      	str	r2, [r3, #12]
-      }
+			}
 
-      /* In case of Alternate function mode selection */
-      if ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF)
+			/* In case of Alternate function mode selection */
+			if ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF) {
  8000dda:	683b      	ldr	r3, [r7, #0]
  8000ddc:	685b      	ldr	r3, [r3, #4]
  8000dde:	2203      	movs	r2, #3
  8000de0:	4013      	ands	r3, r2
  8000de2:	2b02      	cmp	r3, #2
  8000de4:	d123      	bne.n	8000e2e <HAL_GPIO_Init+0x132>
-        /* Check the Alternate function parameters */
-        assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
-        assert_param(IS_GPIO_AF(GPIO_Init->Alternate));
+				/* Check the Alternate function parameters */
+				assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
+				assert_param(IS_GPIO_AF(GPIO_Init->Alternate));
 
-        /* Configure Alternate function mapped with the current IO */
-        temp = GPIOx->AFR[position >> 3u];
+				/* Configure Alternate function mapped with the current IO */
+				temp = GPIOx->AFR[position >> 3u];
  8000de6:	697b      	ldr	r3, [r7, #20]
  8000de8:	08da      	lsrs	r2, r3, #3
  8000dea:	687b      	ldr	r3, [r7, #4]
@@ -2361,7 +2350,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000dee:	0092      	lsls	r2, r2, #2
  8000df0:	58d3      	ldr	r3, [r2, r3]
  8000df2:	613b      	str	r3, [r7, #16]
-        temp &= ~(0xFu << ((position & 0x07u) * 4u));
+				temp &= ~(0xFu << ((position & 0x07u) * 4u));
  8000df4:	697b      	ldr	r3, [r7, #20]
  8000df6:	2207      	movs	r2, #7
  8000df8:	4013      	ands	r3, r2
@@ -2373,7 +2362,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e04:	693b      	ldr	r3, [r7, #16]
  8000e06:	4013      	ands	r3, r2
  8000e08:	613b      	str	r3, [r7, #16]
-        temp |= ((GPIO_Init->Alternate) << ((position & 0x07u) * 4u));
+				temp |= ((GPIO_Init->Alternate) << ((position & 0x07u) * 4u));
  8000e0a:	683b      	ldr	r3, [r7, #0]
  8000e0c:	691a      	ldr	r2, [r3, #16]
  8000e0e:	697b      	ldr	r3, [r7, #20]
@@ -2385,7 +2374,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e1a:	693a      	ldr	r2, [r7, #16]
  8000e1c:	4313      	orrs	r3, r2
  8000e1e:	613b      	str	r3, [r7, #16]
-        GPIOx->AFR[position >> 3u] = temp;
+				GPIOx->AFR[position >> 3u] = temp;
  8000e20:	697b      	ldr	r3, [r7, #20]
  8000e22:	08da      	lsrs	r2, r3, #3
  8000e24:	687b      	ldr	r3, [r7, #4]
@@ -2393,14 +2382,14 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e28:	0092      	lsls	r2, r2, #2
  8000e2a:	6939      	ldr	r1, [r7, #16]
  8000e2c:	50d1      	str	r1, [r2, r3]
-      }
+			}
 
-      /* Configure IO Direction mode (Input, Output, Alternate or Analog) */
-      temp = GPIOx->MODER;
+			/* Configure IO Direction mode (Input, Output, Alternate or Analog) */
+			temp = GPIOx->MODER;
  8000e2e:	687b      	ldr	r3, [r7, #4]
  8000e30:	681b      	ldr	r3, [r3, #0]
  8000e32:	613b      	str	r3, [r7, #16]
-      temp &= ~(GPIO_MODER_MODE0 << (position * 2u));
+			temp &= ~(GPIO_MODER_MODE0 << (position * 2u));
  8000e34:	697b      	ldr	r3, [r7, #20]
  8000e36:	005b      	lsls	r3, r3, #1
  8000e38:	2203      	movs	r2, #3
@@ -2410,7 +2399,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e40:	693b      	ldr	r3, [r7, #16]
  8000e42:	4013      	ands	r3, r2
  8000e44:	613b      	str	r3, [r7, #16]
-      temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2u));
+			temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2u));
  8000e46:	683b      	ldr	r3, [r7, #0]
  8000e48:	685b      	ldr	r3, [r3, #4]
  8000e4a:	2203      	movs	r2, #3
@@ -2422,14 +2411,14 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e56:	693a      	ldr	r2, [r7, #16]
  8000e58:	4313      	orrs	r3, r2
  8000e5a:	613b      	str	r3, [r7, #16]
-      GPIOx->MODER = temp;
+			GPIOx->MODER = temp;
  8000e5c:	687b      	ldr	r3, [r7, #4]
  8000e5e:	693a      	ldr	r2, [r7, #16]
  8000e60:	601a      	str	r2, [r3, #0]
 
-      /*--------------------- EXTI Mode Configuration ------------------------*/
-      /* Configure the External Interrupt or event for the current IO */
-      if ((GPIO_Init->Mode & EXTI_MODE) != 0x00u)
+			/*--------------------- EXTI Mode Configuration ------------------------*/
+			/* Configure the External Interrupt or event for the current IO */
+			if ((GPIO_Init->Mode & EXTI_MODE) != 0x00u) {
  8000e62:	683b      	ldr	r3, [r7, #0]
  8000e64:	685a      	ldr	r2, [r3, #4]
  8000e66:	23c0      	movs	r3, #192	@ 0xc0
@@ -2437,8 +2426,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e6a:	4013      	ands	r3, r2
  8000e6c:	d100      	bne.n	8000e70 <HAL_GPIO_Init+0x174>
  8000e6e:	e092      	b.n	8000f96 <HAL_GPIO_Init+0x29a>
-      {
-        temp = EXTI->EXTICR[position >> 2u];
+				temp = EXTI->EXTICR[position >> 2u];
  8000e70:	4a50      	ldr	r2, [pc, #320]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000e72:	697b      	ldr	r3, [r7, #20]
  8000e74:	089b      	lsrs	r3, r3, #2
@@ -2446,7 +2434,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e78:	009b      	lsls	r3, r3, #2
  8000e7a:	589b      	ldr	r3, [r3, r2]
  8000e7c:	613b      	str	r3, [r7, #16]
-        temp &= ~(0x0FuL << (8u * (position & 0x03u)));
+				temp &= ~(0x0FuL << (8u * (position & 0x03u)));
  8000e7e:	697b      	ldr	r3, [r7, #20]
  8000e80:	2203      	movs	r2, #3
  8000e82:	4013      	ands	r3, r2
@@ -2458,7 +2446,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000e8e:	693b      	ldr	r3, [r7, #16]
  8000e90:	4013      	ands	r3, r2
  8000e92:	613b      	str	r3, [r7, #16]
-        temp |= (GPIO_GET_INDEX(GPIOx) << (8u * (position & 0x03u)));
+				temp |= (GPIO_GET_INDEX(GPIOx) << (8u * (position & 0x03u)));
  8000e94:	687a      	ldr	r2, [r7, #4]
  8000e96:	23a0      	movs	r3, #160	@ 0xa0
  8000e98:	05db      	lsls	r3, r3, #23
@@ -2493,7 +2481,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000ed2:	693a      	ldr	r2, [r7, #16]
  8000ed4:	4313      	orrs	r3, r2
  8000ed6:	613b      	str	r3, [r7, #16]
-        EXTI->EXTICR[position >> 2u] = temp;
+				EXTI->EXTICR[position >> 2u] = temp;
  8000ed8:	4936      	ldr	r1, [pc, #216]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000eda:	697b      	ldr	r3, [r7, #20]
  8000edc:	089b      	lsrs	r3, r3, #2
@@ -2502,135 +2490,131 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000ee2:	693a      	ldr	r2, [r7, #16]
  8000ee4:	505a      	str	r2, [r3, r1]
 
-        /* Clear Rising Falling edge configuration */
-        temp = EXTI->RTSR1;
+				/* Clear Rising Falling edge configuration */
+				temp = EXTI->RTSR1;
  8000ee6:	4b33      	ldr	r3, [pc, #204]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000ee8:	681b      	ldr	r3, [r3, #0]
  8000eea:	613b      	str	r3, [r7, #16]
-        temp &= ~(iocurrent);
+				temp &= ~(iocurrent);
  8000eec:	68fb      	ldr	r3, [r7, #12]
  8000eee:	43da      	mvns	r2, r3
  8000ef0:	693b      	ldr	r3, [r7, #16]
  8000ef2:	4013      	ands	r3, r2
  8000ef4:	613b      	str	r3, [r7, #16]
-        if ((GPIO_Init->Mode & TRIGGER_RISING) != 0x00u)
+				if ((GPIO_Init->Mode & TRIGGER_RISING) != 0x00u) {
  8000ef6:	683b      	ldr	r3, [r7, #0]
  8000ef8:	685a      	ldr	r2, [r3, #4]
  8000efa:	2380      	movs	r3, #128	@ 0x80
  8000efc:	035b      	lsls	r3, r3, #13
  8000efe:	4013      	ands	r3, r2
  8000f00:	d003      	beq.n	8000f0a <HAL_GPIO_Init+0x20e>
-        {
-          temp |= iocurrent;
+					temp |= iocurrent;
  8000f02:	693a      	ldr	r2, [r7, #16]
  8000f04:	68fb      	ldr	r3, [r7, #12]
  8000f06:	4313      	orrs	r3, r2
  8000f08:	613b      	str	r3, [r7, #16]
-        }
-        EXTI->RTSR1 = temp;
+				}
+				EXTI->RTSR1 = temp;
  8000f0a:	4b2a      	ldr	r3, [pc, #168]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f0c:	693a      	ldr	r2, [r7, #16]
  8000f0e:	601a      	str	r2, [r3, #0]
 
-        temp = EXTI->FTSR1;
+				temp = EXTI->FTSR1;
  8000f10:	4b28      	ldr	r3, [pc, #160]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f12:	685b      	ldr	r3, [r3, #4]
  8000f14:	613b      	str	r3, [r7, #16]
-        temp &= ~(iocurrent);
+				temp &= ~(iocurrent);
  8000f16:	68fb      	ldr	r3, [r7, #12]
  8000f18:	43da      	mvns	r2, r3
  8000f1a:	693b      	ldr	r3, [r7, #16]
  8000f1c:	4013      	ands	r3, r2
  8000f1e:	613b      	str	r3, [r7, #16]
-        if ((GPIO_Init->Mode & TRIGGER_FALLING) != 0x00u)
+				if ((GPIO_Init->Mode & TRIGGER_FALLING) != 0x00u) {
  8000f20:	683b      	ldr	r3, [r7, #0]
  8000f22:	685a      	ldr	r2, [r3, #4]
  8000f24:	2380      	movs	r3, #128	@ 0x80
  8000f26:	039b      	lsls	r3, r3, #14
  8000f28:	4013      	ands	r3, r2
  8000f2a:	d003      	beq.n	8000f34 <HAL_GPIO_Init+0x238>
-        {
-          temp |= iocurrent;
+					temp |= iocurrent;
  8000f2c:	693a      	ldr	r2, [r7, #16]
  8000f2e:	68fb      	ldr	r3, [r7, #12]
  8000f30:	4313      	orrs	r3, r2
  8000f32:	613b      	str	r3, [r7, #16]
-        }
-        EXTI->FTSR1 = temp;
+				}
+				EXTI->FTSR1 = temp;
  8000f34:	4b1f      	ldr	r3, [pc, #124]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f36:	693a      	ldr	r2, [r7, #16]
  8000f38:	605a      	str	r2, [r3, #4]
 
-        /* Clear EXTI line configuration */
-        temp = EXTI->EMR1;
+				/* Clear EXTI line configuration */
+				temp = EXTI->EMR1;
  8000f3a:	4a1e      	ldr	r2, [pc, #120]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f3c:	2384      	movs	r3, #132	@ 0x84
  8000f3e:	58d3      	ldr	r3, [r2, r3]
  8000f40:	613b      	str	r3, [r7, #16]
-        temp &= ~(iocurrent);
+				temp &= ~(iocurrent);
  8000f42:	68fb      	ldr	r3, [r7, #12]
  8000f44:	43da      	mvns	r2, r3
  8000f46:	693b      	ldr	r3, [r7, #16]
  8000f48:	4013      	ands	r3, r2
  8000f4a:	613b      	str	r3, [r7, #16]
-        if ((GPIO_Init->Mode & EXTI_EVT) != 0x00u)
+				if ((GPIO_Init->Mode & EXTI_EVT) != 0x00u) {
  8000f4c:	683b      	ldr	r3, [r7, #0]
  8000f4e:	685a      	ldr	r2, [r3, #4]
  8000f50:	2380      	movs	r3, #128	@ 0x80
  8000f52:	029b      	lsls	r3, r3, #10
  8000f54:	4013      	ands	r3, r2
  8000f56:	d003      	beq.n	8000f60 <HAL_GPIO_Init+0x264>
-        {
-          temp |= iocurrent;
+					temp |= iocurrent;
  8000f58:	693a      	ldr	r2, [r7, #16]
  8000f5a:	68fb      	ldr	r3, [r7, #12]
  8000f5c:	4313      	orrs	r3, r2
  8000f5e:	613b      	str	r3, [r7, #16]
-        }
-        EXTI->EMR1 = temp;
+				}
+				EXTI->EMR1 = temp;
  8000f60:	4914      	ldr	r1, [pc, #80]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f62:	2284      	movs	r2, #132	@ 0x84
  8000f64:	693b      	ldr	r3, [r7, #16]
  8000f66:	508b      	str	r3, [r1, r2]
 
-        temp = EXTI->IMR1;
+				temp = EXTI->IMR1;
  8000f68:	4a12      	ldr	r2, [pc, #72]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f6a:	2380      	movs	r3, #128	@ 0x80
  8000f6c:	58d3      	ldr	r3, [r2, r3]
  8000f6e:	613b      	str	r3, [r7, #16]
-        temp &= ~(iocurrent);
+				temp &= ~(iocurrent);
  8000f70:	68fb      	ldr	r3, [r7, #12]
  8000f72:	43da      	mvns	r2, r3
  8000f74:	693b      	ldr	r3, [r7, #16]
  8000f76:	4013      	ands	r3, r2
  8000f78:	613b      	str	r3, [r7, #16]
-        if ((GPIO_Init->Mode & EXTI_IT) != 0x00u)
+				if ((GPIO_Init->Mode & EXTI_IT) != 0x00u) {
  8000f7a:	683b      	ldr	r3, [r7, #0]
  8000f7c:	685a      	ldr	r2, [r3, #4]
  8000f7e:	2380      	movs	r3, #128	@ 0x80
  8000f80:	025b      	lsls	r3, r3, #9
  8000f82:	4013      	ands	r3, r2
  8000f84:	d003      	beq.n	8000f8e <HAL_GPIO_Init+0x292>
-        {
-          temp |= iocurrent;
+					temp |= iocurrent;
  8000f86:	693a      	ldr	r2, [r7, #16]
  8000f88:	68fb      	ldr	r3, [r7, #12]
  8000f8a:	4313      	orrs	r3, r2
  8000f8c:	613b      	str	r3, [r7, #16]
-        }
-        EXTI->IMR1 = temp;
+				}
+				EXTI->IMR1 = temp;
  8000f8e:	4909      	ldr	r1, [pc, #36]	@ (8000fb4 <HAL_GPIO_Init+0x2b8>)
  8000f90:	2280      	movs	r2, #128	@ 0x80
  8000f92:	693b      	ldr	r3, [r7, #16]
  8000f94:	508b      	str	r3, [r1, r2]
-      }
-    }
+			}
+		}
 
-    position++;
+		position++;
  8000f96:	697b      	ldr	r3, [r7, #20]
  8000f98:	3301      	adds	r3, #1
  8000f9a:	617b      	str	r3, [r7, #20]
-  while (((GPIO_Init->Pin) >> position) != 0x00u)
+	while (((GPIO_Init->Pin) >> position) != 0x00u) {
  8000f9c:	683b      	ldr	r3, [r7, #0]
  8000f9e:	681a      	ldr	r2, [r3, #0]
  8000fa0:	697b      	ldr	r3, [r7, #20]
@@ -2638,7 +2622,7 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000fa4:	1e13      	subs	r3, r2, #0
  8000fa6:	d000      	beq.n	8000faa <HAL_GPIO_Init+0x2ae>
  8000fa8:	e6b0      	b.n	8000d0c <HAL_GPIO_Init+0x10>
-  }
+	}
 }
  8000faa:	46c0      	nop			@ (mov r8, r8)
  8000fac:	46c0      	nop			@ (mov r8, r8)
@@ -2651,12 +2635,12 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
  8000fc0:	50000c00 	.word	0x50000c00
 
 08000fc4 <HAL_GPIO_WritePin>:
-  *            @arg GPIO_PIN_RESET: to clear the port pin
-  *            @arg GPIO_PIN_SET: to set the port pin
-  * @retval None
-  */
-void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
-{
+ *            @arg GPIO_PIN_RESET: to clear the port pin
+ *            @arg GPIO_PIN_SET: to set the port pin
+ * @retval None
+ */
+void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin,
+		GPIO_PinState PinState) {
  8000fc4:	b580      	push	{r7, lr}
  8000fc6:	b082      	sub	sp, #8
  8000fc8:	af00      	add	r7, sp, #0
@@ -2669,29 +2653,26 @@ void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState Pin
  8000fd6:	1c7b      	adds	r3, r7, #1
  8000fd8:	1c0a      	adds	r2, r1, #0
  8000fda:	701a      	strb	r2, [r3, #0]
-  /* Check the parameters */
-  assert_param(IS_GPIO_PIN(GPIO_Pin));
-  assert_param(IS_GPIO_PIN_ACTION(PinState));
+	/* Check the parameters */
+	assert_param(IS_GPIO_PIN(GPIO_Pin));
+	assert_param(IS_GPIO_PIN_ACTION(PinState));
 
-  if (PinState != GPIO_PIN_RESET)
+	if (PinState != GPIO_PIN_RESET) {
  8000fdc:	1c7b      	adds	r3, r7, #1
  8000fde:	781b      	ldrb	r3, [r3, #0]
  8000fe0:	2b00      	cmp	r3, #0
  8000fe2:	d004      	beq.n	8000fee <HAL_GPIO_WritePin+0x2a>
-  {
-    GPIOx->BSRR = (uint32_t)GPIO_Pin;
+		GPIOx->BSRR = (uint32_t) GPIO_Pin;
  8000fe4:	1cbb      	adds	r3, r7, #2
  8000fe6:	881a      	ldrh	r2, [r3, #0]
  8000fe8:	687b      	ldr	r3, [r7, #4]
  8000fea:	619a      	str	r2, [r3, #24]
-  }
-  else
-  {
-    GPIOx->BRR = (uint32_t)GPIO_Pin;
-  }
+	} else {
+		GPIOx->BRR = (uint32_t) GPIO_Pin;
+	}
 }
  8000fec:	e003      	b.n	8000ff6 <HAL_GPIO_WritePin+0x32>
-    GPIOx->BRR = (uint32_t)GPIO_Pin;
+		GPIOx->BRR = (uint32_t) GPIO_Pin;
  8000fee:	1cbb      	adds	r3, r7, #2
  8000ff0:	881a      	ldrh	r2, [r3, #0]
  8000ff2:	687b      	ldr	r3, [r7, #4]
@@ -7138,23 +7119,23 @@ void TIM_CCxChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelStat
 	...
 
 080027b8 <HAL_TIMEx_PWMN_Start>:
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
-  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
-  * @retval HAL status
-  */
-HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
-{
+ *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+ *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
+ * @retval HAL status
+ */
+HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim,
+		uint32_t Channel) {
  80027b8:	b580      	push	{r7, lr}
  80027ba:	b084      	sub	sp, #16
  80027bc:	af00      	add	r7, sp, #0
  80027be:	6078      	str	r0, [r7, #4]
  80027c0:	6039      	str	r1, [r7, #0]
 
-  /* Check the parameters */
-  assert_param(IS_TIM_CCXN_INSTANCE(htim->Instance, Channel));
+	/* Check the parameters */
+	assert_param(IS_TIM_CCXN_INSTANCE(htim->Instance, Channel));
 
-  /* Check the TIM complementary channel state */
-  if (TIM_CHANNEL_N_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY)
+	/* Check the TIM complementary channel state */
+	if (TIM_CHANNEL_N_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY) {
  80027c2:	683b      	ldr	r3, [r7, #0]
  80027c4:	2b00      	cmp	r3, #0
  80027c6:	d108      	bne.n	80027da <HAL_TIMEx_PWMN_Start+0x22>
@@ -7201,14 +7182,13 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  8002818:	b2db      	uxtb	r3, r3
  800281a:	2b00      	cmp	r3, #0
  800281c:	d001      	beq.n	8002822 <HAL_TIMEx_PWMN_Start+0x6a>
-  {
-    return HAL_ERROR;
+		return HAL_ERROR;
  800281e:	2301      	movs	r3, #1
  8002820:	e05d      	b.n	80028de <HAL_TIMEx_PWMN_Start+0x126>
-  }
+	}
 
-  /* Set the TIM complementary channel state */
-  TIM_CHANNEL_N_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
+	/* Set the TIM complementary channel state */
+	TIM_CHANNEL_N_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
  8002822:	683b      	ldr	r3, [r7, #0]
  8002824:	2b00      	cmp	r3, #0
  8002826:	d104      	bne.n	8002832 <HAL_TIMEx_PWMN_Start+0x7a>
@@ -7238,8 +7218,8 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  8002856:	2102      	movs	r1, #2
  8002858:	5499      	strb	r1, [r3, r2]
 
-  /* Enable the complementary PWM output  */
-  TIM_CCxNChannelCmd(htim->Instance, Channel, TIM_CCxN_ENABLE);
+	/* Enable the complementary PWM output  */
+	TIM_CCxNChannelCmd(htim->Instance, Channel, TIM_CCxN_ENABLE);
  800285a:	687b      	ldr	r3, [r7, #4]
  800285c:	681b      	ldr	r3, [r3, #0]
  800285e:	6839      	ldr	r1, [r7, #0]
@@ -7247,8 +7227,8 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  8002862:	0018      	movs	r0, r3
  8002864:	f000 f94a 	bl	8002afc <TIM_CCxNChannelCmd>
 
-  /* Enable the Main Output */
-  __HAL_TIM_MOE_ENABLE(htim);
+	/* Enable the Main Output */
+	__HAL_TIM_MOE_ENABLE(htim);
  8002868:	687b      	ldr	r3, [r7, #4]
  800286a:	681b      	ldr	r3, [r3, #0]
  800286c:	6c5a      	ldr	r2, [r3, #68]	@ 0x44
@@ -7259,8 +7239,8 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  8002876:	430a      	orrs	r2, r1
  8002878:	645a      	str	r2, [r3, #68]	@ 0x44
 
-  /* Enable the Peripheral, except in trigger mode where enable is automatically done with trigger */
-  if (IS_TIM_SLAVE_INSTANCE(htim->Instance))
+	/* Enable the Peripheral, except in trigger mode where enable is automatically done with trigger */
+	if (IS_TIM_SLAVE_INSTANCE(htim->Instance)) {
  800287a:	687b      	ldr	r3, [r7, #4]
  800287c:	681b      	ldr	r3, [r3, #0]
  800287e:	4a1a      	ldr	r2, [pc, #104]	@ (80028e8 <HAL_TIMEx_PWMN_Start+0x130>)
@@ -7277,15 +7257,14 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  8002894:	4a15      	ldr	r2, [pc, #84]	@ (80028ec <HAL_TIMEx_PWMN_Start+0x134>)
  8002896:	4293      	cmp	r3, r2
  8002898:	d116      	bne.n	80028c8 <HAL_TIMEx_PWMN_Start+0x110>
-  {
-    tmpsmcr = htim->Instance->SMCR & TIM_SMCR_SMS;
+		tmpsmcr = htim->Instance->SMCR & TIM_SMCR_SMS;
  800289a:	687b      	ldr	r3, [r7, #4]
  800289c:	681b      	ldr	r3, [r3, #0]
  800289e:	689b      	ldr	r3, [r3, #8]
  80028a0:	4a13      	ldr	r2, [pc, #76]	@ (80028f0 <HAL_TIMEx_PWMN_Start+0x138>)
  80028a2:	4013      	ands	r3, r2
  80028a4:	60fb      	str	r3, [r7, #12]
-    if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr))
+		if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr)) {
  80028a6:	68fb      	ldr	r3, [r7, #12]
  80028a8:	2b06      	cmp	r3, #6
  80028aa:	d016      	beq.n	80028da <HAL_TIMEx_PWMN_Start+0x122>
@@ -7294,8 +7273,7 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  80028b0:	025b      	lsls	r3, r3, #9
  80028b2:	429a      	cmp	r2, r3
  80028b4:	d011      	beq.n	80028da <HAL_TIMEx_PWMN_Start+0x122>
-    {
-      __HAL_TIM_ENABLE(htim);
+			__HAL_TIM_ENABLE(htim);
  80028b6:	687b      	ldr	r3, [r7, #4]
  80028b8:	681b      	ldr	r3, [r3, #0]
  80028ba:	681a      	ldr	r2, [r3, #0]
@@ -7304,13 +7282,11 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  80028c0:	2101      	movs	r1, #1
  80028c2:	430a      	orrs	r2, r1
  80028c4:	601a      	str	r2, [r3, #0]
-    if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr))
+		if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr)) {
  80028c6:	e008      	b.n	80028da <HAL_TIMEx_PWMN_Start+0x122>
-    }
-  }
-  else
-  {
-    __HAL_TIM_ENABLE(htim);
+		}
+	} else {
+		__HAL_TIM_ENABLE(htim);
  80028c8:	687b      	ldr	r3, [r7, #4]
  80028ca:	681b      	ldr	r3, [r3, #0]
  80028cc:	681a      	ldr	r2, [r3, #0]
@@ -7320,12 +7296,12 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  80028d4:	430a      	orrs	r2, r1
  80028d6:	601a      	str	r2, [r3, #0]
  80028d8:	e000      	b.n	80028dc <HAL_TIMEx_PWMN_Start+0x124>
-    if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr))
+		if (!IS_TIM_SLAVEMODE_TRIGGER_ENABLED(tmpsmcr)) {
  80028da:	46c0      	nop			@ (mov r8, r8)
-  }
+	}
 
-  /* Return function status */
-  return HAL_OK;
+	/* Return function status */
+	return HAL_OK;
  80028dc:	2300      	movs	r3, #0
 }
  80028de:	0018      	movs	r0, r3
@@ -7338,23 +7314,23 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  80028f0:	00010007 	.word	0x00010007
 
 080028f4 <HAL_TIMEx_MasterConfigSynchronization>:
-  *         mode.
-  * @retval HAL status
-  */
+ *         contains the selected trigger output (TRGO) and the Master/Slave
+ *         mode.
+ * @retval HAL status
+ */
 HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
-                                                        const TIM_MasterConfigTypeDef *sMasterConfig)
-{
+		const TIM_MasterConfigTypeDef *sMasterConfig) {
  80028f4:	b580      	push	{r7, lr}
  80028f6:	b084      	sub	sp, #16
  80028f8:	af00      	add	r7, sp, #0
  80028fa:	6078      	str	r0, [r7, #4]
  80028fc:	6039      	str	r1, [r7, #0]
-  assert_param(IS_TIM_MASTER_INSTANCE(htim->Instance));
-  assert_param(IS_TIM_TRGO_SOURCE(sMasterConfig->MasterOutputTrigger));
-  assert_param(IS_TIM_MSM_STATE(sMasterConfig->MasterSlaveMode));
+	assert_param(IS_TIM_MASTER_INSTANCE(htim->Instance));
+	assert_param(IS_TIM_TRGO_SOURCE(sMasterConfig->MasterOutputTrigger));
+	assert_param(IS_TIM_MSM_STATE(sMasterConfig->MasterSlaveMode));
 
-  /* Check input state */
-  __HAL_LOCK(htim);
+	/* Check input state */
+	__HAL_LOCK(htim);
  80028fe:	687b      	ldr	r3, [r7, #4]
  8002900:	223c      	movs	r2, #60	@ 0x3c
  8002902:	5c9b      	ldrb	r3, [r3, r2]
@@ -7367,75 +7343,74 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
  8002910:	2101      	movs	r1, #1
  8002912:	5499      	strb	r1, [r3, r2]
 
-  /* Change the handler state */
-  htim->State = HAL_TIM_STATE_BUSY;
+	/* Change the handler state */
+	htim->State = HAL_TIM_STATE_BUSY;
  8002914:	687b      	ldr	r3, [r7, #4]
  8002916:	223d      	movs	r2, #61	@ 0x3d
  8002918:	2102      	movs	r1, #2
  800291a:	5499      	strb	r1, [r3, r2]
 
-  /* Get the TIMx CR2 register value */
-  tmpcr2 = htim->Instance->CR2;
+	/* Get the TIMx CR2 register value */
+	tmpcr2 = htim->Instance->CR2;
  800291c:	687b      	ldr	r3, [r7, #4]
  800291e:	681b      	ldr	r3, [r3, #0]
  8002920:	685b      	ldr	r3, [r3, #4]
  8002922:	60fb      	str	r3, [r7, #12]
 
-  /* Get the TIMx SMCR register value */
-  tmpsmcr = htim->Instance->SMCR;
+	/* Get the TIMx SMCR register value */
+	tmpsmcr = htim->Instance->SMCR;
  8002924:	687b      	ldr	r3, [r7, #4]
  8002926:	681b      	ldr	r3, [r3, #0]
  8002928:	689b      	ldr	r3, [r3, #8]
  800292a:	60bb      	str	r3, [r7, #8]
 
-  /* If the timer supports ADC synchronization through TRGO2, set the master mode selection 2 */
-  if (IS_TIM_TRGO2_INSTANCE(htim->Instance))
+	/* If the timer supports ADC synchronization through TRGO2, set the master mode selection 2 */
+	if (IS_TIM_TRGO2_INSTANCE(htim->Instance)) {
  800292c:	687b      	ldr	r3, [r7, #4]
  800292e:	681b      	ldr	r3, [r3, #0]
  8002930:	4a21      	ldr	r2, [pc, #132]	@ (80029b8 <HAL_TIMEx_MasterConfigSynchronization+0xc4>)
  8002932:	4293      	cmp	r3, r2
  8002934:	d108      	bne.n	8002948 <HAL_TIMEx_MasterConfigSynchronization+0x54>
-  {
-    /* Check the parameters */
-    assert_param(IS_TIM_TRGO2_SOURCE(sMasterConfig->MasterOutputTrigger2));
+		/* Check the parameters */
+		assert_param(IS_TIM_TRGO2_SOURCE(sMasterConfig->MasterOutputTrigger2));
 
-    /* Clear the MMS2 bits */
-    tmpcr2 &= ~TIM_CR2_MMS2;
+		/* Clear the MMS2 bits */
+		tmpcr2 &= ~TIM_CR2_MMS2;
  8002936:	68fb      	ldr	r3, [r7, #12]
  8002938:	4a20      	ldr	r2, [pc, #128]	@ (80029bc <HAL_TIMEx_MasterConfigSynchronization+0xc8>)
  800293a:	4013      	ands	r3, r2
  800293c:	60fb      	str	r3, [r7, #12]
-    /* Select the TRGO2 source*/
-    tmpcr2 |= sMasterConfig->MasterOutputTrigger2;
+		/* Select the TRGO2 source*/
+		tmpcr2 |= sMasterConfig->MasterOutputTrigger2;
  800293e:	683b      	ldr	r3, [r7, #0]
  8002940:	685b      	ldr	r3, [r3, #4]
  8002942:	68fa      	ldr	r2, [r7, #12]
  8002944:	4313      	orrs	r3, r2
  8002946:	60fb      	str	r3, [r7, #12]
-  }
+	}
 
-  /* Reset the MMS Bits */
-  tmpcr2 &= ~TIM_CR2_MMS;
+	/* Reset the MMS Bits */
+	tmpcr2 &= ~TIM_CR2_MMS;
  8002948:	68fb      	ldr	r3, [r7, #12]
  800294a:	2270      	movs	r2, #112	@ 0x70
  800294c:	4393      	bics	r3, r2
  800294e:	60fb      	str	r3, [r7, #12]
-  /* Select the TRGO source */
-  tmpcr2 |=  sMasterConfig->MasterOutputTrigger;
+	/* Select the TRGO source */
+	tmpcr2 |= sMasterConfig->MasterOutputTrigger;
  8002950:	683b      	ldr	r3, [r7, #0]
  8002952:	681b      	ldr	r3, [r3, #0]
  8002954:	68fa      	ldr	r2, [r7, #12]
  8002956:	4313      	orrs	r3, r2
  8002958:	60fb      	str	r3, [r7, #12]
 
-  /* Update TIMx CR2 */
-  htim->Instance->CR2 = tmpcr2;
+	/* Update TIMx CR2 */
+	htim->Instance->CR2 = tmpcr2;
  800295a:	687b      	ldr	r3, [r7, #4]
  800295c:	681b      	ldr	r3, [r3, #0]
  800295e:	68fa      	ldr	r2, [r7, #12]
  8002960:	605a      	str	r2, [r3, #4]
 
-  if (IS_TIM_SLAVE_INSTANCE(htim->Instance))
+	if (IS_TIM_SLAVE_INSTANCE(htim->Instance)) {
  8002962:	687b      	ldr	r3, [r7, #4]
  8002964:	681b      	ldr	r3, [r3, #0]
  8002966:	4a14      	ldr	r2, [pc, #80]	@ (80029b8 <HAL_TIMEx_MasterConfigSynchronization+0xc4>)
@@ -7452,43 +7427,42 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
  800297c:	4a10      	ldr	r2, [pc, #64]	@ (80029c0 <HAL_TIMEx_MasterConfigSynchronization+0xcc>)
  800297e:	4293      	cmp	r3, r2
  8002980:	d10c      	bne.n	800299c <HAL_TIMEx_MasterConfigSynchronization+0xa8>
-  {
-    /* Reset the MSM Bit */
-    tmpsmcr &= ~TIM_SMCR_MSM;
+		/* Reset the MSM Bit */
+		tmpsmcr &= ~TIM_SMCR_MSM;
  8002982:	68bb      	ldr	r3, [r7, #8]
  8002984:	2280      	movs	r2, #128	@ 0x80
  8002986:	4393      	bics	r3, r2
  8002988:	60bb      	str	r3, [r7, #8]
-    /* Set master mode */
-    tmpsmcr |= sMasterConfig->MasterSlaveMode;
+		/* Set master mode */
+		tmpsmcr |= sMasterConfig->MasterSlaveMode;
  800298a:	683b      	ldr	r3, [r7, #0]
  800298c:	689b      	ldr	r3, [r3, #8]
  800298e:	68ba      	ldr	r2, [r7, #8]
  8002990:	4313      	orrs	r3, r2
  8002992:	60bb      	str	r3, [r7, #8]
 
-    /* Update TIMx SMCR */
-    htim->Instance->SMCR = tmpsmcr;
+		/* Update TIMx SMCR */
+		htim->Instance->SMCR = tmpsmcr;
  8002994:	687b      	ldr	r3, [r7, #4]
  8002996:	681b      	ldr	r3, [r3, #0]
  8002998:	68ba      	ldr	r2, [r7, #8]
  800299a:	609a      	str	r2, [r3, #8]
-  }
+	}
 
-  /* Change the htim state */
-  htim->State = HAL_TIM_STATE_READY;
+	/* Change the htim state */
+	htim->State = HAL_TIM_STATE_READY;
  800299c:	687b      	ldr	r3, [r7, #4]
  800299e:	223d      	movs	r2, #61	@ 0x3d
  80029a0:	2101      	movs	r1, #1
  80029a2:	5499      	strb	r1, [r3, r2]
 
-  __HAL_UNLOCK(htim);
+	__HAL_UNLOCK(htim);
  80029a4:	687b      	ldr	r3, [r7, #4]
  80029a6:	223c      	movs	r2, #60	@ 0x3c
  80029a8:	2100      	movs	r1, #0
  80029aa:	5499      	strb	r1, [r3, r2]
 
-  return HAL_OK;
+	return HAL_OK;
  80029ac:	2300      	movs	r3, #0
 }
  80029ae:	0018      	movs	r0, r3
@@ -7501,27 +7475,27 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
  80029c0:	40000400 	.word	0x40000400
 
 080029c4 <HAL_TIMEx_ConfigBreakDeadTime>:
-  *         interrupt can be enabled by calling the @ref __HAL_TIM_ENABLE_IT macro.
-  * @retval HAL status
-  */
+ *         break input, the break 2 input or the system break input. Break
+ *         interrupt can be enabled by calling the @ref __HAL_TIM_ENABLE_IT macro.
+ * @retval HAL status
+ */
 HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
-                                                const TIM_BreakDeadTimeConfigTypeDef *sBreakDeadTimeConfig)
-{
+		const TIM_BreakDeadTimeConfigTypeDef *sBreakDeadTimeConfig) {
  80029c4:	b580      	push	{r7, lr}
  80029c6:	b084      	sub	sp, #16
  80029c8:	af00      	add	r7, sp, #0
  80029ca:	6078      	str	r0, [r7, #4]
  80029cc:	6039      	str	r1, [r7, #0]
-  /* Keep this variable initialized to 0 as it is used to configure BDTR register */
-  uint32_t tmpbdtr = 0U;
+	/* Keep this variable initialized to 0 as it is used to configure BDTR register */
+	uint32_t tmpbdtr = 0U;
  80029ce:	2300      	movs	r3, #0
  80029d0:	60fb      	str	r3, [r7, #12]
-  assert_param(IS_TIM_BREAK_FILTER(sBreakDeadTimeConfig->BreakFilter));
-  assert_param(IS_TIM_AUTOMATIC_OUTPUT_STATE(sBreakDeadTimeConfig->AutomaticOutput));
-  assert_param(IS_TIM_BREAK_AFMODE(sBreakDeadTimeConfig->BreakAFMode));
+	assert_param(
+			IS_TIM_AUTOMATIC_OUTPUT_STATE(sBreakDeadTimeConfig->AutomaticOutput));
+	assert_param(IS_TIM_BREAK_AFMODE(sBreakDeadTimeConfig->BreakAFMode));
 
-  /* Check input state */
-  __HAL_LOCK(htim);
+	/* Check input state */
+	__HAL_LOCK(htim);
  80029d2:	687b      	ldr	r3, [r7, #4]
  80029d4:	223c      	movs	r2, #60	@ 0x3c
  80029d6:	5c9b      	ldrb	r3, [r3, r2]
@@ -7534,11 +7508,11 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  80029e4:	2101      	movs	r1, #1
  80029e6:	5499      	strb	r1, [r3, r2]
 
-  /* Set the Lock level, the Break enable Bit and the Polarity, the OSSR State,
-     the OSSI State, the dead time value and the Automatic Output Enable Bit */
+	/* Set the Lock level, the Break enable Bit and the Polarity, the OSSR State,
+	 the OSSI State, the dead time value and the Automatic Output Enable Bit */
 
-  /* Set the BDTR bits */
-  MODIFY_REG(tmpbdtr, TIM_BDTR_DTG, sBreakDeadTimeConfig->DeadTime);
+	/* Set the BDTR bits */
+	MODIFY_REG(tmpbdtr, TIM_BDTR_DTG, sBreakDeadTimeConfig->DeadTime);
  80029e8:	68fb      	ldr	r3, [r7, #12]
  80029ea:	22ff      	movs	r2, #255	@ 0xff
  80029ec:	4393      	bics	r3, r2
@@ -7547,7 +7521,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  80029f2:	68db      	ldr	r3, [r3, #12]
  80029f4:	4313      	orrs	r3, r2
  80029f6:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_LOCK, sBreakDeadTimeConfig->LockLevel);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_LOCK, sBreakDeadTimeConfig->LockLevel);
  80029f8:	68fb      	ldr	r3, [r7, #12]
  80029fa:	4a33      	ldr	r2, [pc, #204]	@ (8002ac8 <HAL_TIMEx_ConfigBreakDeadTime+0x104>)
  80029fc:	401a      	ands	r2, r3
@@ -7555,7 +7529,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a00:	689b      	ldr	r3, [r3, #8]
  8002a02:	4313      	orrs	r3, r2
  8002a04:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_OSSI, sBreakDeadTimeConfig->OffStateIDLEMode);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_OSSI, sBreakDeadTimeConfig->OffStateIDLEMode);
  8002a06:	68fb      	ldr	r3, [r7, #12]
  8002a08:	4a30      	ldr	r2, [pc, #192]	@ (8002acc <HAL_TIMEx_ConfigBreakDeadTime+0x108>)
  8002a0a:	401a      	ands	r2, r3
@@ -7563,7 +7537,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a0e:	685b      	ldr	r3, [r3, #4]
  8002a10:	4313      	orrs	r3, r2
  8002a12:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_OSSR, sBreakDeadTimeConfig->OffStateRunMode);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_OSSR, sBreakDeadTimeConfig->OffStateRunMode);
  8002a14:	68fb      	ldr	r3, [r7, #12]
  8002a16:	4a2e      	ldr	r2, [pc, #184]	@ (8002ad0 <HAL_TIMEx_ConfigBreakDeadTime+0x10c>)
  8002a18:	401a      	ands	r2, r3
@@ -7571,7 +7545,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a1c:	681b      	ldr	r3, [r3, #0]
  8002a1e:	4313      	orrs	r3, r2
  8002a20:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_BKE, sBreakDeadTimeConfig->BreakState);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_BKE, sBreakDeadTimeConfig->BreakState);
  8002a22:	68fb      	ldr	r3, [r7, #12]
  8002a24:	4a2b      	ldr	r2, [pc, #172]	@ (8002ad4 <HAL_TIMEx_ConfigBreakDeadTime+0x110>)
  8002a26:	401a      	ands	r2, r3
@@ -7579,7 +7553,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a2a:	691b      	ldr	r3, [r3, #16]
  8002a2c:	4313      	orrs	r3, r2
  8002a2e:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_BKP, sBreakDeadTimeConfig->BreakPolarity);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_BKP, sBreakDeadTimeConfig->BreakPolarity);
  8002a30:	68fb      	ldr	r3, [r7, #12]
  8002a32:	4a29      	ldr	r2, [pc, #164]	@ (8002ad8 <HAL_TIMEx_ConfigBreakDeadTime+0x114>)
  8002a34:	401a      	ands	r2, r3
@@ -7587,7 +7561,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a38:	695b      	ldr	r3, [r3, #20]
  8002a3a:	4313      	orrs	r3, r2
  8002a3c:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_AOE, sBreakDeadTimeConfig->AutomaticOutput);
+	MODIFY_REG(tmpbdtr, TIM_BDTR_AOE, sBreakDeadTimeConfig->AutomaticOutput);
  8002a3e:	68fb      	ldr	r3, [r7, #12]
  8002a40:	4a26      	ldr	r2, [pc, #152]	@ (8002adc <HAL_TIMEx_ConfigBreakDeadTime+0x118>)
  8002a42:	401a      	ands	r2, r3
@@ -7595,7 +7569,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a46:	6b1b      	ldr	r3, [r3, #48]	@ 0x30
  8002a48:	4313      	orrs	r3, r2
  8002a4a:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_BKF, (sBreakDeadTimeConfig->BreakFilter << TIM_BDTR_BKF_Pos));
+	MODIFY_REG(tmpbdtr, TIM_BDTR_BKF,
  8002a4c:	68fb      	ldr	r3, [r7, #12]
  8002a4e:	4a24      	ldr	r2, [pc, #144]	@ (8002ae0 <HAL_TIMEx_ConfigBreakDeadTime+0x11c>)
  8002a50:	401a      	ands	r2, r3
@@ -7604,7 +7578,8 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a56:	041b      	lsls	r3, r3, #16
  8002a58:	4313      	orrs	r3, r2
  8002a5a:	60fb      	str	r3, [r7, #12]
-  MODIFY_REG(tmpbdtr, TIM_BDTR_BKBID, sBreakDeadTimeConfig->BreakAFMode);
+			(sBreakDeadTimeConfig->BreakFilter << TIM_BDTR_BKF_Pos));
+	MODIFY_REG(tmpbdtr, TIM_BDTR_BKBID, sBreakDeadTimeConfig->BreakAFMode);
  8002a5c:	68fb      	ldr	r3, [r7, #12]
  8002a5e:	4a21      	ldr	r2, [pc, #132]	@ (8002ae4 <HAL_TIMEx_ConfigBreakDeadTime+0x120>)
  8002a60:	401a      	ands	r2, r3
@@ -7613,18 +7588,18 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a66:	4313      	orrs	r3, r2
  8002a68:	60fb      	str	r3, [r7, #12]
 
-  if (IS_TIM_BKIN2_INSTANCE(htim->Instance))
+	if (IS_TIM_BKIN2_INSTANCE(htim->Instance)) {
  8002a6a:	687b      	ldr	r3, [r7, #4]
  8002a6c:	681b      	ldr	r3, [r3, #0]
  8002a6e:	4a1e      	ldr	r2, [pc, #120]	@ (8002ae8 <HAL_TIMEx_ConfigBreakDeadTime+0x124>)
  8002a70:	4293      	cmp	r3, r2
  8002a72:	d11c      	bne.n	8002aae <HAL_TIMEx_ConfigBreakDeadTime+0xea>
-    assert_param(IS_TIM_BREAK2_POLARITY(sBreakDeadTimeConfig->Break2Polarity));
-    assert_param(IS_TIM_BREAK_FILTER(sBreakDeadTimeConfig->Break2Filter));
-    assert_param(IS_TIM_BREAK2_AFMODE(sBreakDeadTimeConfig->Break2AFMode));
+				IS_TIM_BREAK2_POLARITY(sBreakDeadTimeConfig->Break2Polarity));
+		assert_param(IS_TIM_BREAK_FILTER(sBreakDeadTimeConfig->Break2Filter));
+		assert_param(IS_TIM_BREAK2_AFMODE(sBreakDeadTimeConfig->Break2AFMode));
 
-    /* Set the BREAK2 input related BDTR bits */
-    MODIFY_REG(tmpbdtr, TIM_BDTR_BK2F, (sBreakDeadTimeConfig->Break2Filter << TIM_BDTR_BK2F_Pos));
+		/* Set the BREAK2 input related BDTR bits */
+		MODIFY_REG(tmpbdtr, TIM_BDTR_BK2F,
  8002a74:	68fb      	ldr	r3, [r7, #12]
  8002a76:	4a1d      	ldr	r2, [pc, #116]	@ (8002aec <HAL_TIMEx_ConfigBreakDeadTime+0x128>)
  8002a78:	401a      	ands	r2, r3
@@ -7633,7 +7608,8 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a7e:	051b      	lsls	r3, r3, #20
  8002a80:	4313      	orrs	r3, r2
  8002a82:	60fb      	str	r3, [r7, #12]
-    MODIFY_REG(tmpbdtr, TIM_BDTR_BK2E, sBreakDeadTimeConfig->Break2State);
+				(sBreakDeadTimeConfig->Break2Filter << TIM_BDTR_BK2F_Pos));
+		MODIFY_REG(tmpbdtr, TIM_BDTR_BK2E, sBreakDeadTimeConfig->Break2State);
  8002a84:	68fb      	ldr	r3, [r7, #12]
  8002a86:	4a1a      	ldr	r2, [pc, #104]	@ (8002af0 <HAL_TIMEx_ConfigBreakDeadTime+0x12c>)
  8002a88:	401a      	ands	r2, r3
@@ -7641,7 +7617,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a8c:	6a1b      	ldr	r3, [r3, #32]
  8002a8e:	4313      	orrs	r3, r2
  8002a90:	60fb      	str	r3, [r7, #12]
-    MODIFY_REG(tmpbdtr, TIM_BDTR_BK2P, sBreakDeadTimeConfig->Break2Polarity);
+		MODIFY_REG(tmpbdtr, TIM_BDTR_BK2P,
  8002a92:	68fb      	ldr	r3, [r7, #12]
  8002a94:	4a17      	ldr	r2, [pc, #92]	@ (8002af4 <HAL_TIMEx_ConfigBreakDeadTime+0x130>)
  8002a96:	401a      	ands	r2, r3
@@ -7649,7 +7625,8 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002a9a:	6a5b      	ldr	r3, [r3, #36]	@ 0x24
  8002a9c:	4313      	orrs	r3, r2
  8002a9e:	60fb      	str	r3, [r7, #12]
-    MODIFY_REG(tmpbdtr, TIM_BDTR_BK2BID, sBreakDeadTimeConfig->Break2AFMode);
+				sBreakDeadTimeConfig->Break2Polarity);
+		MODIFY_REG(tmpbdtr, TIM_BDTR_BK2BID,
  8002aa0:	68fb      	ldr	r3, [r7, #12]
  8002aa2:	4a15      	ldr	r2, [pc, #84]	@ (8002af8 <HAL_TIMEx_ConfigBreakDeadTime+0x134>)
  8002aa4:	401a      	ands	r2, r3
@@ -7657,22 +7634,23 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002aa8:	6adb      	ldr	r3, [r3, #44]	@ 0x2c
  8002aaa:	4313      	orrs	r3, r2
  8002aac:	60fb      	str	r3, [r7, #12]
-  }
+				sBreakDeadTimeConfig->Break2AFMode);
+	}
 
-  /* Set TIMx_BDTR */
-  htim->Instance->BDTR = tmpbdtr;
+	/* Set TIMx_BDTR */
+	htim->Instance->BDTR = tmpbdtr;
  8002aae:	687b      	ldr	r3, [r7, #4]
  8002ab0:	681b      	ldr	r3, [r3, #0]
  8002ab2:	68fa      	ldr	r2, [r7, #12]
  8002ab4:	645a      	str	r2, [r3, #68]	@ 0x44
 
-  __HAL_UNLOCK(htim);
+	__HAL_UNLOCK(htim);
  8002ab6:	687b      	ldr	r3, [r7, #4]
  8002ab8:	223c      	movs	r2, #60	@ 0x3c
  8002aba:	2100      	movs	r1, #0
  8002abc:	5499      	strb	r1, [r3, r2]
 
-  return HAL_OK;
+	return HAL_OK;
  8002abe:	2300      	movs	r3, #0
 }
  8002ac0:	0018      	movs	r0, r3
@@ -7694,21 +7672,21 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8002af8:	dfffffff 	.word	0xdfffffff
 
 08002afc <TIM_CCxNChannelCmd>:
-  * @param  ChannelNState specifies the TIM Channel CCxNE bit new state.
-  *          This parameter can be: TIM_CCxN_ENABLE or TIM_CCxN_Disable.
-  * @retval None
-  */
-static void TIM_CCxNChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelNState)
-{
+ * @param  ChannelNState specifies the TIM Channel CCxNE bit new state.
+ *          This parameter can be: TIM_CCxN_ENABLE or TIM_CCxN_Disable.
+ * @retval None
+ */
+static void TIM_CCxNChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel,
+		uint32_t ChannelNState) {
  8002afc:	b580      	push	{r7, lr}
  8002afe:	b086      	sub	sp, #24
  8002b00:	af00      	add	r7, sp, #0
  8002b02:	60f8      	str	r0, [r7, #12]
  8002b04:	60b9      	str	r1, [r7, #8]
  8002b06:	607a      	str	r2, [r7, #4]
-  uint32_t tmp;
+	uint32_t tmp;
 
-  tmp = TIM_CCER_CC1NE << (Channel & 0xFU); /* 0xFU = 15 bits max shift */
+	tmp = TIM_CCER_CC1NE << (Channel & 0xFU); /* 0xFU = 15 bits max shift */
  8002b08:	68bb      	ldr	r3, [r7, #8]
  8002b0a:	220f      	movs	r2, #15
  8002b0c:	4013      	ands	r3, r2
@@ -7717,8 +7695,8 @@ static void TIM_CCxNChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t Cha
  8002b12:	0013      	movs	r3, r2
  8002b14:	617b      	str	r3, [r7, #20]
 
-  /* Reset the CCxNE Bit */
-  TIMx->CCER &=  ~tmp;
+	/* Reset the CCxNE Bit */
+	TIMx->CCER &= ~tmp;
  8002b16:	68fb      	ldr	r3, [r7, #12]
  8002b18:	6a1b      	ldr	r3, [r3, #32]
  8002b1a:	697a      	ldr	r2, [r7, #20]
@@ -7727,8 +7705,8 @@ static void TIM_CCxNChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t Cha
  8002b20:	68fb      	ldr	r3, [r7, #12]
  8002b22:	621a      	str	r2, [r3, #32]
 
-  /* Set or reset the CCxNE Bit */
-  TIMx->CCER |= (uint32_t)(ChannelNState << (Channel & 0xFU)); /* 0xFU = 15 bits max shift */
+	/* Set or reset the CCxNE Bit */
+	TIMx->CCER |= (uint32_t) (ChannelNState << (Channel & 0xFU)); /* 0xFU = 15 bits max shift */
  8002b24:	68fb      	ldr	r3, [r7, #12]
  8002b26:	6a1a      	ldr	r2, [r3, #32]
  8002b28:	68bb      	ldr	r3, [r7, #8]

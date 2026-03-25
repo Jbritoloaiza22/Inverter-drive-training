@@ -1,34 +1,32 @@
-name: Build STM32CubeIDE Project
+name: Build STM32 Firmware
 
 on:
   push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      # Compilación con el Action oficial
-      - name: Build with STM32CubeIDE Action
-        uses: xanderhendriks/action-build-stm32cubeide@v15.0
-        with:
-          project-path: STM32CubeIDE
-          project-target: inverter_drive
+    - name: Install ARM GCC
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-arm-none-eabi binutils-arm-none-eabi make
 
-      # Subir artefactos generados
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware-build
-          path: |
-            STM32CubeIDE/Debug/*.elf
-            STM32CubeIDE/Debug/*.map
-            STM32CubeIDE/Debug/*.list
+    - name: Build firmware
+      run: |
+        make -C STM32CubeIDE/Debug all
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware
+        path: |
+          STM32CubeIDE/Debug/*.elf
+          STM32CubeIDE/Debug/*.bin
+          STM32CubeIDE/Debug/*.hex
+          STM32CubeIDE/Debug/*.map

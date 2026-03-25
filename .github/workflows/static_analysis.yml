@@ -1,0 +1,30 @@
+name: Static Analysis
+
+on:
+  pull_request:
+  push:
+    branches: [ main, dev ]
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install tools
+      run: |
+        sudo apt update
+        sudo apt install -y cppcheck clang-tidy
+
+    - name: Run Cppcheck
+      run: |
+        cppcheck --enable=all --inconclusive --error-exitcode=1 \
+        --suppress=missingIncludeSystem \
+        --suppress=unusedFunction \
+        --force .
+
+    - name: Run clang-tidy
+      run: |
+        clang-tidy **/*.c --warnings-as-errors=* --quiet || exit 1
