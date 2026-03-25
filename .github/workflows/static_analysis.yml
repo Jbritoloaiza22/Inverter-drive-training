@@ -28,4 +28,7 @@ jobs:
 
     - name: Run clang-tidy
       run: |
-        clang-tidy **/*.c --warnings-as-errors=* --quiet || exit 1
+        for file in $(find . -name "*.c"); do
+        echo "Checking $file"
+        clang-tidy "$file" --warnings-as-errors=* --quiet || exit 1
+        done
