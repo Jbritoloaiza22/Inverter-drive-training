@@ -12,7 +12,6 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
  ../src/Board/HAL/stm32g0xx_ll_rcc.h \
  ../src/Board/HAL/stm32g0xx_hal_rcc_ex.h \
  ../src/Board/HAL/stm32g0xx_hal_gpio.h \
- ../src/Board/HAL/stm32g0xx_hal_gpio_ex.h \
  ../src/Board/HAL/stm32g0xx_hal_dma.h ../src/Board/HAL/stm32g0xx_ll_dma.h \
  ../src/Board/HAL/stm32g0xx_ll_dmamux.h \
  ../src/Board/HAL/stm32g0xx_hal_dma_ex.h \
@@ -43,7 +42,6 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
 ../src/Board/HAL/stm32g0xx_ll_rcc.h:
 ../src/Board/HAL/stm32g0xx_hal_rcc_ex.h:
 ../src/Board/HAL/stm32g0xx_hal_gpio.h:
-../src/Board/HAL/stm32g0xx_hal_gpio_ex.h:
 ../src/Board/HAL/stm32g0xx_hal_dma.h:
 ../src/Board/HAL/stm32g0xx_ll_dma.h:
 ../src/Board/HAL/stm32g0xx_ll_dmamux.h:

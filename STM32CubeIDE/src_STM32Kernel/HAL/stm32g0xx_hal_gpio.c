@@ -105,6 +105,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
+#define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0uL :\
+                                      ((__GPIOx__) == (GPIOB))? 1uL :\
+                                      ((__GPIOx__) == (GPIOC))? 2uL :\
+                                      ((__GPIOx__) == (GPIOD))? 3uL : 5uL)
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
   */
@@ -166,9 +170,11 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
   uint32_t temp;
 
   /* Check the parameters */
+#ifdef DEBUG
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
+#endif
 
   /* Configure the port pins */
   while (((GPIO_Init->Pin) >> position) != 0x00u)

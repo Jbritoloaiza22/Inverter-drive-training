@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000c72  00000000  00000000  0001cc10  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00012c0f  00000000  00000000  0001d882  2**0
+ 16 .debug_macro  00012a5d  00000000  00000000  0001d882  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00012092  00000000  00000000  00030491  2**0
+ 17 .debug_line   00011efd  00000000  00000000  000302df  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0007f88d  00000000  00000000  00042523  2**0
+ 18 .debug_str    0007f3bd  00000000  00000000  000421dc  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c1db0  2**0
+ 19 .comment      00000043  00000000  00000000  000c1599  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003a58  00000000  00000000  000c1df4  2**2
+ 20 .debug_frame  00003a58  00000000  00000000  000c15dc  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000096  00000000  00000000  000c584c  2**0
+ 21 .debug_line_str 00000096  00000000  00000000  000c5034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1147,7 +1147,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
  8000852:	193b      	adds	r3, r7, r4
  8000854:	2200      	movs	r2, #0
  8000856:	60da      	str	r2, [r3, #12]
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM1;
+    GPIO_InitStruct.Alternate = 0x02;
  8000858:	193b      	adds	r3, r7, r4
  800085a:	2202      	movs	r2, #2
  800085c:	611a      	str	r2, [r3, #16]
@@ -1176,7 +1176,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
  8000880:	187b      	adds	r3, r7, r1
  8000882:	2200      	movs	r2, #0
  8000884:	60da      	str	r2, [r3, #12]
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM1;
+    GPIO_InitStruct.Alternate = 0x2;
  8000886:	187b      	adds	r3, r7, r1
  8000888:	2202      	movs	r2, #2
  800088a:	611a      	str	r2, [r3, #16]
@@ -1310,7 +1310,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
  8000946:	187b      	adds	r3, r7, r1
  8000948:	2200      	movs	r2, #0
  800094a:	60da      	str	r2, [r3, #12]
-    GPIO_InitStruct.Alternate = GPIO_AF0_USART1;
+    GPIO_InitStruct.Alternate = 0;
  800094c:	187b      	adds	r3, r7, r1
  800094e:	2200      	movs	r2, #0
  8000950:	611a      	str	r2, [r3, #16]
@@ -6063,9 +6063,9 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef const *GPIO_Init)
   uint32_t position = 0x00u;
  80022a6:	2300      	movs	r3, #0
  80022a8:	617b      	str	r3, [r7, #20]
-  assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
+#endif
 
   /* Configure the port pins */
   while (((GPIO_Init->Pin) >> position) != 0x00u)

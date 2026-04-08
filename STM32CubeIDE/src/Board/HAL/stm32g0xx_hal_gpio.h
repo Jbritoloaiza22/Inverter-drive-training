@@ -302,8 +302,6 @@ typedef enum
   * @}
   */
 
-/* Include GPIO HAL Extended module */
-#include "stm32g0xx_hal_gpio_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup GPIO_Exported_Functions GPIO Exported Functions
