@@ -27,7 +27,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx.h"
-#include "stm32_hal_legacy.h"   /* Aliases file for old names compatibility */
 #include <stddef.h>
 
 /* Exported types ------------------------------------------------------------*/

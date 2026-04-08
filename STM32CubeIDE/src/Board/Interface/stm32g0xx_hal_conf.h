@@ -287,10 +287,6 @@ in voltage and temperature.*/
 #include "stm32g0xx_hal_pcd.h"
 #endif /* HAL_PCD_MODULE_ENABLED */
 
-#ifdef HAL_PWR_MODULE_ENABLED
-#include "stm32g0xx_hal_pwr.h"
-#endif /* HAL_PWR_MODULE_ENABLED */
-
 #ifdef HAL_RNG_MODULE_ENABLED
 #include "stm32g0xx_hal_rng.h"
 #endif /* HAL_RNG_MODULE_ENABLED */

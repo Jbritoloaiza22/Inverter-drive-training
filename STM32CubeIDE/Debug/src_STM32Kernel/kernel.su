@@ -1,10 +1,10 @@
 ../src_STM32Kernel/kernel.c:71:6:IncCounterToPWM	8	static
 ../src_STM32Kernel/kernel.c:81:5:main	168	static
 ../src_STM32Kernel/kernel.c:183:6:SystemClock_Config	88	static
-../src_STM32Kernel/kernel.c:230:13:MX_ADC1_Init	24	static
-../src_STM32Kernel/kernel.c:289:13:MX_TIM1_Init	104	static
-../src_STM32Kernel/kernel.c:370:13:MX_TIM2_Init	40	static
-../src_STM32Kernel/kernel.c:415:13:MX_TIM3_Init	40	static
-../src_STM32Kernel/kernel.c:460:13:MX_USART1_UART_Init	8	static
-../src_STM32Kernel/kernel.c:508:13:MX_GPIO_Init	48	static
-../src_STM32Kernel/kernel.c:552:6:Error_Handler	8	static,ignoring_inline_asm
+../src_STM32Kernel/kernel.c:226:13:MX_ADC1_Init	24	static
+../src_STM32Kernel/kernel.c:285:13:MX_TIM1_Init	104	static
+../src_STM32Kernel/kernel.c:366:13:MX_TIM2_Init	40	static
+../src_STM32Kernel/kernel.c:411:13:MX_TIM3_Init	40	static
+../src_STM32Kernel/kernel.c:456:13:MX_USART1_UART_Init	8	static
+../src_STM32Kernel/kernel.c:504:13:MX_GPIO_Init	48	static
+../src_STM32Kernel/kernel.c:548:6:Error_Handler	8	static,ignoring_inline_asm

@@ -47,8 +47,6 @@
 "./src_STM32Kernel/HAL/stm32g0xx_hal_flash.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_flash_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_gpio.o"
-"./src_STM32Kernel/HAL/stm32g0xx_hal_pwr.o"
-"./src_STM32Kernel/HAL/stm32g0xx_hal_pwr_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_rcc.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_rcc_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_tim.o"
