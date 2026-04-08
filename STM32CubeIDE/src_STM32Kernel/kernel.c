@@ -144,7 +144,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  HAL_UART_Transmit(&huart1, (uint8_t *)"hello\r\n", 7, 5);
 
-#if 0
     if (!flag_i)
     {
       if (counter_i > 0)
@@ -174,7 +173,6 @@ int main(void)
         flag_i = 0;
       }
     }
-#endif
   }
   /* USER CODE END 3 */
 }

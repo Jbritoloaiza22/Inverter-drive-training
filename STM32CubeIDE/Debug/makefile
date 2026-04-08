@@ -12,6 +12,7 @@ RM := rm -rf
 -include src_libs/MainsLib/subdir.mk
 -include src_libs/MCLib/subdir.mk
 -include src_libs/BoardLib/subdir.mk
+-include src_STM32Kernel/HAL/subdir.mk
 -include src_STM32Kernel/subdir.mk
 -include src_GFLib/Math/ARM/subdir.mk
 -include src_GFLib/Math/subdir.mk
@@ -22,9 +23,6 @@ RM := rm -rf
 -include src/APP/Inverter/subdir.mk
 -include src/APP/Interface/subdir.mk
 -include src/APP/subdir.mk
--include Drivers/STM32G0xx_HAL_Driver/Src/subdir.mk
--include Core/Src/subdir.mk
--include Application/User/Core/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

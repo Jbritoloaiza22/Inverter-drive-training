@@ -5,13 +5,22 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/Board/Interface/BoardInterface.c 
+../src/Board/Interface/BoardInterface.c \
+../src/Board/Interface/stm32g0xx_hal_msp.c \
+../src/Board/Interface/stm32g0xx_it.c \
+../src/Board/Interface/system_stm32g0xx.c 
 
 OBJS += \
-./src/Board/Interface/BoardInterface.o 
+./src/Board/Interface/BoardInterface.o \
+./src/Board/Interface/stm32g0xx_hal_msp.o \
+./src/Board/Interface/stm32g0xx_it.o \
+./src/Board/Interface/system_stm32g0xx.o 
 
 C_DEPS += \
-./src/Board/Interface/BoardInterface.d 
+./src/Board/Interface/BoardInterface.d \
+./src/Board/Interface/stm32g0xx_hal_msp.d \
+./src/Board/Interface/stm32g0xx_it.d \
+./src/Board/Interface/system_stm32g0xx.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +30,7 @@ src/Board/Interface/%.o src/Board/Interface/%.su src/Board/Interface/%.cyclo: ..
 clean: clean-src-2f-Board-2f-Interface
 
 clean-src-2f-Board-2f-Interface:
-	-$(RM) ./src/Board/Interface/BoardInterface.cyclo ./src/Board/Interface/BoardInterface.d ./src/Board/Interface/BoardInterface.o ./src/Board/Interface/BoardInterface.su
+	-$(RM) ./src/Board/Interface/BoardInterface.cyclo ./src/Board/Interface/BoardInterface.d ./src/Board/Interface/BoardInterface.o ./src/Board/Interface/BoardInterface.su ./src/Board/Interface/stm32g0xx_hal_msp.cyclo ./src/Board/Interface/stm32g0xx_hal_msp.d ./src/Board/Interface/stm32g0xx_hal_msp.o ./src/Board/Interface/stm32g0xx_hal_msp.su ./src/Board/Interface/stm32g0xx_it.cyclo ./src/Board/Interface/stm32g0xx_it.d ./src/Board/Interface/stm32g0xx_it.o ./src/Board/Interface/stm32g0xx_it.su ./src/Board/Interface/system_stm32g0xx.cyclo ./src/Board/Interface/system_stm32g0xx.d ./src/Board/Interface/system_stm32g0xx.o ./src/Board/Interface/system_stm32g0xx.su
 
 .PHONY: clean-src-2f-Board-2f-Interface
 
