@@ -44,6 +44,32 @@
 #define GPIO_AF14					0x0E
 #define GPIO_AF15					0x0F
 
-
-
+/* helper macros */
+/*
+* @brief  configure a GPIO pin with all parameters
+* @param  port: where x can be (A..K) to select the GPIO peripheral
+* @param  pin: specifies the GPIO pins to be configured.
+* @param  mode: specifies the operating mode for the selected pins.
+* @param  otype: specifies the output type for the selected pins.
+* @param speed: specifies the speed for the selected pins.
+* @param  pupd: specifies the Pull-up or Pull-Down activation for the selected
+* @param af: specifies the alternate function value if mode is set to alternate function
+*/
+#define GPIO_CONFIG_PIN(port, pin, mode, otype, speed, pupd, af) \
+    do{ \
+        /*configure mode register*/ \
+        (port)->MODER = ((port)->MODER & ~(0x3 << ((pin) * 2))) | ((mode) << ((pin) * 2)); \
+        /*configure output type register*/ \
+        (port)->OTYPER = ((port)->OTYPER & ~(0x1 << (pin))) | ((otype) << (pin)); \
+        /*configure output speed register*/ \
+        (port)->OSPEEDR = ((port)->OSPEEDR & ~(0x3 << ((pin) * 2))) | ((speed) << ((pin) * 2)); \
+        /*configure pull-up/pull-down register*/ \
+        (port)->PUPDR = ((port)->PUPDR & ~(0x3 << ((pin) * 2))) | ((pupd) << ((pin) * 2)); \
+        /*configure alternate function register*/ \
+        if (mode == GPIO_MODE_AF_PP || mode == GPIO_MODE_AF_OD) { \
+            uint8_t af_index = (pin < 8) ? 0 : 1; \
+            uint32_t af_mask = 0xF << ((pin % 8) * 4); \
+            (port)->AFR[af_index] = ((port)->AFR[af_index] & ~af_mask) | ((af) << ((pin % 8) * 4)); \
+        } \
+    }while(0)
 
