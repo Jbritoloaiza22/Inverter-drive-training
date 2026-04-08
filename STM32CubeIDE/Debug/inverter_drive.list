@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000028  00000000  00000000  0000700c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000117ab  00000000  00000000  00007034  2**0
+ 12 .debug_info   000101e8  00000000  00000000  00007034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002189  00000000  00000000  000187df  2**0
+ 13 .debug_abbrev 00001f3f  00000000  00000000  0001721c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000f28  00000000  00000000  0001a968  2**3
+ 14 .debug_aranges 00000dc8  00000000  00000000  00019160  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000bf1  00000000  00000000  0001b890  2**0
+ 15 .debug_rnglists 00000ad0  00000000  00000000  00019f28  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000125e9  00000000  00000000  0001c481  2**0
+ 16 .debug_macro  0001225b  00000000  00000000  0001a9f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00011086  00000000  00000000  0002ea6a  2**0
+ 17 .debug_line   0000f54f  00000000  00000000  0002cc53  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0007e0a2  00000000  00000000  0003faf0  2**0
+ 18 .debug_str    0007d390  00000000  00000000  0003c1a2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000bdb92  2**0
+ 19 .comment      00000043  00000000  00000000  000b9532  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000037e0  00000000  00000000  000bdbd8  2**2
+ 20 .debug_frame  000032a0  00000000  00000000  000b9578  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000096  00000000  00000000  000c13b8  2**0
+ 21 .debug_line_str 00000096  00000000  00000000  000bc818  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -9725,7 +9725,7 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       HAL_TIMEx_BreakCallback(htim);
  80035b4:	687b      	ldr	r3, [r7, #4]
  80035b6:	0018      	movs	r0, r3
- 80035b8:	f000 ffee 	bl	8004598 <HAL_TIMEx_BreakCallback>
+ 80035b8:	f000 ffe6 	bl	8004588 <HAL_TIMEx_BreakCallback>
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
@@ -9754,7 +9754,7 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       HAL_TIMEx_Break2Callback(htim);
  80035d6:	687b      	ldr	r3, [r7, #4]
  80035d8:	0018      	movs	r0, r3
- 80035da:	f000 ffe5 	bl	80045a8 <HAL_TIMEx_Break2Callback>
+ 80035da:	f000 ffdd 	bl	8004598 <HAL_TIMEx_Break2Callback>
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
@@ -9812,7 +9812,7 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       HAL_TIMEx_CommutCallback(htim);
  800361a:	687b      	ldr	r3, [r7, #4]
  800361c:	0018      	movs	r0, r3
- 800361e:	f000 ffb3 	bl	8004588 <HAL_TIMEx_CommutCallback>
+ 800361e:	f000 ffc3 	bl	80045a8 <HAL_TIMEx_CommutCallback>
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
     }
   }
@@ -12169,10 +12169,10 @@ void TIM_CCxChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelStat
 	...
 
 08004244 <HAL_TIMEx_PWMN_Start>:
-  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
-  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
-  * @retval HAL status
-  */
+  htim->Break2Callback                    = HAL_TIMEx_Break2Callback;
+}
+#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+
 HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
  8004244:	b580      	push	{r7, lr}
@@ -12369,9 +12369,7 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
  800437c:	00010007 	.word	0x00010007
 
 08004380 <HAL_TIMEx_MasterConfigSynchronization>:
-  *         mode.
-  * @retval HAL status
-  */
+
 HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
                                                         const TIM_MasterConfigTypeDef *sMasterConfig)
 {
@@ -12724,12 +12722,9 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
  8004580:	fdffffff 	.word	0xfdffffff
  8004584:	dfffffff 	.word	0xdfffffff
 
-08004588 <HAL_TIMEx_CommutCallback>:
-  * @brief  Commutation callback in non-blocking mode
-  * @param  htim TIM handle
-  * @retval None
-  */
-__weak void HAL_TIMEx_CommutCallback(TIM_HandleTypeDef *htim)
+08004588 <HAL_TIMEx_BreakCallback>:
+
+__weak void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim)
 {
  8004588:	b580      	push	{r7, lr}
  800458a:	b082      	sub	sp, #8
@@ -12738,7 +12733,7 @@ __weak void HAL_TIMEx_CommutCallback(TIM_HandleTypeDef *htim)
   UNUSED(htim);
 
   /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIMEx_CommutCallback could be implemented in the user file
+            the HAL_TIMEx_BreakCallback could be implemented in the user file
    */
 }
  8004590:	46c0      	nop			@ (mov r8, r8)
@@ -12746,12 +12741,12 @@ __weak void HAL_TIMEx_CommutCallback(TIM_HandleTypeDef *htim)
  8004594:	b002      	add	sp, #8
  8004596:	bd80      	pop	{r7, pc}
 
-08004598 <HAL_TIMEx_BreakCallback>:
-  * @brief  Break detection callback in non-blocking mode
-  * @param  htim TIM handle
+08004598 <HAL_TIMEx_Break2Callback>:
+  * @brief  Break2 detection callback in non blocking mode
+  * @param  htim: TIM handle
   * @retval None
   */
-__weak void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim)
+__weak void HAL_TIMEx_Break2Callback(TIM_HandleTypeDef *htim)
 {
  8004598:	b580      	push	{r7, lr}
  800459a:	b082      	sub	sp, #8
@@ -12759,8 +12754,8 @@ __weak void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim)
  800459e:	6078      	str	r0, [r7, #4]
   UNUSED(htim);
 
-  /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIMEx_BreakCallback could be implemented in the user file
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_TIMEx_Break2Callback could be implemented in the user file
    */
 }
  80045a0:	46c0      	nop			@ (mov r8, r8)
@@ -12768,12 +12763,9 @@ __weak void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim)
  80045a4:	b002      	add	sp, #8
  80045a6:	bd80      	pop	{r7, pc}
 
-080045a8 <HAL_TIMEx_Break2Callback>:
-  * @brief  Break2 detection callback in non blocking mode
-  * @param  htim: TIM handle
-  * @retval None
-  */
-__weak void HAL_TIMEx_Break2Callback(TIM_HandleTypeDef *htim)
+080045a8 <HAL_TIMEx_CommutCallback>:
+
+__weak void HAL_TIMEx_CommutCallback(TIM_HandleTypeDef *htim)
 {
  80045a8:	b580      	push	{r7, lr}
  80045aa:	b082      	sub	sp, #8
@@ -12781,8 +12773,8 @@ __weak void HAL_TIMEx_Break2Callback(TIM_HandleTypeDef *htim)
  80045ae:	6078      	str	r0, [r7, #4]
   UNUSED(htim);
 
-  /* NOTE : This function Should not be modified, when the callback is needed,
-            the HAL_TIMEx_Break2Callback could be implemented in the user file
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_TIMEx_CommutCallback could be implemented in the user file
    */
 }
  80045b0:	46c0      	nop			@ (mov r8, r8)
@@ -12791,10 +12783,7 @@ __weak void HAL_TIMEx_Break2Callback(TIM_HandleTypeDef *htim)
  80045b6:	bd80      	pop	{r7, pc}
 
 080045b8 <TIM_CCxNChannelCmd>:
-  * @param  ChannelNState specifies the TIM Channel CCxNE bit new state.
-  *          This parameter can be: TIM_CCxN_ENABLE or TIM_CCxN_Disable.
-  * @retval None
-  */
+
 static void TIM_CCxNChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelNState)
 {
  80045b8:	b580      	push	{r7, lr}

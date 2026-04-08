@@ -2181,8 +2181,6 @@ mode.
   */
 /* End of private macros -----------------------------------------------------*/
 
-/* Include TIM HAL Extended module */
-#include "stm32g0xx_hal_tim_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup TIM_Exported_Functions TIM Exported Functions
@@ -2438,6 +2436,31 @@ void TIM_DMACaptureCplt(DMA_HandleTypeDef *hdma);
 void TIM_DMACaptureHalfCplt(DMA_HandleTypeDef *hdma);
 void TIM_CCxChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelState);
 
+
+typedef struct
+{
+  uint32_t IC1Polarity;         /*!< Specifies the active edge of the input signal.
+                                     This parameter can be a value of @ref TIM_Input_Capture_Polarity */
+
+  uint32_t IC1Prescaler;        /*!< Specifies the Input Capture Prescaler.
+                                     This parameter can be a value of @ref TIM_Input_Capture_Prescaler */
+
+  uint32_t IC1Filter;           /*!< Specifies the input capture filter.
+                                     This parameter can be a number between Min_Data = 0x0 and Max_Data = 0xF */
+
+  uint32_t Commutation_Delay;   /*!< Specifies the pulse value to be loaded into the Capture Compare Register.
+                                     This parameter can be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF */
+} TIM_HallSensor_InitTypeDef;
+
+typedef struct
+{
+  uint32_t Source;         /*!< Specifies the source of the timer break input.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source */
+  uint32_t Enable;         /*!< Specifies whether or not the break input source is enabled.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source_Enable */
+  uint32_t Polarity;       /*!< Specifies the break input source polarity.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source_Polarity */
+} TIMEx_BreakInputConfigTypeDef;
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
 void TIM_ResetCallback(TIM_HandleTypeDef *htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */

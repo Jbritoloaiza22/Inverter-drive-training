@@ -22,7 +22,6 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
  ../src/Board/HAL/stm32g0xx_hal_flash.h \
  ../src/Board/HAL/stm32g0xx_hal_flash_ex.h \
  ../src/Board/HAL/stm32g0xx_hal_tim.h \
- ../src/Board/HAL/stm32g0xx_hal_tim_ex.h \
  ../src/Board/HAL/stm32g0xx_hal_uart.h \
  ../src/Board/HAL/stm32g0xx_hal_uart_ex.h
 ../src_STM32Kernel/kernel.h:
@@ -53,6 +52,5 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
 ../src/Board/HAL/stm32g0xx_hal_flash.h:
 ../src/Board/HAL/stm32g0xx_hal_flash_ex.h:
 ../src/Board/HAL/stm32g0xx_hal_tim.h:
-../src/Board/HAL/stm32g0xx_hal_tim_ex.h:
 ../src/Board/HAL/stm32g0xx_hal_uart.h:
 ../src/Board/HAL/stm32g0xx_hal_uart_ex.h:

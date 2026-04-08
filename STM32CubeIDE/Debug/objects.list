@@ -49,7 +49,6 @@
 "./src_STM32Kernel/HAL/stm32g0xx_hal_rcc.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_rcc_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_tim.o"
-"./src_STM32Kernel/HAL/stm32g0xx_hal_tim_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_uart.o"
 "./src_STM32Kernel/HAL/stm32g0xx_ll_rcc.o"
 "./src_libs/BoardLib/Itrip.o"
