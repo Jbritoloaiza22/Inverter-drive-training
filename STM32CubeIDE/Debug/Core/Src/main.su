@@ -1,6 +1,8 @@
-../Core/Src/main.c:61:6:IncCounterToPWM	8	static
-../Core/Src/main.c:71:5:main	168	static
-../Core/Src/main.c:164:6:SystemClock_Config	88	static
-../Core/Src/main.c:211:13:MX_TIM1_Init	104	static
-../Core/Src/main.c:292:13:MX_GPIO_Init	48	static
-../Core/Src/main.c:326:6:Error_Handler	8	static,ignoring_inline_asm
+../Core/Src/main.c:65:6:IncCounterToPWM	8	static
+../Core/Src/main.c:75:5:main	168	static
+../Core/Src/main.c:170:6:SystemClock_Config	88	static
+../Core/Src/main.c:217:13:MX_TIM1_Init	104	static
+../Core/Src/main.c:298:13:MX_TIM2_Init	40	static
+../Core/Src/main.c:343:13:MX_TIM3_Init	40	static
+../Core/Src/main.c:388:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:422:6:Error_Handler	8	static,ignoring_inline_asm
