@@ -12,6 +12,7 @@
  */
 #include "stm32g031xx.h"
 #include "KernelInterface.h"
+#include "gpio.h"
 /* gpio mode register values */
 #define GPIO_MODE_INPUT			0x00 /* use port as input */
 #define GPIO_MODE_OUTPUT		0x01 /* use port as output */
@@ -154,4 +155,5 @@ void GPIO_Init(void){
  */
 void cbGPIOS(void){
 	GPIO_Init();
+	EnableDrivePinForMotorControl();
 }

@@ -210,10 +210,6 @@ in voltage and temperature.*/
 #include "stm32g0xx_hal_rcc.h"
 #endif /* HAL_RCC_MODULE_ENABLED */
 
-#ifdef HAL_GPIO_MODULE_ENABLED
-#include "stm32g0xx_hal_gpio.h"
-#endif /* HAL_GPIO_MODULE_ENABLED */
-
 #ifdef HAL_DMA_MODULE_ENABLED
 #include "stm32g0xx_hal_dma.h"
 #endif /* HAL_DMA_MODULE_ENABLED */

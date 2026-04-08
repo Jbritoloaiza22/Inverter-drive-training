@@ -15,9 +15,9 @@
  *
  * @note    This function bypasses the HAL and manipulates registers directly.
  */
-static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, uint8_t PinState)
 {
-	  if (PinState != GPIO_PIN_RESET)
+	  if (PinState != 0)
 	  {
 	    GPIOx->BSRR = (uint32_t)GPIO_Pin;
 	  }
@@ -63,15 +63,15 @@ static inline void GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
  */
 static inline uint16_t GPIO_ReadPin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin)
 {
-	  GPIO_PinState bitstatus;
+	  uint16_t bitstatus;
 
 	  if ((GPIOx->IDR & GPIO_Pin) != 0x00u)
 	  {
-	    bitstatus = GPIO_PIN_SET;
+	    bitstatus = 1;
 	  }
 	  else
 	  {
-	    bitstatus = GPIO_PIN_RESET;
+	    bitstatus = 0;
 	  }
 	  return bitstatus;
 }

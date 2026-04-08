@@ -1215,7 +1215,6 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   */
 void HAL_RCCEx_EnableLSCO(uint32_t LSCOSource)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
   FlagStatus       pwrclkchanged = RESET;
   FlagStatus       backupchanged = RESET;
 

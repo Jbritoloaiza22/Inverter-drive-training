@@ -1039,24 +1039,14 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(const RCC_ClkInitTypeDef  *RCC_ClkInitStru
   */
 void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_MCODiv)
 {
-  GPIO_InitTypeDef gpio_initstruct;
   uint32_t mcoindex;
   uint32_t mco_gpio_index;
-  GPIO_TypeDef * mco_gpio_port;
 
   /* Check the parameters */
   assert_param(IS_RCC_MCO(RCC_MCOx));
 
-  /* Common GPIO init parameters */
-  gpio_initstruct.Mode      = GPIO_MODE_AF_PP;
-  gpio_initstruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
-  gpio_initstruct.Pull      = GPIO_NOPULL;
-
   /* Get MCOx selection */
   mcoindex = RCC_MCOx & RCC_MCO_INDEX_MASK;
-
-  /* Get MCOx GPIO Port */
-  mco_gpio_port = (GPIO_TypeDef *) RCC_GET_MCO_GPIO_PORT(RCC_MCOx);
 
   /* MCOx Clock Enable */
   mco_gpio_index = RCC_GET_MCO_GPIO_INDEX(RCC_MCOx);
