@@ -119,6 +119,7 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+
   //STM32Kernel_Main();
 
   /* USER CODE END 2 */
@@ -138,9 +139,9 @@ int main(void)
         uint8_t index_b = (i + 43) % 64;
         uint8_t index_c = (i + 85) % 64;
 
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, sin_table[index_a]);
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, sin_table[index_b]);
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, sin_table[index_c]);
+       __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, sin_table[index_a]);
+       __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, sin_table[index_b]);
+       __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, sin_table[index_c]);
 
         i++;
         if (i >= 62)
@@ -399,12 +400,21 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
   /*Configure GPIO pin : PA11 */
   GPIO_InitStruct.Pin = GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
