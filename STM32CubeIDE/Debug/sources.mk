@@ -24,10 +24,10 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Application/User/Core \
+Application/User/Startup \
 Core/Src \
 Drivers/STM32G0xx_HAL_Driver/Src \
-STM32CubeIDE/Application/User/Core \
-STM32CubeIDE/Application/User/Startup \
 src/APP \
 src/APP/Interface \
 src/APP/Inverter \
