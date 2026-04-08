@@ -1,6 +1,5 @@
 "./Application/User/Core/syscalls.o"
 "./Application/User/Core/sysmem.o"
-"./Core/Src/main.o"
 "./Core/Src/stm32g0xx_hal_msp.o"
 "./Core/Src/stm32g0xx_it.o"
 "./Core/Src/system_stm32g0xx.o"
