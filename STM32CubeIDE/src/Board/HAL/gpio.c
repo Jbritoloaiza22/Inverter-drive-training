@@ -1,30 +1,28 @@
 #include "stm32g031xx.h"
 /* gpio mode register values */
-#define GPIO_MODE_INPUT			0x00 // use port as input
-#define GPIO_MODE_OUTPUT_PP		0x01 // use port as output (push-pull)
-#define GPIO_MODE_OUTPUT_OD		0x02 // use port as output (open-drain)
-#define GPIO_MODE_AF_PP			0x03 // use port as alternate function (push-pull)
-#define GPIO_MODE_AF_OD			0x04 // use port as alternate function (open-drain)
-#define GPIO_MODE_ANALOG		0x05 // use port as analog
+#define GPIO_MODE_INPUT			0x00 /* use port as input */
+#define GPIO_MODE_OUTPUT		0x01 /* use port as output */
+#define GPIO_MODE_AF			0x02 /* use port as alternate function */
+#define GPIO_MODE_ANALOG		0x03 /* use port as analog */
 
 /*gpio output type register values */
-#define GPIO_OTYPE_PP			0x00 // push-pull output
-#define GPIO_OTYPE_OD			0x01 // open-drain output
+#define GPIO_OTYPE_PP			0x00 /* push-pull output */
+#define GPIO_OTYPE_OD			0x01 /* open-drain output */
 
 /*gpio output speed register values */
-#define GPIO_SPEED_LOW			0x00 // low speed
-#define GPIO_SPEED_MEDIUM		0x01 // medium speed
-#define GPIO_SPEED_HIGH			0x02 // high speed
-#define GPIO_SPEED_VERY_HIGH	0x03 // very high speed
+#define GPIO_SPEED_VERY_LOW	    0x00 /* low speed */
+#define GPIO_SPEED_LOW			0x01 /* medium speed */
+#define GPIO_SPEED_HIGH			0x02 /* high speed */
+#define GPIO_SPEED_VERY_HIGH	0x03 /* very high speed */
 
 /*gpio pull-up/pull-down register values */
-#define GPIO_NOPULL				0x00 // no pull-up, pull-down
-#define GPIO_PULLUP				0x01 // pull-up
-#define GPIO_PULLDOWN			0x02 // pull-down
+#define GPIO_NOPULL				0x00 /* no pull-up, pull-down */
+#define GPIO_PULLUP				0x01 /* pull-up */
+#define GPIO_PULLDOWN			0x02 /* pull-down */
 
 /*gpio pin state values */
-#define GPIO_PIN_RESET			0x00 // pin reset
-#define GPIO_PIN_SET				0x01 // pin set
+#define GPIO_PIN_RESET			0x00 /* pin reset */
+#define GPIO_PIN_SET				0x01 /* pin set */
 
 /* alternative function defines*/
 #define GPIO_AF0					0x00
@@ -66,7 +64,7 @@
         /*configure pull-up/pull-down register*/ \
         (port)->PUPDR = ((port)->PUPDR & ~(0x3 << ((pin) * 2))) | ((pupd) << ((pin) * 2)); \
         /*configure alternate function register*/ \
-        if (mode == GPIO_MODE_AF_PP || mode == GPIO_MODE_AF_OD) { \
+        if (mode == GPIO_MODE_AF) { \
             uint8_t af_index = (pin < 8) ? 0 : 1; \
             uint32_t af_mask = 0xF << ((pin % 8) * 4); \
             (port)->AFR[af_index] = ((port)->AFR[af_index] & ~af_mask) | ((af) << ((pin % 8) * 4)); \
@@ -79,44 +77,44 @@ static void GPIO_PortInit(void);
 /* function implementations */
 /*
 * @brief  initialize GPIO ports
-* @note   this function should be called before any GPIO configuration
+* @note   this function should be called before any GPIO configuration 
 */
 static void GPIO_PortInit(void) {
     /******************************************************************* PORT A *******************************************************************/
-    /*PA0: */               GPIO_CONFIG_PIN(GPIOA, 0,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA1: */               GPIO_CONFIG_PIN(GPIOA, 1,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA2: */               GPIO_CONFIG_PIN(GPIOA, 2,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA3: */               GPIO_CONFIG_PIN(GPIOA, 3,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA4: */               GPIO_CONFIG_PIN(GPIOA, 4,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA5: */               GPIO_CONFIG_PIN(GPIOA, 5,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA6: */               GPIO_CONFIG_PIN(GPIOA, 6,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA7: */               GPIO_CONFIG_PIN(GPIOA, 7,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA8: */               GPIO_CONFIG_PIN(GPIOA, 8,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA9: */               GPIO_CONFIG_PIN(GPIOA, 9,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA10: */              GPIO_CONFIG_PIN(GPIOA, 10, GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA11: */              GPIO_CONFIG_PIN(GPIOA, 11, GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL,	GPIO_AF0);
-    /*PA12: */	            GPIO_CONFIG_PIN(GPIOA, 12, GPIO_MODE_INPUT,	GPIO_OTYPE_PP,	GPIO_SPEED_MEDIUM,	GPIO_NOPULL,	GPIO_AF0);
-    /*PA13: */	            GPIO_CONFIG_PIN(GPIOA, 13, GPIO_MODE_INPUT,	GPIO_OTYPE_PP,	GPIO_SPEED_MEDIUM,	GPIO_NOPULL	 ,GPIO_AF0);
-    /*PA14: */	            GPIO_CONFIG_PIN(GPIOA, 14, GPIO_MODE_INPUT	 ,GPIO_OTYPE_PP	 ,GPIO_SPEED_MEDIUM	 ,GPIO_NOPULL	 ,GPIO_AF0);
-    /*PA15: */	            GPIO_CONFIG_PIN(GPIOA, 15, GPIO_MODE_INPUT	 ,GPIO_OTYPE_PP	 ,GPIO_SPEED_MEDIUM	 ,GPIO_NOPULL	 ,GPIO_AF0);
+    /* PA0: ADC1_IN0 */      GPIO_CONFIG_PIN(GPIOA, 0,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA1: ADC1_IN1 */      GPIO_CONFIG_PIN(GPIOA, 1,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA2: ADC1_IN2 */      GPIO_CONFIG_PIN(GPIOA, 2,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA3: */               GPIO_CONFIG_PIN(GPIOA, 3,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA4: */               GPIO_CONFIG_PIN(GPIOA, 4,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA5: */               GPIO_CONFIG_PIN(GPIOA, 5,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA6: */               GPIO_CONFIG_PIN(GPIOA, 6,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA7: */               GPIO_CONFIG_PIN(GPIOA, 7,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA8: TIM1_CH1 */      GPIO_CONFIG_PIN(GPIOA, 8,  GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF2);
+    /* PA9: TIM1_CH2 */      GPIO_CONFIG_PIN(GPIOA, 9,  GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF2);
+    /* PA10: TIM1_CH3 */     GPIO_CONFIG_PIN(GPIOA, 10, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF2);
+    /* PA11: DEBUG_PIN*/     GPIO_CONFIG_PIN(GPIOA, 11, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA12: */	             GPIO_CONFIG_PIN(GPIOA, 12, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA13: */	             GPIO_CONFIG_PIN(GPIOA, 13, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_HIGH, GPIO_PULLUP,   GPIO_AF0);
+    /* PA14: */	             GPIO_CONFIG_PIN(GPIOA, 14, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_PULLDOWN, GPIO_AF0);
+    /* PA15: */	             GPIO_CONFIG_PIN(GPIOA, 15, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
     
     /******************************************************************* PORT B *******************************************************************/
-    /*PB0: */               GPIO_CONFIG_PIN(GPIOB, 0,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB1: */               GPIO_CONFIG_PIN(GPIOB, 1,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB2: */               GPIO_CONFIG_PIN(GPIOB, 2,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB3: */               GPIO_CONFIG_PIN(GPIOB, 3,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB4: */               GPIO_CONFIG_PIN(GPIOB, 4,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB5: */               GPIO_CONFIG_PIN(GPIOB, 5,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB6: */               GPIO_CONFIG_PIN(GPIOB, 6,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB7: */               GPIO_CONFIG_PIN(GPIOB, 7,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB8: */               GPIO_CONFIG_PIN(GPIOB, 8,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB9: */               GPIO_CONFIG_PIN(GPIOB, 9,  GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PB10: */              GPIO_CONFIG_PIN(GPIOB, 10, GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL, GPIO_AF0);
-    /*PA11: */              GPIO_CONFIG_PIN(GPIOB, 11, GPIO_MODE_INPUT, GPIO_OTYPE_PP, GPIO_SPEED_MEDIUM, GPIO_NOPULL,	GPIO_AF0);
-    /*PA12: */	            GPIO_CONFIG_PIN(GPIOB, 12, GPIO_MODE_INPUT,	GPIO_OTYPE_PP,	GPIO_SPEED_MEDIUM,	GPIO_NOPULL,	GPIO_AF0);
-    /*PA13: */	            GPIO_CONFIG_PIN(GPIOB, 13, GPIO_MODE_INPUT,	GPIO_OTYPE_PP,	GPIO_SPEED_MEDIUM,	GPIO_NOPULL	 ,GPIO_AF0);
-    /*PA14: */	            GPIO_CONFIG_PIN(GPIOB, 14, GPIO_MODE_INPUT	 ,GPIO_OTYPE_PP	 ,GPIO_SPEED_MEDIUM	 ,GPIO_NOPULL	 ,GPIO_AF0);
-    /*PA15: */	            GPIO_CONFIG_PIN(GPIOB, 15, GPIO_MODE_INPUT	 ,GPIO_OTYPE_PP	 ,GPIO_SPEED_MEDIUM	 ,GPIO_NOPULL	 ,GPIO_AF0);
+    /* PB0: */               GPIO_CONFIG_PIN(GPIOB, 0,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB1: */               GPIO_CONFIG_PIN(GPIOB, 1,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB2: */               GPIO_CONFIG_PIN(GPIOB, 2,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB3: */               GPIO_CONFIG_PIN(GPIOB, 3,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB4: */               GPIO_CONFIG_PIN(GPIOB, 4,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB5: */               GPIO_CONFIG_PIN(GPIOB, 5,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB6: UART_TX*/        GPIO_CONFIG_PIN(GPIOB, 6,  GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB7: UART_RX*/        GPIO_CONFIG_PIN(GPIOB, 7,  GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB8: */               GPIO_CONFIG_PIN(GPIOB, 8,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB9: DEBUG_PIN */     GPIO_CONFIG_PIN(GPIOB, 9,  GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PB10: */              GPIO_CONFIG_PIN(GPIOB, 10, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PA11: */              GPIO_CONFIG_PIN(GPIOB, 11, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PA12: */	             GPIO_CONFIG_PIN(GPIOB, 12, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
+    /* PA13: TIM1_CH1N*/	 GPIO_CONFIG_PIN(GPIOB, 13, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF2);
+    /* PA14: TIM1_CH2N*/	 GPIO_CONFIG_PIN(GPIOB, 14, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF2);
+    /* PA15: TIM1_CH3N*/	 GPIO_CONFIG_PIN(GPIOB, 15, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF2);
 
 }
 
