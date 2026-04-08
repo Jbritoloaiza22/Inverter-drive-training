@@ -1,3 +1,15 @@
+/**
+ * @file gpio.c
+ * @author Jesus Daniel Britoloaiza
+ * @brief GPIO configuration for STM32G031 microcontroller, including analog, output, and alternate functions.
+ *
+ * This module provides a flexible macro-based GPIO initialization system for the STM32G031.
+ * It configures pins for ADC inputs, TIM channels, UART, and general-purpose I/O,
+ * and allows easy modification of mode, speed, output type, pull-up/pull-down, and alternate functions.
+ *
+ * @note This configuration is intended for the EVS32 motor control board, where certain pins
+ *       are reserved for current sensing and PWM outputs.
+ */
 #include "stm32g031xx.h"
 #include "KernelInterface.h"
 /* gpio mode register values */
@@ -72,8 +84,14 @@
         } \
     }while(0)
 
-/* private funcion prototypes*/
-static void GPIO_PortInit(void);
+/**
+ * @brief Initializes all GPIO ports with predefined configuration.
+ *
+ * Configures each pin according to the EVS32 motor control board:
+ *
+ * @note Pins used for ADC, PWM, and UART are configured to avoid hardware conflicts.
+ * @note Call this function before using any GPIO peripheral.
+ */static void GPIO_PortInit(void);
 
 /* function implementations */
 /*
@@ -119,10 +137,21 @@ static void GPIO_PortInit(void) {
 
 }
 
+/**
+ * @brief Initializes GPIO subsystem.
+ *
+ * Calls GPIO_PortInit() to configure all ports and pins.
+ * Should be called at system startup.
+ */
 void GPIO_Init(void){
     GPIO_PortInit();
 }
 
+/**
+ * @brief GPIO callback function.
+ *
+ * Alias to GPIO_Init(), can be called as a callback or initialization routine.
+ */
 void cbGPIOS(void){
 	GPIO_Init();
 }
