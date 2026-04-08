@@ -131,7 +131,6 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_UART_Transmit(&huart1, (uint8_t *)"Hola\r\n", 6, HAL_MAX_DELAY);
 
-  //STM32Kernel_Main();
 
   /* USER CODE END 2 */
 
