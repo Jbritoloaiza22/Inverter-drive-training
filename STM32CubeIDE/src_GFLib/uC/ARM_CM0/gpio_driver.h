@@ -1,6 +1,8 @@
 
 
+#include "stm32g031xx.h"
 
+#define GPIO_NUMBER 16u
 /**
  * @brief   Writes a value to a GPIO pin.
  *
@@ -13,7 +15,7 @@
  *
  * @note    This function bypasses the HAL and manipulates registers directly.
  */
-static inline void GPIO_WritePin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin, , GPIO_PinState PinStat)
+static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {
 	  if (PinState != GPIO_PIN_RESET)
 	  {
@@ -37,7 +39,7 @@ static inline void GPIO_WritePin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin, ,
  *
  * @note    GPIO_NUMBER must be defined as the bit position of the pin.
  */
-static inline void GPIO_TogglePin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin)
+static inline void GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
 	  uint32_t odr;
 
@@ -61,6 +63,8 @@ static inline void GPIO_TogglePin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin)
  */
 static inline uint16_t GPIO_ReadPin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin)
 {
+	  GPIO_PinState bitstatus;
+
 	  if ((GPIOx->IDR & GPIO_Pin) != 0x00u)
 	  {
 	    bitstatus = GPIO_PIN_SET;

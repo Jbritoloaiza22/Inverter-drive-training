@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "kernel.h"
 #include "stm32g0xx_it.h"
+#include "gpio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -180,7 +181,7 @@ void TIM3_IRQHandler(void)
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
+  ToggleDebugPin();
 
   /* USER CODE END TIM3_IRQn 1 */
 }
