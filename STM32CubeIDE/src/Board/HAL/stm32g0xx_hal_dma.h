@@ -694,9 +694,6 @@ typedef struct __DMA_HandleTypeDef
   * @}
   */
 
-/* Include DMA HAL Extension module */
-#include "stm32g0xx_hal_dma_ex.h"
-
 /* Exported functions --------------------------------------------------------*/
 
 /** @addtogroup DMA_Exported_Functions
