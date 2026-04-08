@@ -6,5 +6,5 @@
 ../src_STM32Kernel/kernel.c:366:13:MX_TIM2_Init	40	static
 ../src_STM32Kernel/kernel.c:411:13:MX_TIM3_Init	40	static
 ../src_STM32Kernel/kernel.c:456:13:MX_USART1_UART_Init	8	static
-../src_STM32Kernel/kernel.c:504:13:MX_GPIO_Init	48	static
-../src_STM32Kernel/kernel.c:548:6:Error_Handler	8	static,ignoring_inline_asm
+../src_STM32Kernel/kernel.c:492:13:MX_GPIO_Init	48	static
+../src_STM32Kernel/kernel.c:536:6:Error_Handler	8	static,ignoring_inline_asm
