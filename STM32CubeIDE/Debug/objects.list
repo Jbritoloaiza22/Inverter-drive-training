@@ -19,6 +19,7 @@
 "./src/Board/HAL/GPIOControl.o"
 "./src/Board/HAL/PWMControl.o"
 "./src/Board/HAL/TimerControl.o"
+"./src/Board/HAL/gpio.o"
 "./src/Board/Interface/BoardInterface.o"
 "./src/Board/Interface/stm32g0xx_hal_msp.o"
 "./src/Board/Interface/stm32g0xx_it.o"
