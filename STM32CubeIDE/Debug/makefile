@@ -24,7 +24,6 @@ RM := rm -rf
 -include src/APP/subdir.mk
 -include Drivers/STM32G0xx_HAL_Driver/Src/subdir.mk
 -include Core/Src/subdir.mk
--include Application/User/Startup/subdir.mk
 -include Application/User/Core/subdir.mk
 -include objects.mk
 
