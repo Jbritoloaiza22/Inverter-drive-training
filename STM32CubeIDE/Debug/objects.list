@@ -55,7 +55,6 @@
 "./src_STM32Kernel/HAL/stm32g0xx_hal_tim_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_uart.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_uart_ex.o"
-"./src_STM32Kernel/HAL/stm32g0xx_ll_adc.o"
 "./src_STM32Kernel/HAL/stm32g0xx_ll_rcc.o"
 "./src_libs/BoardLib/Itrip.o"
 "./src_libs/BoardLib/Temperature.o"
