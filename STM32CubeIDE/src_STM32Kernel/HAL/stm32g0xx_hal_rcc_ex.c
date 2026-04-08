@@ -1225,13 +1225,6 @@ void HAL_RCCEx_EnableLSCO(uint32_t LSCOSource)
   /* LSCO Pin Clock Enable */
   LSCO_CLK_ENABLE();
 
-  /* Configure the LSCO pin in analog mode */
-  GPIO_InitStruct.Pin = LSCO_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(LSCO_GPIO_PORT, &GPIO_InitStruct);
-
   /* Update LSCOSEL clock source in Backup Domain control register */
   if (__HAL_RCC_PWR_IS_CLK_DISABLED())
   {

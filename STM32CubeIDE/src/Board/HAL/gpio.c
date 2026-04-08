@@ -1,4 +1,5 @@
 #include "stm32g031xx.h"
+#include "KernelInterface.h"
 /* gpio mode register values */
 #define GPIO_MODE_INPUT			0x00 /* use port as input */
 #define GPIO_MODE_OUTPUT		0x01 /* use port as output */
@@ -96,7 +97,7 @@ static void GPIO_PortInit(void) {
     /* PA12: */	             GPIO_CONFIG_PIN(GPIOA, 12, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
     /* PA13: */	             GPIO_CONFIG_PIN(GPIOA, 13, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_HIGH, GPIO_PULLUP,   GPIO_AF0);
     /* PA14: */	             GPIO_CONFIG_PIN(GPIOA, 14, GPIO_MODE_AF,     GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_PULLDOWN, GPIO_AF0);
-    /* PA15: */	             GPIO_CONFIG_PIN(GPIOA, 15, GPIO_MODE_OUTPUT, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
+    /* PA15: */	             GPIO_CONFIG_PIN(GPIOA, 15, GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
     
     /******************************************************************* PORT B *******************************************************************/
     /* PB0: */               GPIO_CONFIG_PIN(GPIOB, 0,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW, GPIO_NOPULL, GPIO_AF0);
@@ -122,3 +123,6 @@ void GPIO_Init(void){
     GPIO_PortInit();
 }
 
+void cbGPIOS(void){
+	GPIO_Init();
+}

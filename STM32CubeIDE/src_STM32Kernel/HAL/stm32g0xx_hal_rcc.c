@@ -1062,11 +1062,6 @@ void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_M
   mco_gpio_index = RCC_GET_MCO_GPIO_INDEX(RCC_MCOx);
   SET_BIT(RCC->IOPENR, (1UL << mco_gpio_index ));
 
-  /* Configure the MCOx pin in alternate function mode */
-  gpio_initstruct.Pin = RCC_GET_MCO_GPIO_PIN(RCC_MCOx);
-  gpio_initstruct.Alternate = RCC_GET_MCO_GPIO_AF(RCC_MCOx);
-  HAL_GPIO_Init(mco_gpio_port, &gpio_initstruct);
-
   if (mcoindex == RCC_MCO1_INDEX)
   {
     assert_param(IS_RCC_MCODIV(RCC_MCODiv));
