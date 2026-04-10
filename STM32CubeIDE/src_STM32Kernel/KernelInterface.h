@@ -31,3 +31,5 @@ void cbGPIOS(void);
  *          after basic hardware initialization.
  */
 void InitBeforeInterruptEnable(void);
+
+void cbRCC(void);
