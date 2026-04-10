@@ -1,15 +1,5 @@
 #include "rcc.h"
 #include "KernelInterface.h"
-#define FLASH_LATENCY_0                 0x00000000UL        /*!< FLASH Zero wait state */
-#define FLASH_LATENCY_1                 FLASH_ACR_LATENCY_0 /*!< FLASH One wait state */
-#define FLASH_LATENCY_2                 FLASH_ACR_LATENCY_1 /*!< FLASH Two wait states */
-#define RCC_SYSCLKSOURCE_HSI           0x00000000U                       /*!< HSI selection as system clock */
-#define RCC_SYSCLKSOURCE_HSE           RCC_CFGR_SW_0                     /*!< HSE selection as system clock */
-#define RCC_SYSCLKSOURCE_PLLCLK        RCC_CFGR_SW_1                     /*!< PLL selection as system clock */
-#define RCC_SYSCLKSOURCE_LSI           (RCC_CFGR_SW_1 | RCC_CFGR_SW_0)   /*!< LSI selection as system clock */
-#define RCC_SYSCLKSOURCE_LSE           RCC_CFGR_SW_2                     /*!< LSE selection as system clock */
-#define RCC_SYSCLK_DIV1                0x00000000U                                                             /*!< SYSCLK not divided */
-#define RCC_HCLK_DIV1                  0x00000000U                                           /*!< HCLK not divided */
 
 /**
  * @brief  Configures RCC oscillators (optimized, no parameters needed)
@@ -67,30 +57,30 @@ static void RCC_ConfigureClocks(void)
     uint32_t tickstart;
     
     /* Set FLASH latency for system clock speed */
-    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_LATENCY_1;
+    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_0;
     
     /* Wait for latency setting */
     tickstart = 0U;
-    while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_LATENCY_1)
+    while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_0)
     {
         if (++tickstart > 100U) break;
     }
     
     /* Set HCLK divider - No division */
-    MODIFY_REG(RCC->CFGR, RCC_CFGR_HPRE, RCC_SYSCLK_DIV1);
+    RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_HPRE) | 0x0U;
     
     /* Select PLL as system clock source */
-    MODIFY_REG(RCC->CFGR, RCC_CFGR_SW, RCC_SYSCLKSOURCE_PLLCLK);
+    RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_1;
     
     /* Wait for clock switch to complete */
     tickstart = 0U;
-    while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_SYSCLKSOURCE_PLLCLK << 2U))
+    while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_CFGR_SW_1 << 2U))
     {
         if (++tickstart > 100U) break;
     }
     
     /* Set APB1 prescaler - No division */
-    MODIFY_REG(RCC->CFGR, RCC_CFGR_PPRE, RCC_HCLK_DIV1);
+    RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_PPRE) | 0x0U;
 }
 
 void RCC_Init(void)
@@ -113,16 +103,100 @@ void RCC_Init(void)
     RCC->APBRSTR2 = 0x0U;
     
     /* Enable clocks for peripherals */
-    RCC->IOPENR   = 0x3U;        /* GPIO A and B */
-    RCC->AHBENR   = 0x100U;      /* DMA */
-    RCC->APBENR1  = 0x18000003U; /* USART1, TIM2, TIM3 */
-    RCC->APBENR2  = 0x104801U;   /* ADC, TIM1, SYSCFG */
+    RCC->IOPENR = (
+        /* GPIO_A_CLOCK_EN */ dRCC_IOPENR_GPIOAEN(dOn)       |
+        /* GPIO_B_CLOCK_EN */ dRCC_IOPENR_GPIOBEN(dOn)       |
+        /* GPIO_C_CLOCK_EN */ dRCC_IOPENR_GPIOCEN(dOff)      |
+        /* GPIO_D_CLOCK_EN */ dRCC_IOPENR_GPIODEN(dOff)      |
+        /* GPIO_E_CLOCK_EN */ dRCC_IOPENR_GPIOEEN(dOff)      |
+        /* GPIO_F_CLOCK_EN */ dRCC_IOPENR_GPIOFEN(dOff)
+    );
+
+    /* Enable AHB peripheral clock enable register */
+    RCC->AHBENR = (
+        /* DMA1_CLOCK_EN */   dRCC_AHBENR_DMA1EN(dOff)       |
+        /* DMA2_CLOCK_EN */   dRCC_AHBENR_DMA2EN(dOff)       |
+        /* FLASH_CLOCK_EN */  dRCC_AHBENR_FLASHEN(dOn)       |
+        /* CRC_CLOCK_EN */    dRCC_AHBENR_CRCEN(dOff) 
+    );
+
+    /* APB peripheral clock enable register */
+    RCC->APBENR1 = (
+        /* TIM2_CLOCK_EN */   dRCC_APBENR1_TIM2EN(dOn)        |
+        /* TIM3_CLOCK_EN */   dRCC_APBENR1_TIM3EN(dOn)        |
+        /* TIM4_CLOCK_EN */   dRCC_APBENR1_TIM4EN(dOff)       |
+        /* TIM6_CLOCK_EN */   dRCC_APBENR1_TIM6EN(dOff)       |
+        /* TIM7_CLOCK_EN */   dRCC_APBENR1_TIM7EN(dOff)       |
+        /* RTCAPB_CLOCK_EN */ dRCC_APBENR1_RTCAPBEN(dOff)     |
+        /* WWDG_CLOCK_EN */   dRCC_APBENR1_WWDGEN(dOff)       |
+        /* SPI2EN */          dRCC_APBENR1_SPI2EN(dOff)       |
+        /* USART2EN */        dRCC_APBENR1_USART2EN(dOff)     |
+        /* LPUART1EN */       dRCC_APBENR1_LPUART1EN(dOff)    |
+        /* I2C1EN */          dRCC_APBENR1_I2C1EN(dOff)       |
+        /* I2C2EN */          dRCC_APBENR1_I2C2EN(dOff)       |
+        /* DBGEN */           dRCC_APBENR1_DBGEN(dOn)         |
+        /* PWREN */           dRCC_APBENR1_PWREN(dOn)         |
+        /* LPTIM2EN */        dRCC_APBENR1_LPTIM2EN(dOff)     |
+        /* LPTIM1EN */        dRCC_APBENR1_LPTIM1EN(dOff)
+
+    );
+    RCC->APBENR2  = (
+        /* SYSCFGEN */        dRCC_APBENR2_SYSCFGEN(dOn)      |
+        /* TIM1EN*/           dRCC_APBENR2_TIM1EN(dOn)        |  
+        /* ADCEN */           dRCC_APBENR2_SPI1EN(dOff)       |
+        /* USART1EN */        dRCC_APBENR2_USART1EN(dOn)      |
+        /* TIM14EN */         dRCC_APBENR2_TIM14EN(dOff)      |
+        /* TIM16EN */         dRCC_APBENR2_TIM16EN(dOff)      |
+        /* TIM17EN */         dRCC_APBENR2_TIM17EN(dOff)      |      
+        /* ADCEN */           dRCC_APBENR2_ADCEN(dOn)
+    );   
     
     /* Sleep mode clock enables */
-    RCC->IOPSMENR   = 0x2fU;       /* GPIO */
-    RCC->AHBSMENR   = 0x51301U;    /* DMA, SRAM, Flash */
-    RCC->APBSMENR1  = 0xd8724c03U; /* Peripherals */
-    RCC->APBSMENR2  = 0x400000U;   /* ADC */
+    RCC->IOPSMENR = (
+        /* GPIOAEN */         dRCC_IOPSMENR_GPIOASMEN(dOn)     | 
+        /* GPIOBEN */         dRCC_IOPSMENR_GPIOBSMEN(dOn)     |  
+        /* GPIOCEN */         dRCC_IOPSMENR_GPIOCSMEN(dOff)    |  
+        /* GPIODEN */         dRCC_IOPSMENR_GPIODSMEN(dOff)    |  
+        /* GPIOFEN */         dRCC_IOPSMENR_GPIOFSMEN(dOff)    
+    );       
+
+    /* AHB sleep mode clock enable register */
+    RCC->AHBSMENR = (
+        /* DMA1EN */         dRCC_AHBSMENR_DMA1SMEN(dOff)      | 
+        /* DMA2EN */         dRCC_AHBSMENR_DMA2SMEN(dOff)      |   
+        /* FLASHEN */        dRCC_AHBSMENR_FLASHSMEN(dOff)     |  
+        /* SRAMEN */         dRCC_AHBSMENR_SRAMSMEN(dOff)      |  
+        /* CRCEN */          dRCC_AHBSMENR_CRCSMEN(dOff)      
+    );  
+
+    /* APB sleep mode clock enable register 1 */
+    RCC->APBSMENR1 = (
+        /* TIM2EN */          dRCC_APBSMENR1_TIM2SMEN(dOn)     |   
+        /* TIM3EN */          dRCC_APBSMENR1_TIM3SMEN(dOn)     |  
+        /* RTCAPBEN */        dRCC_APBSMENR1_RTCAPBSMEN(dOff)  |  
+        /* WWDGEN */          dRCC_APBSMENR1_WWDGSMEN(dOff)    |  
+        /* SPI2EN */          dRCC_APBSMENR1_SPI2SMEN(dOff)    |  
+        /* USART2EN */        dRCC_APBSMENR1_USART2SMEN(dOff)  |  
+        /* LPUART1EN */       dRCC_APBSMENR1_LPUART1SMEN(dOff) |  
+        /* I2C1EN */          dRCC_APBSMENR1_I2C1SMEN(dOff)    |  
+        /* I2C2EN */          dRCC_APBSMENR1_I2C2SMEN(dOff)    |  
+        /* DebugEN */         dRCC_APBSMENR1_DBGSMEN(dOff)     |  
+        /* PWREN */           dRCC_APBSMENR1_PWRSMEN(dOff)     |  
+        /* LPTIM2EN */        dRCC_APBSMENR1_LPTIM2SMEN(dOff)  |  
+        /* LPTIM1EN */        dRCC_APBSMENR1_LPTIM1SMEN(dOff)   
+    ); 
+
+    /* APB sleep mode clock enable register 2 */
+    RCC->APBSMENR2 =(
+        /* ADCEN */          dRCC_APBSMENR2_ADCSMEN(dOff)     |  
+        /*TIM1SMEN*/         dRCC_APBSMENR2_TIM1SMEN(dOff)    |  
+        /* SYSCFGEN */       dRCC_APBSMENR2_SPI1SMEN(dOff)    |  
+        /*USART1SMEN*/       dRCC_APBSMENR2_USART1SMEN(dOff)  |
+        /*TIM14SMEN*/        dRCC_APBSMENR2_TIM14SMEN(dOff)   |
+        /*TIM16SMEN*/        dRCC_APBSMENR2_TIM16SMEN(dOff)   |
+        /*TIM17SMEN*/        dRCC_APBSMENR2_TIM17SMEN(dOff)   |
+        /*ADCSMEN*/          dRCC_APBSMENR2_ADCSMEN(dOn)
+    );
     
     /* Backup domain control */
     RCC->BDCR = 0x0U;
