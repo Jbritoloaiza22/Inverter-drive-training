@@ -15,19 +15,19 @@
  */
 static void RCC_ConfigureOscillators(void)
 {
-    uint32_t tmp_reg = 0U;
+    uint32_t ui32tmp_reg = 0U;
     
     /* HSE configuration - Enable HSE */
-    tmp_reg = RCC->CR;
-    tmp_reg &= ~RCC_CR_HSEON;  /* Disable HSE first */
-    RCC->CR = tmp_reg;
+    ui32tmp_reg = RCC->CR;
+    ui32tmp_reg &= ~RCC_CR_HSEON;  /* Disable HSE first */
+    RCC->CR = ui32tmp_reg;
     
     /* Wait for HSE to disable */
     while ((RCC->CR & RCC_CR_HSERDY) != 0U) {}
     
     /* Enable HSE */
-    tmp_reg |= RCC_CR_HSEON;
-    RCC->CR = tmp_reg;
+    ui32tmp_reg |= RCC_CR_HSEON;
+    RCC->CR = ui32tmp_reg;
     
     /* Wait for HSE to be stable */
     while ((RCC->CR & RCC_CR_HSERDY) == 0U) {}
@@ -36,9 +36,9 @@ static void RCC_ConfigureOscillators(void)
     RCC->ICSCR = 0x406fU;  /* HSI calibration value */
     
     /* PLL configuration - Predefined for STM32G031 */
-    tmp_reg = RCC->CR;
-    tmp_reg &= ~RCC_CR_PLLON;  /* Disable PLL */
-    RCC->CR = tmp_reg;
+    ui32tmp_reg = RCC->CR;
+    ui32tmp_reg &= ~RCC_CR_PLLON;  /* Disable PLL */
+    RCC->CR = ui32tmp_reg;
     
     /* Wait for PLL to be unlocked */
     while ((RCC->CR & RCC_CR_PLLRDY) != 0U) {}
@@ -47,8 +47,8 @@ static void RCC_ConfigureOscillators(void)
     RCC->PLLCFGR = 0x73021002U;  /* Predefined PLL configuration */
     
     /* Enable PLL */
-    tmp_reg |= RCC_CR_PLLON;
-    RCC->CR = tmp_reg;
+    ui32tmp_reg |= RCC_CR_PLLON;
+    RCC->CR = ui32tmp_reg;
     
     /* Wait for PLL to be stable */
     while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {}
@@ -61,16 +61,16 @@ static void RCC_ConfigureOscillators(void)
  */
 static void RCC_ConfigureClocks(void)
 {
-    uint32_t tickstart;
+    uint32_t ui32tickstart;
     
     /* Set FLASH latency for system clock speed */
     FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_0;
     
     /* Wait for latency setting */
-    tickstart = 0U;
+    ui32tickstart = 0U;
     while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_0)
     {
-        if (++tickstart > 100U) break;
+        if (++ui32tickstart > 100U) break;
     }
     
     /* Set HCLK divider - No division */
@@ -80,10 +80,10 @@ static void RCC_ConfigureClocks(void)
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_1;
     
     /* Wait for clock switch to complete */
-    tickstart = 0U;
+    ui32tickstart = 0U;
     while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_CFGR_SW_1 << 2U))
     {
-        if (++tickstart > 100U) break;
+        if (++ui32tickstart > 100U) break;
     }
     
     /* Set APB1 prescaler - No division */
