@@ -153,10 +153,6 @@ HAL_StatusTypeDef HAL_Init(void)
   __HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 #endif /* INSTRUCTION_CACHE_ENABLE */
 
-#if (PREFETCH_ENABLE != 0U)
-  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
-#endif /* PREFETCH_ENABLE */
-
   /* Use SysTick as time base source and configure 1ms tick (default clock after Reset is HSI) */
   if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
   {

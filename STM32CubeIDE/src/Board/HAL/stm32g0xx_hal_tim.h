@@ -356,8 +356,6 @@ typedef struct
   TIM_TypeDef                        *Instance;         /*!< Register base address                             */
   TIM_Base_InitTypeDef               Init;              /*!< TIM Time Base required parameters                 */
   HAL_TIM_ActiveChannel              Channel;           /*!< Active channel                                    */
-  DMA_HandleTypeDef                  *hdma[7];          /*!< DMA Handlers array
-                                                             This array is accessed by a @ref DMA_Handle_index */
   HAL_LockTypeDef                    Lock;              /*!< Locking object                                    */
   __IO HAL_TIM_StateTypeDef          State;             /*!< TIM operation state                               */
   __IO HAL_TIM_ChannelStateTypeDef   ChannelState[6];   /*!< TIM channel operation state                       */
@@ -2429,11 +2427,6 @@ void TIM_TI1_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32_t TIM_
 void TIM_OC2_SetConfig(TIM_TypeDef *TIMx, const TIM_OC_InitTypeDef *OC_Config);
 void TIM_ETR_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ExtTRGPrescaler,
                        uint32_t TIM_ExtTRGPolarity, uint32_t ExtTRGFilter);
-
-void TIM_DMADelayPulseHalfCplt(DMA_HandleTypeDef *hdma);
-void TIM_DMAError(DMA_HandleTypeDef *hdma);
-void TIM_DMACaptureCplt(DMA_HandleTypeDef *hdma);
-void TIM_DMACaptureHalfCplt(DMA_HandleTypeDef *hdma);
 void TIM_CCxChannelCmd(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t ChannelState);
 
 

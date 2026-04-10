@@ -205,11 +205,6 @@ in voltage and temperature.*/
 /**
   * @brief Include modules header file
   */
-
-#ifdef HAL_DMA_MODULE_ENABLED
-#include "stm32g0xx_hal_dma.h"
-#endif /* HAL_DMA_MODULE_ENABLED */
-
 #ifdef HAL_CORTEX_MODULE_ENABLED
 #include "stm32g0xx_hal_cortex.h"
 #endif /* HAL_CORTEX_MODULE_ENABLED */
@@ -242,10 +237,6 @@ in voltage and temperature.*/
 #ifdef HAL_EXTI_MODULE_ENABLED
 #include "stm32g0xx_hal_exti.h"
 #endif /* HAL_EXTI_MODULE_ENABLED */
-
-#ifdef HAL_FLASH_MODULE_ENABLED
-#include "stm32g0xx_hal_flash.h"
-#endif /* HAL_FLASH_MODULE_ENABLED */
 
 #ifdef HAL_FDCAN_MODULE_ENABLED
 #include "stm32g0xx_hal_fdcan.h"

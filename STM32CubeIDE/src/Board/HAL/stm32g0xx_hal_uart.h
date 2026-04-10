@@ -250,10 +250,6 @@ typedef struct __UART_HandleTypeDef
 
   void (*TxISR)(struct __UART_HandleTypeDef *huart); /*!< Function pointer on Tx IRQ handler */
 
-  DMA_HandleTypeDef        *hdmatx;                  /*!< UART Tx DMA Handle parameters      */
-
-  DMA_HandleTypeDef        *hdmarx;                  /*!< UART Rx DMA Handle parameters      */
-
   HAL_LockTypeDef           Lock;                    /*!< Locking object                     */
 
   __IO HAL_UART_StateTypeDef    gState;              /*!< UART state information related to global Handle management
