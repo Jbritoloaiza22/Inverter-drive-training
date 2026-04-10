@@ -1,3 +1,9 @@
+/**
+ * @file rcc.c
+ * @brief RCC peripheral initialization for STM32G031 microcontroller
+ * @author Jesus Daniel Britoloaiza
+ */
+
 #include "rcc.h"
 #include "KernelInterface.h"
 
@@ -5,6 +11,7 @@
  * @brief  Configures RCC oscillators (optimized, no parameters needed)
  * @retval None
  * @note   Optimized implementation for STM32G031 - predefined configuration
+ * @author Jesus Daniel Britoloaiza
  */
 static void RCC_ConfigureOscillators(void)
 {
@@ -83,6 +90,13 @@ static void RCC_ConfigureClocks(void)
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_PPRE) | 0x0U;
 }
 
+/**
+ * @brief  Initializes the Reset and Clock Control (RCC) peripheral
+ * @retval None
+ * @note   Configures oscillators, clocks, peripheral clock enables, sleep modes,
+ *         interrupt flags, reset registers, backup domain, and control/status registers
+ *         for STM32G031 microcontroller with predefined configuration.
+ */
 void RCC_Init(void)
 {
     /* Configure oscillators */

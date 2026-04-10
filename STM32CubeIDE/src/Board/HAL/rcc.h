@@ -1,3 +1,9 @@
+/**
+ * @file rcc.h
+ * @brief RCC register bitfield macros for STM32G031
+ * @author Jesus Daniel Britoloaiza
+ */
+
 #include "stm32g031xx.h"
 #include "stm32g0xx.h"
 
