@@ -7,6 +7,7 @@
 #include "rcc.h"
 #include "KernelInterface.h"
 
+#define dtimeout 100U
 /**
  * @brief  Configures RCC oscillators (optimized, no parameters needed)
  * @retval None
@@ -23,14 +24,14 @@ static void RCC_ConfigureOscillators(void)
     RCC->CR = ui32tmp_reg;
     
     /* Wait for HSE to disable */
-    while ((RCC->CR & RCC_CR_HSERDY) != 0U) {}
+    while ((RCC->CR & RCC_CR_HSERDY)) {}
     
     /* Enable HSE */
     ui32tmp_reg |= RCC_CR_HSEON;
     RCC->CR = ui32tmp_reg;
     
     /* Wait for HSE to be stable */
-    while ((RCC->CR & RCC_CR_HSERDY) == 0U) {}
+    while (!(RCC->CR & RCC_CR_HSERDY)) {}
     
     /* HSI configuration - Calibration */
     RCC->ICSCR = 0x406fU;  /* HSI calibration value */
@@ -41,7 +42,7 @@ static void RCC_ConfigureOscillators(void)
     RCC->CR = ui32tmp_reg;
     
     /* Wait for PLL to be unlocked */
-    while ((RCC->CR & RCC_CR_PLLRDY) != 0U) {}
+    while ((RCC->CR & RCC_CR_PLLRDY)) {}
     
     /* Configure PLL */
     RCC->PLLCFGR = 0x73021002U;  /* Predefined PLL configuration */
@@ -51,7 +52,7 @@ static void RCC_ConfigureOscillators(void)
     RCC->CR = ui32tmp_reg;
     
     /* Wait for PLL to be stable */
-    while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {}
+    while (!(RCC->CR & RCC_CR_PLLRDY)) {}
 }
 
 /**
@@ -70,7 +71,15 @@ static void RCC_ConfigureClocks(void)
     ui32tickstart = 0U;
     while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_0)
     {
-        if (++ui32tickstart > 100U) break;
+        if (++ui32tickstart > dtimeout) 
+        {
+            break;
+        }
+        else
+        {
+            /* nothing to do */
+        }
+
     }
     
     /* Set HCLK divider - No division */
@@ -83,7 +92,14 @@ static void RCC_ConfigureClocks(void)
     ui32tickstart = 0U;
     while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_CFGR_SW_1 << 2U))
     {
-        if (++ui32tickstart > 100U) break;
+        if (++ui32tickstart > dtimeout) 
+        {
+            break;
+        }
+        else
+        {
+            /* nothing to do */
+        }
     }
     
     /* Set APB1 prescaler - No division */
