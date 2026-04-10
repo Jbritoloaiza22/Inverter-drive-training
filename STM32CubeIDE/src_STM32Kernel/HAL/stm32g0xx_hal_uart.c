@@ -3178,7 +3178,6 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
   MODIFY_REG(huart->Instance->PRESC, USART_PRESC_PRESCALER, huart->Init.ClockPrescaler);
 
   /*-------------------------- USART BRR Configuration -----------------------*/
-  UART_GETCLOCKSOURCE(huart, clocksource);
 
   /* Check LPUART instance */
   if (UART_INSTANCE_LOWPOWER(huart))
@@ -3187,13 +3186,13 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
     switch (clocksource)
     {
       case UART_CLOCKSOURCE_PCLK1:
-        pclk = HAL_RCC_GetPCLK1Freq();
+        //pclk = HAL_RCC_GetPCLK1Freq();
         break;
       case UART_CLOCKSOURCE_HSI:
         pclk = (uint32_t) HSI_VALUE;
         break;
       case UART_CLOCKSOURCE_SYSCLK:
-        pclk = HAL_RCC_GetSysClockFreq();
+        //pclk = HAL_RCC_GetSysClockFreq();
         break;
       case UART_CLOCKSOURCE_LSE:
         pclk = (uint32_t) LSE_VALUE;
@@ -3239,13 +3238,13 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
     switch (clocksource)
     {
       case UART_CLOCKSOURCE_PCLK1:
-        pclk = HAL_RCC_GetPCLK1Freq();
+        //pclk = HAL_RCC_GetPCLK1Freq();
         break;
       case UART_CLOCKSOURCE_HSI:
         pclk = (uint32_t) HSI_VALUE;
         break;
       case UART_CLOCKSOURCE_SYSCLK:
-        pclk = HAL_RCC_GetSysClockFreq();
+        //pclk = HAL_RCC_GetSysClockFreq();
         break;
       case UART_CLOCKSOURCE_LSE:
         pclk = (uint32_t) LSE_VALUE;
@@ -3277,13 +3276,13 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
     switch (clocksource)
     {
       case UART_CLOCKSOURCE_PCLK1:
-        pclk = HAL_RCC_GetPCLK1Freq();
+        //pclk = HAL_RCC_GetPCLK1Freq();
         break;
       case UART_CLOCKSOURCE_HSI:
         pclk = (uint32_t) HSI_VALUE;
         break;
       case UART_CLOCKSOURCE_SYSCLK:
-        pclk = HAL_RCC_GetSysClockFreq();
+        //pclk = HAL_RCC_GetSysClockFreq();
         break;
       case UART_CLOCKSOURCE_LSE:
         pclk = (uint32_t) LSE_VALUE;
