@@ -45,8 +45,9 @@ typedef struct{
 	float T0;
 } kSVMTimes;
 
-
-
+int32_t i32SVM_sector(float alpha, float beta);
+kSVMTimes kSVM_Times(float alpha, float beta, float Vdc, float Ts, int32_t sector, kSVMTimes *t);
+void vSVM_duty(float Ts, int32_t i32sector, kSVMTimes *t, float *dA, float *dB, float *dC);
 
 #ifdef __cplusplus
 }
