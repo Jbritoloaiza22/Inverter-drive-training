@@ -21,6 +21,7 @@
 #include "kernel.h"
 #include "stm32g0xx_it.h"
 #include "gpio.h"
+#include "tim.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -57,8 +58,6 @@
 
 /* External variables --------------------------------------------------------*/
 extern ADC_HandleTypeDef hadc1;
-extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -165,9 +164,9 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
+  tim2_IRQHandler_TIM();
   /* USER CODE BEGIN TIM2_IRQn 1 */
-
+  ToggleDebugPin();
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -179,9 +178,9 @@ void TIM3_IRQHandler(void)
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
   /* USER CODE END TIM3_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim3);
+  tim3_IRQHandler_TIM();
+
   /* USER CODE BEGIN TIM3_IRQn 1 */
-  ToggleDebugPin();
 
   /* USER CODE END TIM3_IRQn 1 */
 }

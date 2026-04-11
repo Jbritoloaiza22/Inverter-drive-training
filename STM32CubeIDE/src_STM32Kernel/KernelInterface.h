@@ -32,6 +32,19 @@ void cbGPIOS(void);
 void cbPWM(void);
 
 /**
+ * @brief Timer update callback.
+ *
+ * This function is executed when the timer update interrupt occurs.
+ * It is typically used to execute periodic tasks such as updating
+ * PWM compare values, advancing waveform indexes, or running
+ * time-based control routines.
+ *
+ * @note This function is usually called from the TIM interrupt
+ *       service routine (ISR).
+ */
+
+void cbTIM(void);
+/**
  * @brief   Performs system initializations before enabling interrupts.
  *
  * Sets up essential peripherals and initial system state required
@@ -43,4 +56,15 @@ void cbPWM(void);
  */
 void InitBeforeInterruptEnable(void);
 
+/**
+ * @brief RCC configuration callback.
+ *
+ * This function is responsible for performing custom configuration
+ * related to the Reset and Clock Control (RCC) peripheral. It may
+ * include enabling peripheral clocks or configuring system clock
+ * sources required by the application.
+ *
+ * @note This callback is typically invoked during system initialization
+ *       before peripherals dependent on the clock configuration are used.
+ */
 void cbRCC(void);
