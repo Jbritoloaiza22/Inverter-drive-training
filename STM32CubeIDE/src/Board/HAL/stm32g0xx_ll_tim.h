@@ -240,9 +240,9 @@ typedef struct
   uint32_t RepetitionCounter;  /*!< Specifies the repetition counter value. Each time the RCR downcounter
                                    reaches zero, an update event is generated and counting restarts
                                    from the RCR value (N).
-                                   This means in PWM mode that (N+1) corresponds to:
-                                      - the number of PWM periods in edge-aligned mode
-                                      - the number of half PWM period in center-aligned mode
+                                   This means in  mode that (N+1) corresponds to:
+                                      - the number of  periods in edge-aligned mode
+                                      - the number of half  period in center-aligned mode
                                    GP timers: this parameter must be a number between Min_Data = 0x00 and
                                    Max_Data = 0xFF.
                                    Advanced timers: this parameter must be a number between Min_Data = 0x0000 and
@@ -749,8 +749,8 @@ typedef struct
 /** Legacy definitions for compatibility purpose
 @cond 0
   */
-#define LL_TIM_OCMODE_ASSYMETRIC_PWM1 LL_TIM_OCMODE_ASYMMETRIC_PWM1
-#define LL_TIM_OCMODE_ASSYMETRIC_PWM2 LL_TIM_OCMODE_ASYMMETRIC_PWM2
+#define LL_TIM_OCMODE_ASSYMETRIC_1 LL_TIM_OCMODE_ASYMMETRIC_1
+#define LL_TIM_OCMODE_ASSYMETRIC_2 LL_TIM_OCMODE_ASYMMETRIC_2
 /**
 @endcond
   */
@@ -764,14 +764,14 @@ typedef struct
 #define LL_TIM_OCMODE_TOGGLE                   (TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_0)                    /*!<OCyREF toggles on compare match*/
 #define LL_TIM_OCMODE_FORCED_INACTIVE          TIM_CCMR1_OC1M_2                                         /*!<OCyREF is forced low*/
 #define LL_TIM_OCMODE_FORCED_ACTIVE            (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_0)                    /*!<OCyREF is forced high*/
-#define LL_TIM_OCMODE_PWM1                     (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1)                    /*!<In upcounting, channel y is active as long as TIMx_CNT<TIMx_CCRy else inactive.  In downcounting, channel y is inactive as long as TIMx_CNT>TIMx_CCRy else active.*/
-#define LL_TIM_OCMODE_PWM2                     (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_0) /*!<In upcounting, channel y is inactive as long as TIMx_CNT<TIMx_CCRy else active.  In downcounting, channel y is active as long as TIMx_CNT>TIMx_CCRy else inactive*/
+#define LL_TIM_OCMODE_1                     (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1)                    /*!<In upcounting, channel y is active as long as TIMx_CNT<TIMx_CCRy else inactive.  In downcounting, channel y is inactive as long as TIMx_CNT>TIMx_CCRy else active.*/
+#define LL_TIM_OCMODE_2                     (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_0) /*!<In upcounting, channel y is inactive as long as TIMx_CNT<TIMx_CCRy else active.  In downcounting, channel y is active as long as TIMx_CNT>TIMx_CCRy else inactive*/
 #define LL_TIM_OCMODE_RETRIG_OPM1              TIM_CCMR1_OC1M_3                                         /*!<Retrigerrable OPM mode 1*/
 #define LL_TIM_OCMODE_RETRIG_OPM2              (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_0)                    /*!<Retrigerrable OPM mode 2*/
-#define LL_TIM_OCMODE_COMBINED_PWM1            (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_2)                    /*!<Combined PWM mode 1*/
-#define LL_TIM_OCMODE_COMBINED_PWM2            (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_0 | TIM_CCMR1_OC1M_2) /*!<Combined PWM mode 2*/
-#define LL_TIM_OCMODE_ASYMMETRIC_PWM1          (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2) /*!<Asymmetric PWM mode 1*/
-#define LL_TIM_OCMODE_ASYMMETRIC_PWM2          (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M)                      /*!<Asymmetric PWM mode 2*/
+#define LL_TIM_OCMODE_COMBINED_1            (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_2)                    /*!<Combined  mode 1*/
+#define LL_TIM_OCMODE_COMBINED_2            (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_0 | TIM_CCMR1_OC1M_2) /*!<Combined  mode 2*/
+#define LL_TIM_OCMODE_ASYMMETRIC_1          (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2) /*!<Asymmetric  mode 1*/
+#define LL_TIM_OCMODE_ASYMMETRIC_2          (TIM_CCMR1_OC1M_3 | TIM_CCMR1_OC1M)                      /*!<Asymmetric  mode 2*/
 /**
   * @}
   */
@@ -2256,14 +2256,14 @@ __STATIC_INLINE void LL_TIM_OC_ConfigOutput(TIM_TypeDef *TIMx, uint32_t Channel,
   *         @arg @ref LL_TIM_OCMODE_TOGGLE
   *         @arg @ref LL_TIM_OCMODE_FORCED_INACTIVE
   *         @arg @ref LL_TIM_OCMODE_FORCED_ACTIVE
-  *         @arg @ref LL_TIM_OCMODE_PWM1
-  *         @arg @ref LL_TIM_OCMODE_PWM2
+  *         @arg @ref LL_TIM_OCMODE_1
+  *         @arg @ref LL_TIM_OCMODE_2
   *         @arg @ref LL_TIM_OCMODE_RETRIG_OPM1
   *         @arg @ref LL_TIM_OCMODE_RETRIG_OPM2
-  *         @arg @ref LL_TIM_OCMODE_COMBINED_PWM1
-  *         @arg @ref LL_TIM_OCMODE_COMBINED_PWM2
-  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_PWM1
-  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_PWM2
+  *         @arg @ref LL_TIM_OCMODE_COMBINED_1
+  *         @arg @ref LL_TIM_OCMODE_COMBINED_2
+  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_1
+  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_2
   * @retval None
   */
 __STATIC_INLINE void LL_TIM_OC_SetMode(TIM_TypeDef *TIMx, uint32_t Channel, uint32_t Mode)
@@ -2296,14 +2296,14 @@ __STATIC_INLINE void LL_TIM_OC_SetMode(TIM_TypeDef *TIMx, uint32_t Channel, uint
   *         @arg @ref LL_TIM_OCMODE_TOGGLE
   *         @arg @ref LL_TIM_OCMODE_FORCED_INACTIVE
   *         @arg @ref LL_TIM_OCMODE_FORCED_ACTIVE
-  *         @arg @ref LL_TIM_OCMODE_PWM1
-  *         @arg @ref LL_TIM_OCMODE_PWM2
+  *         @arg @ref LL_TIM_OCMODE_1
+  *         @arg @ref LL_TIM_OCMODE_2
   *         @arg @ref LL_TIM_OCMODE_RETRIG_OPM1
   *         @arg @ref LL_TIM_OCMODE_RETRIG_OPM2
-  *         @arg @ref LL_TIM_OCMODE_COMBINED_PWM1
-  *         @arg @ref LL_TIM_OCMODE_COMBINED_PWM2
-  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_PWM1
-  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_PWM2
+  *         @arg @ref LL_TIM_OCMODE_COMBINED_1
+  *         @arg @ref LL_TIM_OCMODE_COMBINED_2
+  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_1
+  *         @arg @ref LL_TIM_OCMODE_ASYMMETRIC_2
   */
 __STATIC_INLINE uint32_t LL_TIM_OC_GetMode(const TIM_TypeDef *TIMx, uint32_t Channel)
 {
@@ -2448,7 +2448,7 @@ __STATIC_INLINE uint32_t LL_TIM_OC_GetIdleState(const TIM_TypeDef *TIMx, uint32_
 
 /**
   * @brief  Enable fast mode for the output channel.
-  * @note Acts only if the channel is configured in PWM1 or PWM2 mode.
+  * @note Acts only if the channel is configured in 1 or 2 mode.
   * @rmtoll CCMR1        OC1FE          LL_TIM_OC_EnableFast\n
   *         CCMR1        OC2FE          LL_TIM_OC_EnableFast\n
   *         CCMR2        OC3FE          LL_TIM_OC_EnableFast\n
@@ -2603,7 +2603,7 @@ __STATIC_INLINE uint32_t LL_TIM_OC_IsEnabledPreload(const TIM_TypeDef *TIMx, uin
 
 /**
   * @brief  Enable clearing the output channel on an external event.
-  * @note This function can only be used in Output compare and PWM modes. It does not work in Forced mode.
+  * @note This function can only be used in Output compare and  modes. It does not work in Forced mode.
   * @note Macro IS_TIM_OCXREF_CLEAR_INSTANCE(TIMx) can be used to check whether
   *       or not a timer instance can clear the OCxREF signal on an external event.
   * @rmtoll CCMR1        OC1CE          LL_TIM_OC_EnableClear\n
@@ -2659,7 +2659,7 @@ __STATIC_INLINE void LL_TIM_OC_DisableClear(TIM_TypeDef *TIMx, uint32_t Channel)
 /**
   * @brief  Indicates clearing the output channel on an external event is enabled for the output channel.
   * @note This function enables clearing the output channel on an external event.
-  * @note This function can only be used in Output compare and PWM modes. It does not work in Forced mode.
+  * @note This function can only be used in Output compare and  modes. It does not work in Forced mode.
   * @note Macro IS_TIM_OCXREF_CLEAR_INSTANCE(TIMx) can be used to check whether
   *       or not a timer instance can clear the OCxREF signal on an external event.
   * @rmtoll CCMR1        OC1CE          LL_TIM_OC_IsEnabledClear\n
@@ -2890,8 +2890,8 @@ __STATIC_INLINE uint32_t LL_TIM_OC_GetCompareCH6(const TIM_TypeDef *TIMx)
 
 /**
   * @brief  Select on which reference signal the OC5REF is combined to.
-  * @note Macro IS_TIM_COMBINED3PHASEPWM_INSTANCE(TIMx) can be used to check
-  *       whether or not a timer instance supports the combined 3-phase PWM mode.
+  * @note Macro IS_TIM_COMBINED3PHASE_INSTANCE(TIMx) can be used to check
+  *       whether or not a timer instance supports the combined 3-phase  mode.
   * @rmtoll CCR5         GC5C3          LL_TIM_SetCH5CombinedChannels\n
   *         CCR5         GC5C2          LL_TIM_SetCH5CombinedChannels\n
   *         CCR5         GC5C1          LL_TIM_SetCH5CombinedChannels
@@ -4226,7 +4226,7 @@ __STATIC_INLINE void LL_TIM_SetRemap(TIM_TypeDef *TIMx, uint32_t Remap)
 /**
   * @brief  Set the OCREF clear input source
   * @note The OCxREF signal of a given channel can be cleared when a high level is applied on the OCREF_CLR_INPUT
-  * @note This function can only be used in Output compare and PWM modes.
+  * @note This function can only be used in Output compare and  modes.
   * @rmtoll SMCR          OCCS                LL_TIM_SetOCRefClearInputSource
   * @rmtoll OR1           OCREF_CLR           LL_TIM_SetOCRefClearInputSource
   * @param  TIMx Timer instance
