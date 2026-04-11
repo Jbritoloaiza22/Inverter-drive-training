@@ -11,3 +11,8 @@ static float fSVM_clamp(float x)
     return x;
 }
 
+void vSVM_Init(void)
+{
+    /* Currently no additional configuration required */
+}
+
