@@ -57,7 +57,7 @@
         (++) For configurable lines, configure rising and/or falling trigger
              "Trigger" member from EXTI_ConfigTypeDef structure.
         (++) For Exti lines linked to gpio, choose gpio port using "GPIOSel"
-             member from GPIO_InitTypeDef structure.
+             member from vGPIO_InitTypeDef structure.
 
     (#) Get current Exti configuration of a dedicated line using
         HAL_EXTI_GetConfigLine().

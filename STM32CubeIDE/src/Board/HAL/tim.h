@@ -54,7 +54,7 @@
  * Configures TIM2 as a periodic timer generating update interrupts
  * based on the configured prescaler and auto-reload values.
  */
-void tim2_Init(void);
+void vTIM2_Init(void);
 
 /**
  * @brief Start TIM2 timer.
@@ -62,7 +62,7 @@ void tim2_Init(void);
  * Enables the TIM2 counter allowing it to begin counting
  * and generating periodic update events.
  */
-void tim2_Start(void);
+void vTIM2_Start(void);
 
 /**
  * @brief TIM2 interrupt service routine handler.
@@ -70,7 +70,7 @@ void tim2_Start(void);
  * This function processes the update interrupt generated
  * by TIM2 and clears the corresponding interrupt flag.
  */
-void tim2_IRQHandler_TIM(void);
+void vTIM2_IRQHandler(void);
 
 /**
  * @brief Initialize TIM3 peripheral.
@@ -78,7 +78,7 @@ void tim2_IRQHandler_TIM(void);
  * Configures TIM3 as a periodic timer generating update interrupts
  * according to the configured prescaler and auto-reload values.
  */
-void tim3_Init(void);
+void vTIM3_Init(void);
 
 /**
  * @brief Start TIM3 timer.
@@ -86,7 +86,7 @@ void tim3_Init(void);
  * Enables the TIM3 counter allowing it to begin counting
  * and generating periodic update events.
  */
-void tim3_Start(void);
+void vTIM3_Start(void);
 
 /**
  * @brief TIM3 interrupt service routine handler.
@@ -94,6 +94,6 @@ void tim3_Start(void);
  * This function handles the update interrupt generated
  * by TIM3 and clears the interrupt flag.
  */
-void tim3_IRQHandler_TIM(void);
+void vTIM3_IRQHandler(void);
 
 #endif /* __TIM_H */

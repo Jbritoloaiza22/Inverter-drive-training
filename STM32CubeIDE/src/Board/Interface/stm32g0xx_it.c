@@ -164,9 +164,9 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */
-  tim2_IRQHandler_TIM();
+  vTIM2_IRQHandler();
   /* USER CODE BEGIN TIM2_IRQn 1 */
-  ToggleDebugPin();
+  vGPIO_ToggleDebugPin();
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -178,7 +178,7 @@ void TIM3_IRQHandler(void)
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
   /* USER CODE END TIM3_IRQn 0 */
-  tim3_IRQHandler_TIM();
+  vTIM3_IRQHandler();
 
   /* USER CODE BEGIN TIM3_IRQn 1 */
 

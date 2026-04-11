@@ -27,7 +27,7 @@
  * @note   Optimized implementation for STM32G031 - predefined configuration
  * @author Jesus Daniel Britoloaiza
  */
-static void rcc_ConfigureOscillators(void)
+static void vRCC_ConfigureOscillators(void)
 {
     uint32_t ui32tmp_reg = 0U;
     
@@ -73,7 +73,7 @@ static void rcc_ConfigureOscillators(void)
  * @retval None
  * @note   Optimized implementation for STM32G031 - predefined configuration
  */
-static void rcc_ConfigureClocks(void)
+static void vRCC_ConfigureClocks(void)
 {
     uint32_t ui32tickstart;
     
@@ -126,13 +126,13 @@ static void rcc_ConfigureClocks(void)
  *         interrupt flags, reset registers, backup domain, and control/status registers
  *         for STM32G031 microcontroller with predefined configuration.
  */
-void rcc_Init(void)
+void vRCC_Init(void)
 {
     /* Configure oscillators */
-    rcc_ConfigureOscillators();
+    vRCC_ConfigureOscillators();
     
     /* Configure clocks */
-    rcc_ConfigureClocks();
+    vRCC_ConfigureClocks();
     
     /* Clear and initialize interrupt flags */
     RCC->CIER   = 0x0U;  /* Disable all interrupts */
@@ -249,5 +249,5 @@ void rcc_Init(void)
 }
 
 void cbRCC(void){
-    rcc_Init();
+    vRCC_Init();
 }

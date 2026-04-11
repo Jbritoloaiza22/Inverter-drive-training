@@ -103,14 +103,14 @@
  *
  * @note Pins used for ADC, PWM, and UART are configured to avoid hardware conflicts.
  * @note Call this function before using any GPIO peripheral.
- */static void gpio_PortInit(void);
+ */static void vGPIO_PortInit(void);
 
 /* function implementations */
 /*
 * @brief  initialize GPIO ports
 * @note   this function should be called before any GPIO configuration 
 */
-static void gpio_PortInit(void) {
+static void vGPIO_PortInit(void) {
     /******************************************************************* PORT A *******************************************************************/
     /* PA0: ADC1_IN0 */      GPIO_CONFIG_PIN(GPIOA, 0,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
     /* PA1: ADC1_IN1 */      GPIO_CONFIG_PIN(GPIOA, 1,  GPIO_MODE_ANALOG, GPIO_OTYPE_PP, GPIO_SPEED_VERY_LOW,  GPIO_NOPULL,   GPIO_AF0);
@@ -152,20 +152,20 @@ static void gpio_PortInit(void) {
 /**
  * @brief Initializes GPIO subsystem.
  *
- * Calls gpio_PortInit() to configure all ports and pins.
+ * Calls vGPIO_PortInit() to configure all ports and pins.
  * Should be called at system startup.
  */
-void gpio_Init(void){
-    gpio_PortInit();
+void vGPIO_Init(void){
+    vGPIO_PortInit();
 }
 
 /**
  * @brief GPIO callback function.
  *
- * Alias to GPIO_Init(), can be called as a callback or initialization routine.
+ * Alias to vGPIO_Init(), can be called as a callback or initialization routine.
  */
 void cbGPIOS(void){
-	gpio_Init();
-	EnableDrivePinForMotorControl();
+	vGPIO_Init();
+	vGPIO_EnableDrivePinForMotorControl();
 }
 

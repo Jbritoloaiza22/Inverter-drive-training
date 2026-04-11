@@ -64,21 +64,21 @@ int main(void)
   HAL_Init();
 
   /* Initialize system components before enabling interrupts */
-  initBeforeInterruptEnable();
+  vKernelInterface_initBeforeInterruptEnable();
 
   /* Initialize peripherals */
   MX_USART1_UART_Init();
   MX_ADC1_Init();
 
   /*enable user interrupts */
-  enableInterruptsForAllPeripherals();
+  vKernelInterface_enableInterruptsForAllPeripherals();
 
   /* Main application loop */
   for(;;)
   {
 	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
+	  vKernelInterface_SetPhaseBDuty((uint32_t)dDUTYCYCLE);
+	  vKernelInterface_SetPhaseCDuty((uint32_t)dDUTYCYCLE);
   }
 }
 
@@ -198,7 +198,7 @@ void Error_Handler(void)
  * The callbacks are defined in the kernel interface layer to allow
  * hardware abstraction and modular configuration.
  */
-void initBeforeInterruptEnable(void)
+void vKernelInterface_initBeforeInterruptEnable(void)
 {
 	cbRCC();
 	cbGPIOS();
@@ -217,7 +217,7 @@ void initBeforeInterruptEnable(void)
  * - TIM2 update interrupt
  * - TIM3 update interrupt
  */
-void enableInterruptsForAllPeripherals(void)
+void vKernelInterface_enableInterruptsForAllPeripherals(void)
 {
   /* Enable TIM2 interrupt */
   HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);

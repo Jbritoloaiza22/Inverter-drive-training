@@ -28,7 +28,7 @@
  * and auto-reload values defined by TIM2_PRESCALER and TIM2_ARR.
  * The timer generates an update interrupt on overflow.
  */
-void tim2_Init(void)
+void vTIM2_Init(void)
 {
   /* Reset configuration */
   TIM2->CR1 = 0;
@@ -64,7 +64,7 @@ void tim2_Init(void)
  * Enables the counter allowing TIM2 to begin counting
  * and generating periodic update events.
  */
-void tim2_Start(void)
+void vTIM2_Start(void)
 {
   TIM2->CR1 |= TIM_CR1_CEN;
 }
@@ -78,7 +78,7 @@ void tim2_Start(void)
  * Additional application logic can be inserted inside
  * the interrupt service routine.
  */
-void tim2_IRQHandler_TIM(void)
+void vTIM2_IRQHandler(void)
 {
   if (TIM2->SR & TIM_SR_UIF)
   {
@@ -97,7 +97,7 @@ void tim2_IRQHandler_TIM(void)
  * and auto-reload values defined by TIM3_PRESCALER and TIM3_ARR.
  * The timer generates an update interrupt on overflow.
  */
-void tim3_Init(void)
+void vTIM3_Init(void)
 {
   /* Reset configuration */
   TIM3->CR1 = 0;
@@ -133,7 +133,7 @@ void tim3_Init(void)
  * Enables the counter allowing TIM3 to begin counting
  * and generating periodic update events.
  */
-void tim3_Start(void)
+void vTIM3_Start(void)
 {
   TIM3->CR1 |= TIM_CR1_CEN;
 }
@@ -147,7 +147,7 @@ void tim3_Start(void)
  * Additional application logic can be executed inside
  * this interrupt service routine.
  */
-void tim3_IRQHandler_TIM(void)
+void vTIM3_IRQHandler(void)
 {
   if (TIM3->SR & TIM_SR_UIF)
   {
@@ -165,8 +165,8 @@ void tim3_IRQHandler_TIM(void)
  * Alias to TIMx_Init(), can be called as a callback or initialization routine.
  */
 void cbTIM(void){
-	tim2_Init();
-	tim2_Start();
-	tim3_Init();
-	tim3_Start();
+	vTIM2_Init();
+	vTIM2_Start();
+	vTIM3_Init();
+	vTIM3_Start();
 }

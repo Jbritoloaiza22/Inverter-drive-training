@@ -39,7 +39,7 @@
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_Init(void)
+void vPWM_Init(void)
 {
   /* Configure TIM1 */
   TIM1->CR1   = 0;
@@ -72,7 +72,7 @@ void pwm_Init(void)
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_Start(void)
+void vPWM_Start(void)
 {
   TIM1->CR1 |= TIM_CR1_CEN;
 }
@@ -92,7 +92,7 @@ void pwm_Start(void)
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC)
+void vPWM_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC)
 {
   TIM1->CCR1 = compareA;
   TIM1->CCR2 = compareB;
@@ -109,7 +109,7 @@ void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compa
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel1_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel1SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR1 = ui32DutyCycle;
 }
 
@@ -123,7 +123,7 @@ void pwm_channel1_set_duty(uint32_t ui32DutyCycle){
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel2_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel2SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR2 = ui32DutyCycle;
 }
 
@@ -137,18 +137,18 @@ void pwm_channel2_set_duty(uint32_t ui32DutyCycle){
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel3_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel3SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR3 = ui32DutyCycle;
 }
 
 /**
  * @brief PWM callback function.
  *
- * Alias to PWM_Init(), can be called as a callback or initialization routine.
+ * Alias to vPWM_Init(), can be called as a callback or initialization routine.
  */
 void cbPWM(void){
-	pwm_Init();
-	pwm_Start();
+	vPWM_Init();
+	vPWM_Start();
 }
 
 /**
@@ -161,7 +161,7 @@ void cbPWM(void){
  * @param ui32DutyCycle Duty cycle value.
  */
 void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle){
-	pwm_channel1_set_duty(ui32DutyCycle);
+	vPWM_channel1SetDuty(ui32DutyCycle);
 }
 
 /**
@@ -173,7 +173,7 @@ void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle){
  * @param ui32DutyCycle Duty cycle value.
  */
 void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
-	pwm_channel1_set_duty(ui32DutyCycle);
+	vPWM_channel2SetDuty(ui32DutyCycle);
 }
 
 /**
@@ -185,6 +185,6 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
  * @param ui32DutyCycle Duty cycle value.
  */
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
-	pwm_channel1_set_duty(ui32DutyCycle);;
+	vPWM_channel3SetDuty(ui32DutyCycle);;
 }
 

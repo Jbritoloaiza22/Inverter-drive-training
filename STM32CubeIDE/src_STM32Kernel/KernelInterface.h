@@ -65,7 +65,7 @@ void cbTIM(void);
  * @note    Recommended to call this at the very start of the program,
  *          after basic hardware initialization.
  */
-void initBeforeInterruptEnable(void);
+void vKernelInterface_initBeforeInterruptEnable(void);
 
 /**
  * @brief RCC configuration callback.
@@ -90,7 +90,7 @@ void cbRCC(void);
  * @note Must be called after peripheral initialization and before
  *       starting the timers.
  */
-void enableInterruptsForAllPeripherals(void);
+void vKernelInterface_enableInterruptsForAllPeripherals(void);
 
 /**
  * @brief Set duty cycle for phase A through the kernel interface.

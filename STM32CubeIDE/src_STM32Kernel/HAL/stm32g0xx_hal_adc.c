@@ -89,7 +89,7 @@
          (++) Enable the clock for the ADC GPIOs
               using macro __HAL_RCC_GPIOx_CLK_ENABLE()
          (++) Configure these ADC pins in analog mode
-              using function HAL_GPIO_Init()
+              using function HAL_vGPIO_Init()
 
     (#) Optionally, in case of usage of ADC with interruptions:
          (++) Configure the NVIC for ADC
