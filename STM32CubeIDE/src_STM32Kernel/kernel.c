@@ -83,18 +83,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	unsigned short sin_table[64] = {
-	    491, 980, 1467, 1951, 2430, 2903, 3369, 3827, 4276, 4714,
-	    5141, 5556, 5957, 6344, 6716, 7071, 7410, 7730, 8032, 8315,
-	    8577, 8819, 9040, 9239, 9415, 9569, 9700, 9808, 9892, 9952,
-	    9988, 10000, 9988, 9952, 9892, 9808, 9700, 9569, 9415, 9239,
-	    9040, 8819, 8577, 8315, 8032, 7730, 7410, 7071, 6716, 6344,
-	    5957, 5556, 5141, 4714, 4276, 3827, 3369, 2903, 2430, 1951,
-	    1467, 980, 491
-	};
-
-
-  uint32_t i = 0, flag_i = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -114,17 +102,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   InitBeforeInterruptEnable();
-  PWM_Init();
+  pwm_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  PWM_Start();
+  pwm_Start();
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_UART_Transmit(&huart1, (uint8_t *)"Hola\r\n", 6, 1000);
-
 
   /* USER CODE END 2 */
 
@@ -135,37 +121,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_UART_Transmit(&huart1, (uint8_t *)"hello\r\n", 7, 5);
 
-    if (!flag_i)
-    {
-      if (counter_i > 0)
-      {
-        uint8_t index_a = i;
-        uint8_t index_b = (i + 43) % 64;
-        uint8_t index_c = (i + 85) % 64;
-
-
-        PWM_CHANNEL1_SET_CYCLEDUTY((uint32_t)sin_table[index_a]);
-        PWM_CHANNEL2_SET_CYCLEDUTY((uint32_t)sin_table[index_b]);
-        PWM_CHANNEL3_SET_CYCLEDUTY((uint32_t)sin_table[index_c]);
-        i++;
-        if (i >= 62)
-        {
-          i = 0;
-        }
-
-        counter_i = 0;
-      }
-    }
-    else
-    {
-      if (counter_i > 100)
-      {
-        counter_i = 0;
-        flag_i = 0;
-      }
-    }
+	  pwm_channel1_set_duty((uint32_t)1000);
+	  pwm_channel2_set_duty((uint32_t)1000);
+	  pwm_channel3_set_duty((uint32_t)1000);
   }
   /* USER CODE END 3 */
 }
