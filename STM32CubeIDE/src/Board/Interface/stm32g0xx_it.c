@@ -164,9 +164,9 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */
-  TIM2_IRQHandler_TIM();
+  tim2_IRQHandler_TIM();
   /* USER CODE BEGIN TIM2_IRQn 1 */
-
+  ToggleDebugPin();
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -178,8 +178,7 @@ void TIM3_IRQHandler(void)
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
   /* USER CODE END TIM3_IRQn 0 */
-  TIM3_IRQHandler_TIM();
-  ToggleDebugPin();
+  tim3_IRQHandler_TIM();
 
   /* USER CODE BEGIN TIM3_IRQn 1 */
 

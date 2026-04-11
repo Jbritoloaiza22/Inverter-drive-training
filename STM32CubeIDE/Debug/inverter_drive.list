@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  0000f21c  00000000  00000000  0000f1c9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000095a1  00000000  00000000  0001e3e5  2**0
+ 17 .debug_line   000095a6  00000000  00000000  0001e3e5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0005e7bd  00000000  00000000  00027986  2**0
+ 18 .debug_str    0005e7bd  00000000  00000000  0002798b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00086143  2**0
+ 19 .comment      00000043  00000000  00000000  00086148  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00001df8  00000000  00000000  00086188  2**2
+ 20 .debug_frame  00001df8  00000000  00000000  0008618c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000096  00000000  00000000  00087f80  2**0
+ 21 .debug_line_str 00000096  00000000  00000000  00087f84  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2525,54 +2525,53 @@ void cbRCC(void){
  80011d8:	bd80      	pop	{r7, pc}
 	...
 
-080011dc <TIM2_Init>:
-#include "tim.h"
-#include "stm32g031xx.h"
-
-void TIM2_Init(void)
+080011dc <tim2_Init>:
+ * Configures TIM2 as a basic up-counter timer using the prescaler
+ * and auto-reload values defined by TIM2_PRESCALER and TIM2_ARR.
+ * The timer generates an update interrupt on overflow.
+ */
+void tim2_Init(void)
 {
  80011dc:	b580      	push	{r7, lr}
  80011de:	af00      	add	r7, sp, #0
-	  /* ---------------- TIM2 ---------------- */
-
-	  /* Reset configuration */
-	  TIM2->CR1 = 0;
+  /* Reset configuration */
+  TIM2->CR1 = 0;
  80011e0:	2380      	movs	r3, #128	@ 0x80
  80011e2:	05db      	lsls	r3, r3, #23
  80011e4:	2200      	movs	r2, #0
  80011e6:	601a      	str	r2, [r3, #0]
-	  TIM2->CR2 = 0;
+  TIM2->CR2 = 0;
  80011e8:	2380      	movs	r3, #128	@ 0x80
  80011ea:	05db      	lsls	r3, r3, #23
  80011ec:	2200      	movs	r2, #0
  80011ee:	605a      	str	r2, [r3, #4]
-	  TIM2->SMCR = 0;
+  TIM2->SMCR = 0;
  80011f0:	2380      	movs	r3, #128	@ 0x80
  80011f2:	05db      	lsls	r3, r3, #23
  80011f4:	2200      	movs	r2, #0
  80011f6:	609a      	str	r2, [r3, #8]
-	  TIM2->DIER = 0;
+  TIM2->DIER = 0;
  80011f8:	2380      	movs	r3, #128	@ 0x80
  80011fa:	05db      	lsls	r3, r3, #23
  80011fc:	2200      	movs	r2, #0
  80011fe:	60da      	str	r2, [r3, #12]
 
-	  /* Set prescaler */
-	  TIM2->PSC = TIM2_PRESCALER;
+  /* Set prescaler */
+  TIM2->PSC = TIM2_PRESCALER;
  8001200:	2380      	movs	r3, #128	@ 0x80
  8001202:	05db      	lsls	r3, r3, #23
  8001204:	223f      	movs	r2, #63	@ 0x3f
  8001206:	629a      	str	r2, [r3, #40]	@ 0x28
 
-	  /* Set auto reload */
-	  TIM2->ARR = TIM2_ARR;
+  /* Set auto reload value */
+  TIM2->ARR = TIM2_ARR;
  8001208:	2380      	movs	r3, #128	@ 0x80
  800120a:	05db      	lsls	r3, r3, #23
  800120c:	22f9      	movs	r2, #249	@ 0xf9
  800120e:	62da      	str	r2, [r3, #44]	@ 0x2c
 
-	  /* Counter mode up */
-	  TIM2->CR1 &= ~TIM_CR1_DIR;
+  /* Counter mode: up */
+  TIM2->CR1 &= ~TIM_CR1_DIR;
  8001210:	2380      	movs	r3, #128	@ 0x80
  8001212:	05db      	lsls	r3, r3, #23
  8001214:	681a      	ldr	r2, [r3, #0]
@@ -2582,19 +2581,19 @@ void TIM2_Init(void)
  800121c:	438a      	bics	r2, r1
  800121e:	601a      	str	r2, [r3, #0]
 
-	  /* Clock division */
-	  TIM2->CR1 &= ~TIM_CR1_CKD;
+  /* Clock division */
+  TIM2->CR1 &= ~TIM_CR1_CKD;
  8001220:	2380      	movs	r3, #128	@ 0x80
  8001222:	05db      	lsls	r3, r3, #23
  8001224:	681a      	ldr	r2, [r3, #0]
  8001226:	2380      	movs	r3, #128	@ 0x80
  8001228:	05db      	lsls	r3, r3, #23
- 800122a:	490b      	ldr	r1, [pc, #44]	@ (8001258 <TIM2_Init+0x7c>)
+ 800122a:	490b      	ldr	r1, [pc, #44]	@ (8001258 <tim2_Init+0x7c>)
  800122c:	400a      	ands	r2, r1
  800122e:	601a      	str	r2, [r3, #0]
 
-	  /* Enable update interrupt */
-	  TIM2->DIER |= TIM_DIER_UIE;
+  /* Enable update interrupt */
+  TIM2->DIER |= TIM_DIER_UIE;
  8001230:	2380      	movs	r3, #128	@ 0x80
  8001232:	05db      	lsls	r3, r3, #23
  8001234:	68da      	ldr	r2, [r3, #12]
@@ -2604,20 +2603,19 @@ void TIM2_Init(void)
  800123c:	430a      	orrs	r2, r1
  800123e:	60da      	str	r2, [r3, #12]
 
-	  /* Reset counter */
-	  TIM2->CNT = 0;
+  /* Reset counter */
+  TIM2->CNT = 0;
  8001240:	2380      	movs	r3, #128	@ 0x80
  8001242:	05db      	lsls	r3, r3, #23
  8001244:	2200      	movs	r2, #0
  8001246:	625a      	str	r2, [r3, #36]	@ 0x24
 
-	  /* Generate update event (load registers) */
-	  TIM2->EGR = TIM_EGR_UG;
+  /* Generate update event to load registers */
+  TIM2->EGR = TIM_EGR_UG;
  8001248:	2380      	movs	r3, #128	@ 0x80
  800124a:	05db      	lsls	r3, r3, #23
  800124c:	2201      	movs	r2, #1
  800124e:	615a      	str	r2, [r3, #20]
-
 }
  8001250:	46c0      	nop			@ (mov r8, r8)
  8001252:	46bd      	mov	sp, r7
@@ -2625,9 +2623,12 @@ void TIM2_Init(void)
  8001256:	46c0      	nop			@ (mov r8, r8)
  8001258:	fffffcff 	.word	0xfffffcff
 
-0800125c <TIM2_Start>:
-
-void TIM2_Start(void)
+0800125c <tim2_Start>:
+ *
+ * Enables the counter allowing TIM2 to begin counting
+ * and generating periodic update events.
+ */
+void tim2_Start(void)
 {
  800125c:	b580      	push	{r7, lr}
  800125e:	af00      	add	r7, sp, #0
@@ -2645,21 +2646,24 @@ void TIM2_Start(void)
  8001272:	46bd      	mov	sp, r7
  8001274:	bd80      	pop	{r7, pc}
 
-08001276 <TIM2_IRQHandler_TIM>:
-
-void TIM2_IRQHandler_TIM(void)
+08001276 <tim2_IRQHandler_TIM>:
+ *
+ * Additional application logic can be inserted inside
+ * the interrupt service routine.
+ */
+void tim2_IRQHandler_TIM(void)
 {
  8001276:	b580      	push	{r7, lr}
  8001278:	af00      	add	r7, sp, #0
-    if (TIM2->SR & TIM_SR_UIF)
+  if (TIM2->SR & TIM_SR_UIF)
  800127a:	2380      	movs	r3, #128	@ 0x80
  800127c:	05db      	lsls	r3, r3, #23
  800127e:	691b      	ldr	r3, [r3, #16]
  8001280:	2201      	movs	r2, #1
  8001282:	4013      	ands	r3, r2
- 8001284:	d007      	beq.n	8001296 <TIM2_IRQHandler_TIM+0x20>
-    {
-        TIM2->SR &= ~TIM_SR_UIF;   // limpiar flag
+ 8001284:	d007      	beq.n	8001296 <tim2_IRQHandler_TIM+0x20>
+  {
+    TIM2->SR &= ~TIM_SR_UIF;   /* Clear update interrupt flag */
  8001286:	2380      	movs	r3, #128	@ 0x80
  8001288:	05db      	lsls	r3, r3, #23
  800128a:	691a      	ldr	r2, [r3, #16]
@@ -2668,90 +2672,93 @@ void TIM2_IRQHandler_TIM(void)
  8001290:	2101      	movs	r1, #1
  8001292:	438a      	bics	r2, r1
  8001294:	611a      	str	r2, [r3, #16]
-
-    }
+  }
+  else
+  {
+    /* Do nothing */
+  }
 }
  8001296:	46c0      	nop			@ (mov r8, r8)
  8001298:	46bd      	mov	sp, r7
  800129a:	bd80      	pop	{r7, pc}
 
-0800129c <TIM3_Init>:
-
-void TIM3_Init(void)
+0800129c <tim3_Init>:
+ * Configures TIM3 as a basic up-counter timer using the prescaler
+ * and auto-reload values defined by TIM3_PRESCALER and TIM3_ARR.
+ * The timer generates an update interrupt on overflow.
+ */
+void tim3_Init(void)
 {
  800129c:	b580      	push	{r7, lr}
  800129e:	af00      	add	r7, sp, #0
-	  /* ---------------- TIM3 ---------------- */
-
-	  /* Reset configuration */
-	  TIM3->CR1 = 0;
- 80012a0:	4b16      	ldr	r3, [pc, #88]	@ (80012fc <TIM3_Init+0x60>)
+  /* Reset configuration */
+  TIM3->CR1 = 0;
+ 80012a0:	4b16      	ldr	r3, [pc, #88]	@ (80012fc <tim3_Init+0x60>)
  80012a2:	2200      	movs	r2, #0
  80012a4:	601a      	str	r2, [r3, #0]
-	  TIM3->CR2 = 0;
- 80012a6:	4b15      	ldr	r3, [pc, #84]	@ (80012fc <TIM3_Init+0x60>)
+  TIM3->CR2 = 0;
+ 80012a6:	4b15      	ldr	r3, [pc, #84]	@ (80012fc <tim3_Init+0x60>)
  80012a8:	2200      	movs	r2, #0
  80012aa:	605a      	str	r2, [r3, #4]
-	  TIM3->SMCR = 0;
- 80012ac:	4b13      	ldr	r3, [pc, #76]	@ (80012fc <TIM3_Init+0x60>)
+  TIM3->SMCR = 0;
+ 80012ac:	4b13      	ldr	r3, [pc, #76]	@ (80012fc <tim3_Init+0x60>)
  80012ae:	2200      	movs	r2, #0
  80012b0:	609a      	str	r2, [r3, #8]
-	  TIM3->DIER = 0;
- 80012b2:	4b12      	ldr	r3, [pc, #72]	@ (80012fc <TIM3_Init+0x60>)
+  TIM3->DIER = 0;
+ 80012b2:	4b12      	ldr	r3, [pc, #72]	@ (80012fc <tim3_Init+0x60>)
  80012b4:	2200      	movs	r2, #0
  80012b6:	60da      	str	r2, [r3, #12]
 
-	  /* Set prescaler */
-	  TIM3->PSC = TIM3_PRESCALER;
- 80012b8:	4b10      	ldr	r3, [pc, #64]	@ (80012fc <TIM3_Init+0x60>)
+  /* Set prescaler */
+  TIM3->PSC = TIM3_PRESCALER;
+ 80012b8:	4b10      	ldr	r3, [pc, #64]	@ (80012fc <tim3_Init+0x60>)
  80012ba:	223f      	movs	r2, #63	@ 0x3f
  80012bc:	629a      	str	r2, [r3, #40]	@ 0x28
 
-	  /* Set auto reload */
-	  TIM3->ARR = TIM3_ARR;
- 80012be:	4b0f      	ldr	r3, [pc, #60]	@ (80012fc <TIM3_Init+0x60>)
- 80012c0:	4a0f      	ldr	r2, [pc, #60]	@ (8001300 <TIM3_Init+0x64>)
+  /* Set auto reload value */
+  TIM3->ARR = TIM3_ARR;
+ 80012be:	4b0f      	ldr	r3, [pc, #60]	@ (80012fc <tim3_Init+0x60>)
+ 80012c0:	4a0f      	ldr	r2, [pc, #60]	@ (8001300 <tim3_Init+0x64>)
  80012c2:	62da      	str	r2, [r3, #44]	@ 0x2c
 
-	  /* Counter mode up */
-	  TIM3->CR1 &= ~TIM_CR1_DIR;
- 80012c4:	4b0d      	ldr	r3, [pc, #52]	@ (80012fc <TIM3_Init+0x60>)
+  /* Counter mode: up */
+  TIM3->CR1 &= ~TIM_CR1_DIR;
+ 80012c4:	4b0d      	ldr	r3, [pc, #52]	@ (80012fc <tim3_Init+0x60>)
  80012c6:	681a      	ldr	r2, [r3, #0]
- 80012c8:	4b0c      	ldr	r3, [pc, #48]	@ (80012fc <TIM3_Init+0x60>)
+ 80012c8:	4b0c      	ldr	r3, [pc, #48]	@ (80012fc <tim3_Init+0x60>)
  80012ca:	2110      	movs	r1, #16
  80012cc:	438a      	bics	r2, r1
  80012ce:	601a      	str	r2, [r3, #0]
 
-	  /* Clock division */
-	  TIM3->CR1 &= ~TIM_CR1_CKD;
- 80012d0:	4b0a      	ldr	r3, [pc, #40]	@ (80012fc <TIM3_Init+0x60>)
+  /* Clock division */
+  TIM3->CR1 &= ~TIM_CR1_CKD;
+ 80012d0:	4b0a      	ldr	r3, [pc, #40]	@ (80012fc <tim3_Init+0x60>)
  80012d2:	681a      	ldr	r2, [r3, #0]
- 80012d4:	4b09      	ldr	r3, [pc, #36]	@ (80012fc <TIM3_Init+0x60>)
- 80012d6:	490b      	ldr	r1, [pc, #44]	@ (8001304 <TIM3_Init+0x68>)
+ 80012d4:	4b09      	ldr	r3, [pc, #36]	@ (80012fc <tim3_Init+0x60>)
+ 80012d6:	490b      	ldr	r1, [pc, #44]	@ (8001304 <tim3_Init+0x68>)
  80012d8:	400a      	ands	r2, r1
  80012da:	601a      	str	r2, [r3, #0]
 
-	  /* Enable update interrupt */
-	  TIM3->DIER |= TIM_DIER_UIE;
- 80012dc:	4b07      	ldr	r3, [pc, #28]	@ (80012fc <TIM3_Init+0x60>)
+  /* Enable update interrupt */
+  TIM3->DIER |= TIM_DIER_UIE;
+ 80012dc:	4b07      	ldr	r3, [pc, #28]	@ (80012fc <tim3_Init+0x60>)
  80012de:	68da      	ldr	r2, [r3, #12]
- 80012e0:	4b06      	ldr	r3, [pc, #24]	@ (80012fc <TIM3_Init+0x60>)
+ 80012e0:	4b06      	ldr	r3, [pc, #24]	@ (80012fc <tim3_Init+0x60>)
  80012e2:	2101      	movs	r1, #1
  80012e4:	430a      	orrs	r2, r1
  80012e6:	60da      	str	r2, [r3, #12]
 
-	  /* Reset counter */
-	  TIM3->CNT = 0;
- 80012e8:	4b04      	ldr	r3, [pc, #16]	@ (80012fc <TIM3_Init+0x60>)
+  /* Reset counter */
+  TIM3->CNT = 0;
+ 80012e8:	4b04      	ldr	r3, [pc, #16]	@ (80012fc <tim3_Init+0x60>)
  80012ea:	2200      	movs	r2, #0
  80012ec:	625a      	str	r2, [r3, #36]	@ 0x24
 
-	  /* Generate update event (load registers) */
-	  TIM3->EGR = TIM_EGR_UG;
- 80012ee:	4b03      	ldr	r3, [pc, #12]	@ (80012fc <TIM3_Init+0x60>)
+  /* Generate update event to load registers */
+  TIM3->EGR = TIM_EGR_UG;
+ 80012ee:	4b03      	ldr	r3, [pc, #12]	@ (80012fc <tim3_Init+0x60>)
  80012f0:	2201      	movs	r2, #1
  80012f2:	615a      	str	r2, [r3, #20]
-
 }
  80012f4:	46c0      	nop			@ (mov r8, r8)
  80012f6:	46bd      	mov	sp, r7
@@ -2761,16 +2768,19 @@ void TIM3_Init(void)
  8001300:	000003e7 	.word	0x000003e7
  8001304:	fffffcff 	.word	0xfffffcff
 
-08001308 <TIM3_Start>:
-
-void TIM3_Start(void)
+08001308 <tim3_Start>:
+ *
+ * Enables the counter allowing TIM3 to begin counting
+ * and generating periodic update events.
+ */
+void tim3_Start(void)
 {
  8001308:	b580      	push	{r7, lr}
  800130a:	af00      	add	r7, sp, #0
   TIM3->CR1 |= TIM_CR1_CEN;
- 800130c:	4b04      	ldr	r3, [pc, #16]	@ (8001320 <TIM3_Start+0x18>)
+ 800130c:	4b04      	ldr	r3, [pc, #16]	@ (8001320 <tim3_Start+0x18>)
  800130e:	681a      	ldr	r2, [r3, #0]
- 8001310:	4b03      	ldr	r3, [pc, #12]	@ (8001320 <TIM3_Start+0x18>)
+ 8001310:	4b03      	ldr	r3, [pc, #12]	@ (8001320 <tim3_Start+0x18>)
  8001312:	2101      	movs	r1, #1
  8001314:	430a      	orrs	r2, r1
  8001316:	601a      	str	r2, [r3, #0]
@@ -2781,29 +2791,34 @@ void TIM3_Start(void)
  800131e:	46c0      	nop			@ (mov r8, r8)
  8001320:	40000400 	.word	0x40000400
 
-08001324 <TIM3_IRQHandler_TIM>:
-
-void TIM3_IRQHandler_TIM(void)
+08001324 <tim3_IRQHandler_TIM>:
+ *
+ * Additional application logic can be executed inside
+ * this interrupt service routine.
+ */
+void tim3_IRQHandler_TIM(void)
 {
  8001324:	b580      	push	{r7, lr}
  8001326:	af00      	add	r7, sp, #0
-    if (TIM3->SR & TIM_SR_UIF)
- 8001328:	4b06      	ldr	r3, [pc, #24]	@ (8001344 <TIM3_IRQHandler_TIM+0x20>)
+  if (TIM3->SR & TIM_SR_UIF)
+ 8001328:	4b06      	ldr	r3, [pc, #24]	@ (8001344 <tim3_IRQHandler_TIM+0x20>)
  800132a:	691b      	ldr	r3, [r3, #16]
  800132c:	2201      	movs	r2, #1
  800132e:	4013      	ands	r3, r2
- 8001330:	d005      	beq.n	800133e <TIM3_IRQHandler_TIM+0x1a>
-    {
-        TIM3->SR &= ~TIM_SR_UIF;   // limpiar flag
- 8001332:	4b04      	ldr	r3, [pc, #16]	@ (8001344 <TIM3_IRQHandler_TIM+0x20>)
+ 8001330:	d005      	beq.n	800133e <tim3_IRQHandler_TIM+0x1a>
+  {
+    TIM3->SR &= ~TIM_SR_UIF;   /* Clear update interrupt flag */
+ 8001332:	4b04      	ldr	r3, [pc, #16]	@ (8001344 <tim3_IRQHandler_TIM+0x20>)
  8001334:	691a      	ldr	r2, [r3, #16]
- 8001336:	4b03      	ldr	r3, [pc, #12]	@ (8001344 <TIM3_IRQHandler_TIM+0x20>)
+ 8001336:	4b03      	ldr	r3, [pc, #12]	@ (8001344 <tim3_IRQHandler_TIM+0x20>)
  8001338:	2101      	movs	r1, #1
  800133a:	438a      	bics	r2, r1
  800133c:	611a      	str	r2, [r3, #16]
-
-    }
-}
+  }
+  else
+  {
+    /* Do nothing */
+  }
  800133e:	46c0      	nop			@ (mov r8, r8)
  8001340:	46bd      	mov	sp, r7
  8001342:	bd80      	pop	{r7, pc}
@@ -3086,32 +3101,31 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */
-  TIM2_IRQHandler_TIM();
- 800143c:	f7ff ff1b 	bl	8001276 <TIM2_IRQHandler_TIM>
+  tim2_IRQHandler_TIM();
+ 800143c:	f7ff ff1b 	bl	8001276 <tim2_IRQHandler_TIM>
   /* USER CODE BEGIN TIM2_IRQn 1 */
-
+  ToggleDebugPin();
+ 8001440:	f7ff ffc4 	bl	80013cc <ToggleDebugPin>
   /* USER CODE END TIM2_IRQn 1 */
 }
- 8001440:	46c0      	nop			@ (mov r8, r8)
- 8001442:	46bd      	mov	sp, r7
- 8001444:	bd80      	pop	{r7, pc}
+ 8001444:	46c0      	nop			@ (mov r8, r8)
+ 8001446:	46bd      	mov	sp, r7
+ 8001448:	bd80      	pop	{r7, pc}
 
-08001446 <TIM3_IRQHandler>:
+0800144a <TIM3_IRQHandler>:
 
 /**
   * @brief This function handles TIM3 global interrupt.
   */
 void TIM3_IRQHandler(void)
 {
- 8001446:	b580      	push	{r7, lr}
- 8001448:	af00      	add	r7, sp, #0
+ 800144a:	b580      	push	{r7, lr}
+ 800144c:	af00      	add	r7, sp, #0
   /* USER CODE BEGIN TIM3_IRQn 0 */
 
   /* USER CODE END TIM3_IRQn 0 */
-  TIM3_IRQHandler_TIM();
- 800144a:	f7ff ff6b 	bl	8001324 <TIM3_IRQHandler_TIM>
-  ToggleDebugPin();
- 800144e:	f7ff ffbd 	bl	80013cc <ToggleDebugPin>
+  tim3_IRQHandler_TIM();
+ 800144e:	f7ff ff69 	bl	8001324 <tim3_IRQHandler_TIM>
 
   /* USER CODE BEGIN TIM3_IRQn 1 */
 
@@ -3184,19 +3198,19 @@ int main(void)
   /* Initialize all configured peripherals */
   InitBeforeInterruptEnable();
  8001484:	f000 f8d2 	bl	800162c <InitBeforeInterruptEnable>
-  TIM2_Init();
- 8001488:	f7ff fea8 	bl	80011dc <TIM2_Init>
-  TIM3_Init();
- 800148c:	f7ff ff06 	bl	800129c <TIM3_Init>
+  tim2_Init();
+ 8001488:	f7ff fea8 	bl	80011dc <tim2_Init>
+  tim3_Init();
+ 800148c:	f7ff ff06 	bl	800129c <tim3_Init>
   MX_USART1_UART_Init();
  8001490:	f000 f892 	bl	80015b8 <MX_USART1_UART_Init>
   MX_ADC1_Init();
  8001494:	f000 f826 	bl	80014e4 <MX_ADC1_Init>
   /* USER CODE BEGIN 2 */
-  TIM2_Start();
- 8001498:	f7ff fee0 	bl	800125c <TIM2_Start>
-  TIM3_Start();
- 800149c:	f7ff ff34 	bl	8001308 <TIM3_Start>
+  tim2_Start();
+ 8001498:	f7ff fee0 	bl	800125c <tim2_Start>
+  tim3_Start();
+ 800149c:	f7ff ff34 	bl	8001308 <tim3_Start>
   HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
  80014a0:	2200      	movs	r2, #0
  80014a2:	2100      	movs	r1, #0

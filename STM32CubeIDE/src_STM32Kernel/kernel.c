@@ -94,13 +94,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   InitBeforeInterruptEnable();
-  TIM2_Init();
-  TIM3_Init();
+  tim2_Init();
+  tim3_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  TIM2_Start();
-  TIM3_Start();
+  tim2_Start();
+  tim3_Start();
   HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
   HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
