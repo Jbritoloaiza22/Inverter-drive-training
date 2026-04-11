@@ -57,3 +57,21 @@ static void vSVM_normalize(float *a, float *b, float *c)
     *c = fSVM_clamp(*c);
 }
 
+void vSVM_Update(float Valpha, float Vbeta)
+{
+    float a, b, c;
+
+    Valpha = fSVM_clamp(Valpha);
+    Vbeta  = fSVM_clamp(Vbeta);
+
+    vSVM_AlphaBetaToABC(Valpha, Vbeta, &a, &b, &c);
+    vSVM_normalize(&a, &b, &c);
+
+    uint32_t arr = TIM1->ARR;
+
+    uint32_t dutyA = (uint32_t)(a * arr);
+    uint32_t dutyB = (uint32_t)(b * arr);
+    uint32_t dutyC = (uint32_t)(c * arr);
+
+    vPWM_UpdatePhaseCompare(dutyA, dutyB, dutyC);
+}
