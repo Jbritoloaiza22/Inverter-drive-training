@@ -16,3 +16,14 @@ void vSVM_Init(void)
     /* Currently no additional configuration required */
 }
 
+/**
+ * αβ → abc transformation
+ */
+static void vSVM_AlphaBetaToABC(float alpha, float beta,
+                                  float *a, float *b, float *c)
+{
+    *a = alpha;
+    *b = -0.5f * alpha + (dSQRT3 * 0.5f) * beta;
+    *c = -0.5f * alpha - (dSQRT3 * 0.5f) * beta;
+}
+
