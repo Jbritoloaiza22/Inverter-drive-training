@@ -165,5 +165,6 @@ void cbGPIOS(void){
  */
 void cbPWM(void){
 	pwm_Init();
+	pwm_Start();
 }
 

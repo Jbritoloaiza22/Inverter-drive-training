@@ -99,13 +99,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   InitBeforeInterruptEnable();
-  pwm_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  pwm_Start();
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_Base_Start_IT(&htim3);
 
@@ -352,5 +350,6 @@ void assert_failed(uint8_t *file, uint32_t line)
 void InitBeforeInterruptEnable(void){
 	cbRCC();
 	cbGPIOS();
+	cbPWM();
 }
 
