@@ -15,7 +15,7 @@
 #define GPIO_PIN_13                ((uint16_t)0x2000)  /* Pin 13 selected   */
 #define GPIO_PIN_14                ((uint16_t)0x4000)  /* Pin 14 selected   */
 #define GPIO_PIN_15                ((uint16_t)0x8000)  /* Pin 15 selected   */
-void GPIO_Init(void);
+void gpio_Init(void);
 
 static inline void ToggleDebugPin(void)
 {

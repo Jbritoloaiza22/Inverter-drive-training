@@ -131,12 +131,12 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 }
 
 /**
-  * @brief TIM_PWM MSP Initialization
+  * @brief TIM_ MSP Initialization
   * This function configures the hardware resources used in this example
-  * @param htim_pwm: TIM_PWM handle pointer
+  * @param htim_: TIM_ handle pointer
   * @retval None
   */
-void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* htim_pwm)
+void HAL_TIM__MspInit(TIM_HandleTypeDef* htim_)
 {
 
 
@@ -177,14 +177,14 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
 }
 /**
-  * @brief TIM_PWM MSP De-Initialization
+  * @brief TIM_ MSP De-Initialization
   * This function freeze the hardware resources used in this example
-  * @param htim_pwm: TIM_PWM handle pointer
+  * @param htim_: TIM_ handle pointer
   * @retval None
   */
-void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm)
+void HAL_TIM__MspDeInit(TIM_HandleTypeDef* htim_)
 {
-  if(htim_pwm->Instance==TIM1)
+  if(htim_->Instance==TIM1)
   {
     /* USER CODE BEGIN TIM1_MspDeInit 0 */
 

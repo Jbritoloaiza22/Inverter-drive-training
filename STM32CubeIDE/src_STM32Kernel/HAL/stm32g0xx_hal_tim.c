@@ -9,11 +9,11 @@
   *           + TIM Time Base Start
   *           + TIM Time Base Start Interruption
   *           + TIM Time Base Start DMA
-  *           + TIM Output Compare/PWM Initialization
-  *           + TIM Output Compare/PWM Channel Configuration
-  *           + TIM Output Compare/PWM  Start
-  *           + TIM Output Compare/PWM  Start Interruption
-  *           + TIM Output Compare/PWM Start DMA
+  *           + TIM Output Compare/ Initialization
+  *           + TIM Output Compare/ Channel Configuration
+  *           + TIM Output Compare/  Start
+  *           + TIM Output Compare/  Start Interruption
+  *           + TIM Output Compare/ Start DMA
   *           + TIM Input Capture Initialization
   *           + TIM Input Capture Channel Configuration
   *           + TIM Input Capture Start
@@ -51,7 +51,7 @@
        (#) Up to 4 independent channels for:
            (++) Input Capture
            (++) Output Compare
-           (++) PWM generation (Edge and Center-aligned Mode)
+           (++)  generation (Edge and Center-aligned Mode)
            (++) One-pulse mode output
        (#) Synchronization circuit to control the timer with external signals and to interconnect
             several timers together.
@@ -65,7 +65,7 @@
            (++) Time Base : HAL_TIM_Base_MspInit()
            (++) Input Capture : HAL_TIM_IC_MspInit()
            (++) Output Compare : HAL_TIM_OC_MspInit()
-           (++) PWM generation : HAL_TIM_PWM_MspInit()
+           (++)  generation : HAL_TIM__MspInit()
            (++) One-pulse mode output : HAL_TIM_OnePulse_MspInit()
            (++) Encoder mode output : HAL_TIM_Encoder_MspInit()
 
@@ -86,8 +86,8 @@
        (++) HAL_TIM_Base_Init: to use the Timer to generate a simple time base
        (++) HAL_TIM_OC_Init and HAL_TIM_OC_ConfigChannel: to use the Timer to generate an
             Output Compare signal.
-       (++) HAL_TIM_PWM_Init and HAL_TIM_PWM_ConfigChannel: to use the Timer to generate a
-            PWM signal.
+       (++) HAL_TIM__Init and HAL_TIM__ConfigChannel: to use the Timer to generate a
+             signal.
        (++) HAL_TIM_IC_Init and HAL_TIM_IC_ConfigChannel: to use the Timer to measure an
             external signal.
        (++) HAL_TIM_OnePulse_Init and HAL_TIM_OnePulse_ConfigChannel: to use the Timer
@@ -98,7 +98,7 @@
            (++) Time Base : HAL_TIM_Base_Start(), HAL_TIM_Base_Start_DMA(), HAL_TIM_Base_Start_IT()
            (++) Input Capture :  HAL_TIM_IC_Start(), HAL_TIM_IC_Start_DMA(), HAL_TIM_IC_Start_IT()
            (++) Output Compare : HAL_TIM_OC_Start(), HAL_TIM_OC_Start_DMA(), HAL_TIM_OC_Start_IT()
-           (++) PWM generation : HAL_TIM_PWM_Start(), HAL_TIM_PWM_Start_DMA(), HAL_TIM_PWM_Start_IT()
+           (++)  generation : HAL_TIM__Start(), HAL_TIM__Start_DMA(), HAL_TIM__Start_IT()
            (++) One-pulse mode output : HAL_TIM_OnePulse_Start(), HAL_TIM_OnePulse_Start_IT()
            (++) Encoder mode output : HAL_TIM_Encoder_Start(), HAL_TIM_Encoder_Start_DMA(), HAL_TIM_Encoder_Start_IT().
 
@@ -132,8 +132,8 @@
     (+) IC_MspDeInitCallback              : TIM IC Msp DeInit Callback.
     (+) OC_MspInitCallback                : TIM OC Msp Init Callback.
     (+) OC_MspDeInitCallback              : TIM OC Msp DeInit Callback.
-    (+) PWM_MspInitCallback               : TIM PWM Msp Init Callback.
-    (+) PWM_MspDeInitCallback             : TIM PWM Msp DeInit Callback.
+    (+) _MspInitCallback               : TIM  Msp Init Callback.
+    (+) _MspDeInitCallback             : TIM  Msp DeInit Callback.
     (+) OnePulse_MspInitCallback          : TIM One Pulse Msp Init Callback.
     (+) OnePulse_MspDeInitCallback        : TIM One Pulse Msp DeInit Callback.
     (+) Encoder_MspInitCallback           : TIM Encoder Msp Init Callback.
@@ -147,8 +147,8 @@
     (+) IC_CaptureCallback                : TIM Input Capture Callback.
     (+) IC_CaptureHalfCpltCallback        : TIM Input Capture half complete Callback.
     (+) OC_DelayElapsedCallback           : TIM Output Compare Delay Elapsed Callback.
-    (+) PWM_PulseFinishedCallback         : TIM PWM Pulse Finished Callback.
-    (+) PWM_PulseFinishedHalfCpltCallback : TIM PWM Pulse Finished half complete Callback.
+    (+) _PulseFinishedCallback         : TIM  Pulse Finished Callback.
+    (+) _PulseFinishedHalfCpltCallback : TIM  Pulse Finished half complete Callback.
     (+) ErrorCallback                     : TIM Error Callback.
     (+) CommutationCallback               : TIM Commutation Callback.
     (+) CommutationHalfCpltCallback       : TIM Commutation half complete Callback.
@@ -317,8 +317,14 @@ HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
   htim->DMABurstState = HAL_DMA_BURST_STATE_READY;
 
   /* Initialize the TIM channels state */
-  TIM_CHANNEL_STATE_SET_ALL(htim, HAL_TIM_CHANNEL_STATE_READY);
-  TIM_CHANNEL_N_STATE_SET_ALL(htim, HAL_TIM_CHANNEL_STATE_READY);
+  htim->ChannelState[0] = HAL_TIM_CHANNEL_STATE_READY;
+  htim->ChannelState[1] = HAL_TIM_CHANNEL_STATE_READY;
+  htim->ChannelState[2] = HAL_TIM_CHANNEL_STATE_READY;
+
+  htim->ChannelNState[0] = HAL_TIM_CHANNEL_STATE_READY;
+  htim->ChannelNState[1] = HAL_TIM_CHANNEL_STATE_READY;
+  htim->ChannelNState[2] = HAL_TIM_CHANNEL_STATE_READY;
+
 
   /* Initialize the TIM state*/
   htim->State = HAL_TIM_STATE_READY;
@@ -412,12 +418,6 @@ HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim)
   /* Check the parameters */
   assert_param(IS_TIM_INSTANCE(htim->Instance));
 
-  /* Check the TIM state */
-  if (htim->State != HAL_TIM_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
-
   /* Set the TIM state */
   htim->State = HAL_TIM_STATE_BUSY;
 
@@ -470,13 +470,6 @@ HAL_StatusTypeDef HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim)
 
   /* Check the parameters */
   assert_param(IS_TIM_INSTANCE(htim->Instance));
-
-  /* Check the TIM state */
-  if (htim->State != HAL_TIM_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
-
   /* Set the TIM state */
   htim->State = HAL_TIM_STATE_BUSY;
 
@@ -786,11 +779,6 @@ HAL_StatusTypeDef HAL_TIM_OC_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
   /* Check the parameters */
   assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
 
-  /* Check the TIM channel state */
-  if (TIM_CHANNEL_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
@@ -877,12 +865,6 @@ HAL_StatusTypeDef HAL_TIM_OC_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 
   /* Check the parameters */
   assert_param(IS_TIM_CCX_CHANNEL(htim->Instance, Channel));
-
-  /* Check the TIM channel state */
-  if (TIM_CHANNEL_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
@@ -1031,38 +1013,38 @@ HAL_StatusTypeDef HAL_TIM_OC_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
   * @}
   */
 
-/** @defgroup TIM_Exported_Functions_Group3 TIM PWM functions
-  *  @brief    TIM PWM functions
+/** @defgroup TIM_Exported_Functions_Group3 TIM  functions
+  *  @brief    TIM  functions
   *
 @verbatim
   ==============================================================================
-                          ##### TIM PWM functions #####
+                          ##### TIM  functions #####
   ==============================================================================
   [..]
     This section provides functions allowing to:
-    (+) Initialize and configure the TIM PWM.
-    (+) De-initialize the TIM PWM.
-    (+) Start the TIM PWM.
-    (+) Stop the TIM PWM.
-    (+) Start the TIM PWM and enable interrupt.
-    (+) Stop the TIM PWM and disable interrupt.
-    (+) Start the TIM PWM and enable DMA transfer.
-    (+) Stop the TIM PWM and disable DMA transfer.
+    (+) Initialize and configure the TIM .
+    (+) De-initialize the TIM .
+    (+) Start the TIM .
+    (+) Stop the TIM .
+    (+) Start the TIM  and enable interrupt.
+    (+) Stop the TIM  and disable interrupt.
+    (+) Start the TIM  and enable DMA transfer.
+    (+) Stop the TIM  and disable DMA transfer.
 
 @endverbatim
   * @{
   */
 /**
-  * @brief  Initializes the TIM PWM Time Base according to the specified
+  * @brief  Initializes the TIM  Time Base according to the specified
   *         parameters in the TIM_HandleTypeDef and initializes the associated handle.
   * @note   Switching from Center Aligned counter mode to Edge counter mode (or reverse)
   *         requires a timer reset to avoid unexpected direction
   *         due to DIR bit readonly in center aligned mode.
-  *         Ex: call @ref HAL_TIM_PWM_DeInit() before HAL_TIM_PWM_Init()
-  * @param  htim TIM PWM handle
+  *         Ex: call @ref HAL_TIM__DeInit() before HAL_TIM__Init()
+  * @param  htim TIM  handle
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_Init(TIM_HandleTypeDef *htim)
+HAL_StatusTypeDef HAL_TIM__Init(TIM_HandleTypeDef *htim)
 {
   /* Check the TIM handle allocation */
   if (htim == NULL)
@@ -1070,59 +1052,18 @@ HAL_StatusTypeDef HAL_TIM_PWM_Init(TIM_HandleTypeDef *htim)
     return HAL_ERROR;
   }
 
-  /* Check the parameters */
-  assert_param(IS_TIM_INSTANCE(htim->Instance));
-  assert_param(IS_TIM_COUNTER_MODE(htim->Init.CounterMode));
-  assert_param(IS_TIM_CLOCKDIVISION_DIV(htim->Init.ClockDivision));
-  assert_param(IS_TIM_PERIOD(htim, htim->Init.Period));
-  assert_param(IS_TIM_AUTORELOAD_PRELOAD(htim->Init.AutoReloadPreload));
-
-  if (htim->State == HAL_TIM_STATE_RESET)
-  {
-    /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
-
-#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-    /* Reset interrupt callbacks to legacy weak callbacks */
-    TIM_ResetCallback(htim);
-
-    if (htim->PWM_MspInitCallback == NULL)
-    {
-      htim->PWM_MspInitCallback = HAL_TIM_PWM_MspInit;
-    }
-    /* Init the low level hardware : GPIO, CLOCK, NVIC */
-    htim->PWM_MspInitCallback(htim);
-#else
-    /* Init the low level hardware : GPIO, CLOCK, NVIC and DMA */
-    HAL_TIM_PWM_MspInit(htim);
-#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
-  }
-
-  /* Set the TIM state */
-  htim->State = HAL_TIM_STATE_BUSY;
-
-  /* Init the base time for the PWM */
-  TIM_Base_SetConfig(htim->Instance, &htim->Init);
-
-  /* Initialize the DMA burst operation state */
-  htim->DMABurstState = HAL_DMA_BURST_STATE_READY;
-
-  /* Initialize the TIM channels state */
-  TIM_CHANNEL_STATE_SET_ALL(htim, HAL_TIM_CHANNEL_STATE_READY);
-  TIM_CHANNEL_N_STATE_SET_ALL(htim, HAL_TIM_CHANNEL_STATE_READY);
-
   /* Initialize the TIM state*/
-  htim->State = HAL_TIM_STATE_READY;
+  //htim->State = HAL_TIM_STATE_READY;
 
   return HAL_OK;
 }
 
 /**
   * @brief  DeInitializes the TIM peripheral
-  * @param  htim TIM PWM handle
+  * @param  htim TIM  handle
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_DeInit(TIM_HandleTypeDef *htim)
+HAL_StatusTypeDef HAL_TIM__DeInit(TIM_HandleTypeDef *htim)
 {
   /* Check the parameters */
   assert_param(IS_TIM_INSTANCE(htim->Instance));
@@ -1133,15 +1074,15 @@ HAL_StatusTypeDef HAL_TIM_PWM_DeInit(TIM_HandleTypeDef *htim)
   __HAL_TIM_DISABLE(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-  if (htim->PWM_MspDeInitCallback == NULL)
+  if (htim->_MspDeInitCallback == NULL)
   {
-    htim->PWM_MspDeInitCallback = HAL_TIM_PWM_MspDeInit;
+    htim->_MspDeInitCallback = HAL_TIM__MspDeInit;
   }
   /* DeInit the low level hardware */
-  htim->PWM_MspDeInitCallback(htim);
+  htim->_MspDeInitCallback(htim);
 #else
   /* DeInit the low level hardware: GPIO, CLOCK, NVIC and DMA */
-  HAL_TIM_PWM_MspDeInit(htim);
+  HAL_TIM__MspDeInit(htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
 
   /* Change the DMA burst operation state */
@@ -1161,37 +1102,37 @@ HAL_StatusTypeDef HAL_TIM_PWM_DeInit(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  Initializes the TIM PWM MSP.
-  * @param  htim TIM PWM handle
+  * @brief  Initializes the TIM  MSP.
+  * @param  htim TIM  handle
   * @retval None
   */
-__weak void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM__MspInit(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
 
   /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_PWM_MspInit could be implemented in the user file
+            the HAL_TIM__MspInit could be implemented in the user file
    */
 }
 
 /**
-  * @brief  DeInitializes TIM PWM MSP.
-  * @param  htim TIM PWM handle
+  * @brief  DeInitializes TIM  MSP.
+  * @param  htim TIM  handle
   * @retval None
   */
-__weak void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM__MspDeInit(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
 
   /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_PWM_MspDeInit could be implemented in the user file
+            the HAL_TIM__MspDeInit could be implemented in the user file
    */
 }
 
 /**
-  * @brief  Starts the PWM signal generation.
+  * @brief  Starts the  signal generation.
   * @param  htim TIM handle
   * @param  Channel TIM Channels to be enabled
   *          This parameter can be one of the following values:
@@ -1203,18 +1144,12 @@ __weak void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef *htim)
   *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
+HAL_StatusTypeDef HAL_TIM__Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   uint32_t tmpsmcr;
 
   /* Check the parameters */
   assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
-
-  /* Check the TIM channel state */
-  if (TIM_CHANNEL_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
@@ -1247,8 +1182,8 @@ HAL_StatusTypeDef HAL_TIM_PWM_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 }
 
 /**
-  * @brief  Stops the PWM signal generation.
-  * @param  htim TIM PWM handle
+  * @brief  Stops the  signal generation.
+  * @param  htim TIM  handle
   * @param  Channel TIM Channels to be disabled
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
@@ -1259,7 +1194,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
   *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
+HAL_StatusTypeDef HAL_TIM__Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
   assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
@@ -1284,8 +1219,8 @@ HAL_StatusTypeDef HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 }
 
 /**
-  * @brief  Starts the PWM signal generation in interrupt mode.
-  * @param  htim TIM PWM handle
+  * @brief  Starts the  signal generation in interrupt mode.
+  * @param  htim TIM  handle
   * @param  Channel TIM Channel to be enabled
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
@@ -1294,19 +1229,13 @@ HAL_StatusTypeDef HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
   *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
+HAL_StatusTypeDef HAL_TIM__Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   HAL_StatusTypeDef status = HAL_OK;
   uint32_t tmpsmcr;
 
   /* Check the parameters */
   assert_param(IS_TIM_CCX_CHANNEL(htim->Instance, Channel));
-
-  /* Check the TIM channel state */
-  if (TIM_CHANNEL_STATE_GET(htim, Channel) != HAL_TIM_CHANNEL_STATE_READY)
-  {
-    return HAL_ERROR;
-  }
 
   /* Set the TIM channel state */
   TIM_CHANNEL_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
@@ -1377,8 +1306,8 @@ HAL_StatusTypeDef HAL_TIM_PWM_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel
 }
 
 /**
-  * @brief  Stops the PWM signal generation in interrupt mode.
-  * @param  htim TIM PWM handle
+  * @brief  Stops the  signal generation in interrupt mode.
+  * @param  htim TIM  handle
   * @param  Channel TIM Channels to be disabled
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
@@ -1387,7 +1316,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel
   *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
+HAL_StatusTypeDef HAL_TIM__Stop_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -2841,10 +2770,10 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
         {
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
           htim->OC_DelayElapsedCallback(htim);
-          htim->PWM_PulseFinishedCallback(htim);
+          htim->_PulseFinishedCallback(htim);
 #else
           HAL_TIM_OC_DelayElapsedCallback(htim);
-          HAL_TIM_PWM_PulseFinishedCallback(htim);
+          HAL_TIM__PulseFinishedCallback(htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
         }
         htim->Channel = HAL_TIM_ACTIVE_CHANNEL_CLEARED;
@@ -2872,10 +2801,10 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       {
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
         htim->OC_DelayElapsedCallback(htim);
-        htim->PWM_PulseFinishedCallback(htim);
+        htim->_PulseFinishedCallback(htim);
 #else
         HAL_TIM_OC_DelayElapsedCallback(htim);
-        HAL_TIM_PWM_PulseFinishedCallback(htim);
+        HAL_TIM__PulseFinishedCallback(htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
       }
       htim->Channel = HAL_TIM_ACTIVE_CHANNEL_CLEARED;
@@ -2902,10 +2831,10 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       {
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
         htim->OC_DelayElapsedCallback(htim);
-        htim->PWM_PulseFinishedCallback(htim);
+        htim->_PulseFinishedCallback(htim);
 #else
         HAL_TIM_OC_DelayElapsedCallback(htim);
-        HAL_TIM_PWM_PulseFinishedCallback(htim);
+        HAL_TIM__PulseFinishedCallback(htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
       }
       htim->Channel = HAL_TIM_ACTIVE_CHANNEL_CLEARED;
@@ -2932,10 +2861,10 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
       {
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
         htim->OC_DelayElapsedCallback(htim);
-        htim->PWM_PulseFinishedCallback(htim);
+        htim->_PulseFinishedCallback(htim);
 #else
         HAL_TIM_OC_DelayElapsedCallback(htim);
-        HAL_TIM_PWM_PulseFinishedCallback(htim);
+        HAL_TIM__PulseFinishedCallback(htim);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
       }
       htim->Channel = HAL_TIM_ACTIVE_CHANNEL_CLEARED;
@@ -3022,7 +2951,7 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef *htim)
   ==============================================================================
  [..]
    This section provides functions allowing to:
-      (+) Configure The Input Output channels for OC, PWM, IC or One Pulse mode.
+      (+) Configure The Input Output channels for OC, , IC or One Pulse mode.
       (+) Configure External Clock source.
       (+) Configure Complementary channels, break features and dead time.
       (+) Configure Master and the Slave synchronization.
@@ -3233,10 +3162,10 @@ HAL_StatusTypeDef HAL_TIM_IC_ConfigChannel(TIM_HandleTypeDef *htim, const TIM_IC
 }
 
 /**
-  * @brief  Initializes the TIM PWM  channels according to the specified
+  * @brief  Initializes the TIM   channels according to the specified
   *         parameters in the TIM_OC_InitTypeDef.
-  * @param  htim TIM PWM handle
-  * @param  sConfig TIM PWM configuration structure
+  * @param  htim TIM  handle
+  * @param  sConfig TIM  configuration structure
   * @param  Channel TIM Channels to be configured
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
@@ -3247,7 +3176,7 @@ HAL_StatusTypeDef HAL_TIM_IC_ConfigChannel(TIM_HandleTypeDef *htim, const TIM_IC
   *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
+HAL_StatusTypeDef HAL_TIM__ConfigChannel(TIM_HandleTypeDef *htim,
                                             const TIM_OC_InitTypeDef *sConfig,
                                             uint32_t Channel)
 {
@@ -3255,7 +3184,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
 
   /* Check the parameters */
   assert_param(IS_TIM_CHANNELS(Channel));
-  assert_param(IS_TIM_PWM_MODE(sConfig->OCMode));
+  assert_param(IS_TIM__MODE(sConfig->OCMode));
   assert_param(IS_TIM_OC_POLARITY(sConfig->OCPolarity));
   assert_param(IS_TIM_FAST_STATE(sConfig->OCFastMode));
 
@@ -3269,7 +3198,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC1_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 1 in PWM mode */
+      /* Configure the Channel 1 in  mode */
       TIM_OC1_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel1 */
@@ -3286,7 +3215,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 2 in PWM mode */
+      /* Configure the Channel 2 in  mode */
       TIM_OC2_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel2 */
@@ -3303,7 +3232,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC3_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 3 in PWM mode */
+      /* Configure the Channel 3 in  mode */
       TIM_OC3_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel3 */
@@ -3320,7 +3249,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC4_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 4 in PWM mode */
+      /* Configure the Channel 4 in  mode */
       TIM_OC4_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel4 */
@@ -3337,7 +3266,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC5_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 5 in PWM mode */
+      /* Configure the Channel 5 in  mode */
       TIM_OC5_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel5*/
@@ -3354,7 +3283,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_ConfigChannel(TIM_HandleTypeDef *htim,
       /* Check the parameters */
       assert_param(IS_TIM_CC6_INSTANCE(htim->Instance));
 
-      /* Configure the Channel 6 in PWM mode */
+      /* Configure the Channel 6 in  mode */
       TIM_OC6_SetConfig(htim->Instance, sConfig);
 
       /* Set the Preload enable bit for channel6 */
@@ -4288,32 +4217,32 @@ __weak void HAL_TIM_IC_CaptureHalfCpltCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  PWM Pulse finished callback in non-blocking mode
+  * @brief   Pulse finished callback in non-blocking mode
   * @param  htim TIM handle
   * @retval None
   */
-__weak void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM__PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
 
   /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_PWM_PulseFinishedCallback could be implemented in the user file
+            the HAL_TIM__PulseFinishedCallback could be implemented in the user file
    */
 }
 
 /**
-  * @brief  PWM Pulse finished half complete callback in non-blocking mode
+  * @brief   Pulse finished half complete callback in non-blocking mode
   * @param  htim TIM handle
   * @retval None
   */
-__weak void HAL_TIM_PWM_PulseFinishedHalfCpltCallback(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM__PulseFinishedHalfCpltCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
 
   /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_PWM_PulseFinishedHalfCpltCallback could be implemented in the user file
+            the HAL_TIM__PulseFinishedHalfCpltCallback could be implemented in the user file
    */
 }
 
@@ -4374,8 +4303,8 @@ __weak void HAL_TIM_ErrorCallback(TIM_HandleTypeDef *htim)
   *          @arg @ref HAL_TIM_IC_MSPDEINIT_CB_ID IC MspDeInit Callback ID
   *          @arg @ref HAL_TIM_OC_MSPINIT_CB_ID OC MspInit Callback ID
   *          @arg @ref HAL_TIM_OC_MSPDEINIT_CB_ID OC MspDeInit Callback ID
-  *          @arg @ref HAL_TIM_PWM_MSPINIT_CB_ID PWM MspInit Callback ID
-  *          @arg @ref HAL_TIM_PWM_MSPDEINIT_CB_ID PWM MspDeInit Callback ID
+  *          @arg @ref HAL_TIM__MSPINIT_CB_ID  MspInit Callback ID
+  *          @arg @ref HAL_TIM__MSPDEINIT_CB_ID  MspDeInit Callback ID
   *          @arg @ref HAL_TIM_ONE_PULSE_MSPINIT_CB_ID One Pulse MspInit Callback ID
   *          @arg @ref HAL_TIM_ONE_PULSE_MSPDEINIT_CB_ID One Pulse MspDeInit Callback ID
   *          @arg @ref HAL_TIM_ENCODER_MSPINIT_CB_ID Encoder MspInit Callback ID
@@ -4389,8 +4318,8 @@ __weak void HAL_TIM_ErrorCallback(TIM_HandleTypeDef *htim)
   *          @arg @ref HAL_TIM_IC_CAPTURE_CB_ID Input Capture Callback ID
   *          @arg @ref HAL_TIM_IC_CAPTURE_HALF_CB_ID Input Capture half complete Callback ID
   *          @arg @ref HAL_TIM_OC_DELAY_ELAPSED_CB_ID Output Compare Delay Elapsed Callback ID
-  *          @arg @ref HAL_TIM_PWM_PULSE_FINISHED_CB_ID PWM Pulse Finished Callback ID
-  *          @arg @ref HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID PWM Pulse Finished half complete Callback ID
+  *          @arg @ref HAL_TIM__PULSE_FINISHED_CB_ID  Pulse Finished Callback ID
+  *          @arg @ref HAL_TIM__PULSE_FINISHED_HALF_CB_ID  Pulse Finished half complete Callback ID
   *          @arg @ref HAL_TIM_ERROR_CB_ID Error Callback ID
   *          @arg @ref HAL_TIM_COMMUTATION_CB_ID Commutation Callback ID
   *          @arg @ref HAL_TIM_COMMUTATION_HALF_CB_ID Commutation half complete Callback ID
@@ -4437,12 +4366,12 @@ HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Call
         htim->OC_MspDeInitCallback                 = pCallback;
         break;
 
-      case HAL_TIM_PWM_MSPINIT_CB_ID :
-        htim->PWM_MspInitCallback                  = pCallback;
+      case HAL_TIM__MSPINIT_CB_ID :
+        htim->_MspInitCallback                  = pCallback;
         break;
 
-      case HAL_TIM_PWM_MSPDEINIT_CB_ID :
-        htim->PWM_MspDeInitCallback                = pCallback;
+      case HAL_TIM__MSPDEINIT_CB_ID :
+        htim->_MspDeInitCallback                = pCallback;
         break;
 
       case HAL_TIM_ONE_PULSE_MSPINIT_CB_ID :
@@ -4497,12 +4426,12 @@ HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Call
         htim->OC_DelayElapsedCallback              = pCallback;
         break;
 
-      case HAL_TIM_PWM_PULSE_FINISHED_CB_ID :
-        htim->PWM_PulseFinishedCallback            = pCallback;
+      case HAL_TIM__PULSE_FINISHED_CB_ID :
+        htim->_PulseFinishedCallback            = pCallback;
         break;
 
-      case HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID :
-        htim->PWM_PulseFinishedHalfCpltCallback    = pCallback;
+      case HAL_TIM__PULSE_FINISHED_HALF_CB_ID :
+        htim->_PulseFinishedHalfCpltCallback    = pCallback;
         break;
 
       case HAL_TIM_ERROR_CB_ID :
@@ -4559,12 +4488,12 @@ HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Call
         htim->OC_MspDeInitCallback         = pCallback;
         break;
 
-      case HAL_TIM_PWM_MSPINIT_CB_ID :
-        htim->PWM_MspInitCallback          = pCallback;
+      case HAL_TIM__MSPINIT_CB_ID :
+        htim->_MspInitCallback          = pCallback;
         break;
 
-      case HAL_TIM_PWM_MSPDEINIT_CB_ID :
-        htim->PWM_MspDeInitCallback        = pCallback;
+      case HAL_TIM__MSPDEINIT_CB_ID :
+        htim->_MspDeInitCallback        = pCallback;
         break;
 
       case HAL_TIM_ONE_PULSE_MSPINIT_CB_ID :
@@ -4618,8 +4547,8 @@ HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Call
   *          @arg @ref HAL_TIM_IC_MSPDEINIT_CB_ID IC MspDeInit Callback ID
   *          @arg @ref HAL_TIM_OC_MSPINIT_CB_ID OC MspInit Callback ID
   *          @arg @ref HAL_TIM_OC_MSPDEINIT_CB_ID OC MspDeInit Callback ID
-  *          @arg @ref HAL_TIM_PWM_MSPINIT_CB_ID PWM MspInit Callback ID
-  *          @arg @ref HAL_TIM_PWM_MSPDEINIT_CB_ID PWM MspDeInit Callback ID
+  *          @arg @ref HAL_TIM__MSPINIT_CB_ID  MspInit Callback ID
+  *          @arg @ref HAL_TIM__MSPDEINIT_CB_ID  MspDeInit Callback ID
   *          @arg @ref HAL_TIM_ONE_PULSE_MSPINIT_CB_ID One Pulse MspInit Callback ID
   *          @arg @ref HAL_TIM_ONE_PULSE_MSPDEINIT_CB_ID One Pulse MspDeInit Callback ID
   *          @arg @ref HAL_TIM_ENCODER_MSPINIT_CB_ID Encoder MspInit Callback ID
@@ -4633,8 +4562,8 @@ HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Call
   *          @arg @ref HAL_TIM_IC_CAPTURE_CB_ID Input Capture Callback ID
   *          @arg @ref HAL_TIM_IC_CAPTURE_HALF_CB_ID Input Capture half complete Callback ID
   *          @arg @ref HAL_TIM_OC_DELAY_ELAPSED_CB_ID Output Compare Delay Elapsed Callback ID
-  *          @arg @ref HAL_TIM_PWM_PULSE_FINISHED_CB_ID PWM Pulse Finished Callback ID
-  *          @arg @ref HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID PWM Pulse Finished half complete Callback ID
+  *          @arg @ref HAL_TIM__PULSE_FINISHED_CB_ID  Pulse Finished Callback ID
+  *          @arg @ref HAL_TIM__PULSE_FINISHED_HALF_CB_ID  Pulse Finished half complete Callback ID
   *          @arg @ref HAL_TIM_ERROR_CB_ID Error Callback ID
   *          @arg @ref HAL_TIM_COMMUTATION_CB_ID Commutation Callback ID
   *          @arg @ref HAL_TIM_COMMUTATION_HALF_CB_ID Commutation half complete Callback ID
@@ -4680,14 +4609,14 @@ HAL_StatusTypeDef HAL_TIM_UnRegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Ca
         htim->OC_MspDeInitCallback              = HAL_TIM_OC_MspDeInit;
         break;
 
-      case HAL_TIM_PWM_MSPINIT_CB_ID :
-        /* Legacy weak PWM Msp Init Callback */
-        htim->PWM_MspInitCallback               = HAL_TIM_PWM_MspInit;
+      case HAL_TIM__MSPINIT_CB_ID :
+        /* Legacy weak  Msp Init Callback */
+        htim->_MspInitCallback               = HAL_TIM__MspInit;
         break;
 
-      case HAL_TIM_PWM_MSPDEINIT_CB_ID :
-        /* Legacy weak PWM Msp DeInit Callback */
-        htim->PWM_MspDeInitCallback             = HAL_TIM_PWM_MspDeInit;
+      case HAL_TIM__MSPDEINIT_CB_ID :
+        /* Legacy weak  Msp DeInit Callback */
+        htim->_MspDeInitCallback             = HAL_TIM__MspDeInit;
         break;
 
       case HAL_TIM_ONE_PULSE_MSPINIT_CB_ID :
@@ -4755,14 +4684,14 @@ HAL_StatusTypeDef HAL_TIM_UnRegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Ca
         htim->OC_DelayElapsedCallback           = HAL_TIM_OC_DelayElapsedCallback;
         break;
 
-      case HAL_TIM_PWM_PULSE_FINISHED_CB_ID :
-        /* Legacy weak PWM Pulse Finished Callback */
-        htim->PWM_PulseFinishedCallback         = HAL_TIM_PWM_PulseFinishedCallback;
+      case HAL_TIM__PULSE_FINISHED_CB_ID :
+        /* Legacy weak  Pulse Finished Callback */
+        htim->_PulseFinishedCallback         = HAL_TIM__PulseFinishedCallback;
         break;
 
-      case HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID :
-        /* Legacy weak PWM Pulse Finished half complete Callback */
-        htim->PWM_PulseFinishedHalfCpltCallback = HAL_TIM_PWM_PulseFinishedHalfCpltCallback;
+      case HAL_TIM__PULSE_FINISHED_HALF_CB_ID :
+        /* Legacy weak  Pulse Finished half complete Callback */
+        htim->_PulseFinishedHalfCpltCallback = HAL_TIM__PulseFinishedHalfCpltCallback;
         break;
 
       case HAL_TIM_ERROR_CB_ID :
@@ -4830,14 +4759,14 @@ HAL_StatusTypeDef HAL_TIM_UnRegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_Ca
         htim->OC_MspDeInitCallback         = HAL_TIM_OC_MspDeInit;
         break;
 
-      case HAL_TIM_PWM_MSPINIT_CB_ID :
-        /* Legacy weak PWM Msp Init Callback */
-        htim->PWM_MspInitCallback          = HAL_TIM_PWM_MspInit;
+      case HAL_TIM__MSPINIT_CB_ID :
+        /* Legacy weak  Msp Init Callback */
+        htim->_MspInitCallback          = HAL_TIM__MspInit;
         break;
 
-      case HAL_TIM_PWM_MSPDEINIT_CB_ID :
-        /* Legacy weak PWM Msp DeInit Callback */
-        htim->PWM_MspDeInitCallback        = HAL_TIM_PWM_MspDeInit;
+      case HAL_TIM__MSPDEINIT_CB_ID :
+        /* Legacy weak  Msp DeInit Callback */
+        htim->_MspDeInitCallback        = HAL_TIM__MspDeInit;
         break;
 
       case HAL_TIM_ONE_PULSE_MSPINIT_CB_ID :
@@ -4926,11 +4855,11 @@ HAL_TIM_StateTypeDef HAL_TIM_OC_GetState(const TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  Return the TIM PWM handle state.
+  * @brief  Return the TIM  handle state.
   * @param  htim TIM handle
   * @retval HAL state
   */
-HAL_TIM_StateTypeDef HAL_TIM_PWM_GetState(const TIM_HandleTypeDef *htim)
+HAL_TIM_StateTypeDef HAL_TIM__GetState(const TIM_HandleTypeDef *htim)
 {
   return htim->State;
 }
@@ -6029,8 +5958,8 @@ void TIM_ResetCallback(TIM_HandleTypeDef *htim)
   htim->IC_CaptureCallback                = HAL_TIM_IC_CaptureCallback;
   htim->IC_CaptureHalfCpltCallback        = HAL_TIM_IC_CaptureHalfCpltCallback;
   htim->OC_DelayElapsedCallback           = HAL_TIM_OC_DelayElapsedCallback;
-  htim->PWM_PulseFinishedCallback         = HAL_TIM_PWM_PulseFinishedCallback;
-  htim->PWM_PulseFinishedHalfCpltCallback = HAL_TIM_PWM_PulseFinishedHalfCpltCallback;
+  htim->_PulseFinishedCallback         = HAL_TIM__PulseFinishedCallback;
+  htim->_PulseFinishedHalfCpltCallback = HAL_TIM__PulseFinishedHalfCpltCallback;
   htim->ErrorCallback                     = HAL_TIM_ErrorCallback;
   htim->CommutationCallback               = HAL_TIMEx_CommutCallback;
   htim->CommutationHalfCpltCallback       = HAL_TIMEx_CommutHalfCpltCallback;
@@ -6039,7 +5968,7 @@ void TIM_ResetCallback(TIM_HandleTypeDef *htim)
 }
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
 
-HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
+HAL_StatusTypeDef HAL_TIMEx_N_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   uint32_t tmpsmcr;
 
@@ -6055,7 +5984,7 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start(TIM_HandleTypeDef *htim, uint32_t Channel
   /* Set the TIM complementary channel state */
   TIM_CHANNEL_N_STATE_SET(htim, Channel, HAL_TIM_CHANNEL_STATE_BUSY);
 
-  /* Enable the complementary PWM output  */
+  /* Enable the complementary  output  */
   TIM_CCxNChannelCmd(htim->Instance, Channel, TIM_CCxN_ENABLE);
 
   /* Enable the Main Output */
