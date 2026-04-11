@@ -43,7 +43,6 @@
 "./src_STM32Kernel/HAL/stm32g0xx_hal_adc_ex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_cortex.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_exti.o"
-"./src_STM32Kernel/HAL/stm32g0xx_hal_tim.o"
 "./src_STM32Kernel/HAL/stm32g0xx_hal_uart.o"
 "./src_libs/BoardLib/Itrip.o"
 "./src_libs/BoardLib/Temperature.o"

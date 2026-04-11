@@ -290,10 +290,6 @@ in voltage and temperature.*/
 #include "stm32g0xx_hal_spi.h"
 #endif /* HAL_SPI_MODULE_ENABLED */
 
-#ifdef HAL_TIM_MODULE_ENABLED
-#include "stm32g0xx_hal_tim.h"
-#endif /* HAL_TIM_MODULE_ENABLED */
-
 #ifdef HAL_UART_MODULE_ENABLED
 #include "stm32g0xx_hal_uart.h"
 #endif /* HAL_UART_MODULE_ENABLED */
