@@ -44,6 +44,7 @@
 "./src_STM32Kernel/HAL/stm32g0xx_hal_uart.o"
 "./src_libs/BoardLib/Itrip.o"
 "./src_libs/BoardLib/Temperature.o"
+"./src_libs/BoardLib/svm.o"
 "./src_libs/MCLib/CurrentControl.o"
 "./src_libs/MCLib/FOC.o"
 "./src_libs/MCLib/MotorObserver.o"
