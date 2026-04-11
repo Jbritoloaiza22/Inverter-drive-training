@@ -46,14 +46,14 @@
  * The timer is configured according to the selected ARR value which
  * determines the PWM switching frequency.
  */
-void pwm_Init(void);
+void vPWM_Init(void);
 
 /**
  * @brief Start PWM generation.
  *
  * Enables TIM1 counter allowing PWM outputs to start switching.
  */
-void pwm_Start(void);
+void vPWM_Start(void);
 
 /**
  * @brief Update duty cycle for three phases.
@@ -64,7 +64,7 @@ void pwm_Start(void);
  * @param compareB Duty cycle value for phase B (CCR2)
  * @param compareC Duty cycle value for phase C (CCR3)
  */
-void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC);
+void vPWM_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC);
 
 /**
  * @brief Set duty cycle for PWM channel 1.
@@ -74,7 +74,7 @@ void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compa
  *
  * @param ui32DutyCycle Duty cycle value (0 to ARR)
  */
-void pwm_channel1_set_duty(uint32_t ui32DutyCycle);
+void vPWM_channel1SetDuty(uint32_t ui32DutyCycle);
 
 /**
  * @brief Set duty cycle for PWM channel 2.
@@ -84,7 +84,7 @@ void pwm_channel1_set_duty(uint32_t ui32DutyCycle);
  *
  * @param ui32DutyCycle Duty cycle value (0 to ARR)
  */
-void pwm_channel2_set_duty(uint32_t ui32DutyCycle);
+void vPWM_channel2SetDuty(uint32_t ui32DutyCycle);
 
 /**
  * @brief Set duty cycle for PWM channel 3.
@@ -94,6 +94,6 @@ void pwm_channel2_set_duty(uint32_t ui32DutyCycle);
  *
  * @param ui32DutyCycle Duty cycle value (0 to ARR)
  */
-void pwm_channel3_set_duty(uint32_t ui32DutyCycle);
+void vPWM_channel3SetDuty(uint32_t ui32DutyCycle);
 
 #endif /* __PWM_H */

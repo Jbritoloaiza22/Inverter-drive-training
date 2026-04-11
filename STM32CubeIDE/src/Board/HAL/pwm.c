@@ -15,6 +15,7 @@
  * This source code is provided for educational and research purposes.
  */
 #include "pwm.h"
+#include "KernelInterface.h"
 #include "stm32g031xx.h"
 
 
@@ -38,7 +39,7 @@
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_Init(void)
+void vPWM_Init(void)
 {
   /* Configure TIM1 */
   TIM1->CR1   = 0;
@@ -71,7 +72,7 @@ void pwm_Init(void)
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_Start(void)
+void vPWM_Start(void)
 {
   TIM1->CR1 |= TIM_CR1_CEN;
 }
@@ -91,7 +92,7 @@ void pwm_Start(void)
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC)
+void vPWM_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC)
 {
   TIM1->CCR1 = compareA;
   TIM1->CCR2 = compareB;
@@ -108,7 +109,7 @@ void pwm_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compa
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel1_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel1SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR1 = ui32DutyCycle;
 }
 
@@ -122,7 +123,7 @@ void pwm_channel1_set_duty(uint32_t ui32DutyCycle){
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel2_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel2SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR2 = ui32DutyCycle;
 }
 
@@ -136,6 +137,54 @@ void pwm_channel2_set_duty(uint32_t ui32DutyCycle){
  *
  * @author Jesus Daniel Britoloaiza
  */
-void pwm_channel3_set_duty(uint32_t ui32DutyCycle){
+void vPWM_channel3SetDuty(uint32_t ui32DutyCycle){
 	TIM1->CCR3 = ui32DutyCycle;
 }
+
+/**
+ * @brief PWM callback function.
+ *
+ * Alias to vPWM_Init(), can be called as a callback or initialization routine.
+ */
+void cbPWM(void){
+	vPWM_Init();
+	vPWM_Start();
+}
+
+/**
+ * @brief Update PWM duty cycle for phase A via kernel interface.
+ *
+ * Provides a hardware abstraction layer allowing the application
+ * to control phase A duty cycle without direct access to the HAL
+ * or low-level PWM driver.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle){
+	vPWM_channel1SetDuty(ui32DutyCycle);
+}
+
+/**
+ * @brief Update PWM duty cycle for phase B via kernel interface.
+ *
+ * Provides an interface between the application layer and the
+ * underlying PWM driver managed by the kernel.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
+	vPWM_channel2SetDuty(ui32DutyCycle);
+}
+
+/**
+ * @brief Update PWM duty cycle for phase C via kernel interface.
+ *
+ * Allows the application to control the duty cycle of phase C
+ * through the kernel abstraction layer.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
+	vPWM_channel3SetDuty(ui32DutyCycle);;
+}
+

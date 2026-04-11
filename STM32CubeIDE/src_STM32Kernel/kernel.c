@@ -1,142 +1,98 @@
-/* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+ * @file kernel.c
+ * @brief Main application entry point.
+ *
+ * This file contains the main program flow and peripheral initialization
+ * routines for the STM32G031 microcontroller. The application initializes
+ * the system, configures peripherals such as UART and ADC, enables timer
+ * interrupts, and executes the main control loop.
+ *
+ * The system also relies on callback-based initialization functions
+ * defined in the kernel interface to configure clocks, GPIOs, PWM,
+ * and timers before enabling interrupts.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
+ */
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "kernel.h"
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
+#define dDUTYCYCLE 1000
+#define dBAUDRATEUART 115200
+/** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
+
+/** @brief UART handle structure */
 UART_HandleTypeDef huart1;
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
+/* Private function prototypes */
 static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-uint32_t counter_i = 0;
-void IncCounterToPWM(void)
-{
-	counter_i++;
-}
-/* USER CODE END 0 */
+/** @brief Example counter used for PWM related tasks */
+uint32_t ui32counter = 0;
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
+ * @brief Increment internal PWM counter.
+ *
+ * This function increments a global counter that may be used
+ * for waveform indexing or periodic PWM related operations.
+ */
+void incCountertopwmDebug(void)
 {
-
-  /* USER CODE BEGIN 1 */
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  InitBeforeInterruptEnable();
-  MX_USART1_UART_Init();
-  MX_ADC1_Init();
-  /* USER CODE BEGIN 2 */
-  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM2_IRQn);
-  HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM3_IRQn);
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
-	  pwm_channel1_set_duty((uint32_t)1000);
-	  pwm_channel2_set_duty((uint32_t)1000);
-	  pwm_channel3_set_duty((uint32_t)1000);
-  }
-  /* USER CODE END 3 */
+	ui32counter++;
 }
 
+/**
+ * @brief Main program entry point.
+ *
+ * Initializes the HAL library, configures system peripherals,
+ * enables timer interrupts, and runs the main application loop.
+ *
+ * @retval int Program return status (never returns in embedded systems)
+ */
+int main(void)
+{
+  HAL_Init();
 
+  /* Initialize system components before enabling interrupts */
+  vKernelInterface_initBeforeInterruptEnable();
+
+  /* Initialize peripherals */
+  MX_USART1_UART_Init();
+  MX_ADC1_Init();
+
+  /*enable user interrupts */
+  vKernelInterface_enableInterruptsForAllPeripherals();
+
+  /* Main application loop */
+  for(;;)
+  {
+	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
+	  vKernelInterface_SetPhaseBDuty((uint32_t)dDUTYCYCLE);
+	  vKernelInterface_SetPhaseCDuty((uint32_t)dDUTYCYCLE);
+  }
+}
 
 /**
   * @brief ADC1 Initialization Function
-  * @param None
-  * @retval None
+  *
+  * Configures the ADC peripheral with a single conversion channel
+  * and 12-bit resolution. The ADC is configured for software-triggered
+  * conversions without DMA.
   */
 static void MX_ADC1_Init(void)
 {
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
   ADC_ChannelConfTypeDef sConfig = {0};
 
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
-  */
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
@@ -156,43 +112,45 @@ static void MX_ADC1_Init(void)
   hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
   hadc1.Init.OversamplingMode = DISABLE;
   hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
   }
-
-  /** Configure Regular Channel
-  */
+  else
+  {
+    /*do nothing*/
+  }
+  /** Configure ADC Regular Channel */
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
+  else
+  {
+    /*do nothing*/
+  }
 }
 
 /**
   * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
+  *
+  * Configures USART1 for serial communication with the following
+  * parameters:
+  * - Baudrate: 115200
+  * - 8 data bits
+  * - 1 stop bit
+  * - No parity
   */
 static void MX_USART1_UART_Init(void)
 {
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+
+  huart1.Init.BaudRate = dBAUDRATEUART;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -202,56 +160,70 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
+  else
+  {
+    /*do nothing*/
+  }
 }
 
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
+  * @brief Error handler function.
+  *
+  * This function is executed whenever a HAL error occurs.
+  * The system disables interrupts and enters an infinite loop.
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */
 }
-#ifdef USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
 
-/************************* custom functions **********************/
-void InitBeforeInterruptEnable(void){
+/***************************************************************************
+ * Custom initialization functions
+ ***************************************************************************/
+
+/**
+ * @brief Initialize system modules before enabling interrupts.
+ *
+ * This function executes a sequence of callback functions responsible
+ * for configuring the system clock, GPIOs, PWM modules, and timers.
+ *
+ * The callbacks are defined in the kernel interface layer to allow
+ * hardware abstraction and modular configuration.
+ */
+void vKernelInterface_initBeforeInterruptEnable(void)
+{
 	cbRCC();
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
 }
 
+/**
+ * @brief Enable interrupts for all configured peripherals.
+ *
+ * Configures and enables the Nested Vector Interrupt Controller (NVIC)
+ * for the timers used in the application. Each interrupt is assigned
+ * a priority level before being enabled.
+ *
+ * The following interrupts are enabled:
+ * - TIM2 update interrupt
+ * - TIM3 update interrupt
+ */
+void vKernelInterface_enableInterruptsForAllPeripherals(void)
+{
+  /* Enable TIM2 interrupt */
+  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+
+  /* Enable TIM3 interrupt */
+  HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM3_IRQn);
+}

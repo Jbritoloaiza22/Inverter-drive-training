@@ -1,7 +1,20 @@
 /**
  * @file rcc.c
- * @brief RCC peripheral initialization for STM32G031 microcontroller
- * @author Jesus Daniel Britoloaiza
+ * @brief RCC peripheral initialization for STM32G031 microcontroller.
+ *
+ * This module provides the configuration and initialization of the
+ * Reset and Clock Control (RCC) peripheral required by the system.
+ * It is responsible for enabling clocks for the core peripherals
+ * and configuring the system clock sources used by the application.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
 
 #include "rcc.h"
@@ -14,7 +27,7 @@
  * @note   Optimized implementation for STM32G031 - predefined configuration
  * @author Jesus Daniel Britoloaiza
  */
-static void RCC_ConfigureOscillators(void)
+static void vRCC_ConfigureOscillators(void)
 {
     uint32_t ui32tmp_reg = 0U;
     
@@ -60,7 +73,7 @@ static void RCC_ConfigureOscillators(void)
  * @retval None
  * @note   Optimized implementation for STM32G031 - predefined configuration
  */
-static void RCC_ConfigureClocks(void)
+static void vRCC_ConfigureClocks(void)
 {
     uint32_t ui32tickstart;
     
@@ -113,13 +126,13 @@ static void RCC_ConfigureClocks(void)
  *         interrupt flags, reset registers, backup domain, and control/status registers
  *         for STM32G031 microcontroller with predefined configuration.
  */
-void RCC_Init(void)
+void vRCC_Init(void)
 {
     /* Configure oscillators */
-    RCC_ConfigureOscillators();
+    vRCC_ConfigureOscillators();
     
     /* Configure clocks */
-    RCC_ConfigureClocks();
+    vRCC_ConfigureClocks();
     
     /* Clear and initialize interrupt flags */
     RCC->CIER   = 0x0U;  /* Disable all interrupts */
@@ -236,5 +249,5 @@ void RCC_Init(void)
 }
 
 void cbRCC(void){
-    RCC_Init();
+    vRCC_Init();
 }

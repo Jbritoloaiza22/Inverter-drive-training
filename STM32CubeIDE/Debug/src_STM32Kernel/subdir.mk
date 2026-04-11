@@ -11,7 +11,6 @@ C_SRCS += \
 ../src_STM32Kernel/Core.c \
 ../src_STM32Kernel/Interrupt.c \
 ../src_STM32Kernel/Reset.c \
-../src_STM32Kernel/Timer.c \
 ../src_STM32Kernel/kernel.c \
 ../src_STM32Kernel/syscalls.c \
 ../src_STM32Kernel/sysmem.c 
@@ -20,7 +19,6 @@ OBJS += \
 ./src_STM32Kernel/Core.o \
 ./src_STM32Kernel/Interrupt.o \
 ./src_STM32Kernel/Reset.o \
-./src_STM32Kernel/Timer.o \
 ./src_STM32Kernel/kernel.o \
 ./src_STM32Kernel/startup_stm32g031c8tx.o \
 ./src_STM32Kernel/syscalls.o \
@@ -33,7 +31,6 @@ C_DEPS += \
 ./src_STM32Kernel/Core.d \
 ./src_STM32Kernel/Interrupt.d \
 ./src_STM32Kernel/Reset.d \
-./src_STM32Kernel/Timer.d \
 ./src_STM32Kernel/kernel.d \
 ./src_STM32Kernel/syscalls.d \
 ./src_STM32Kernel/sysmem.d 
@@ -48,7 +45,7 @@ src_STM32Kernel/%.o: ../src_STM32Kernel/%.s src_STM32Kernel/subdir.mk
 clean: clean-src_STM32Kernel
 
 clean-src_STM32Kernel:
-	-$(RM) ./src_STM32Kernel/Core.cyclo ./src_STM32Kernel/Core.d ./src_STM32Kernel/Core.o ./src_STM32Kernel/Core.su ./src_STM32Kernel/Interrupt.cyclo ./src_STM32Kernel/Interrupt.d ./src_STM32Kernel/Interrupt.o ./src_STM32Kernel/Interrupt.su ./src_STM32Kernel/Reset.cyclo ./src_STM32Kernel/Reset.d ./src_STM32Kernel/Reset.o ./src_STM32Kernel/Reset.su ./src_STM32Kernel/Timer.cyclo ./src_STM32Kernel/Timer.d ./src_STM32Kernel/Timer.o ./src_STM32Kernel/Timer.su ./src_STM32Kernel/kernel.cyclo ./src_STM32Kernel/kernel.d ./src_STM32Kernel/kernel.o ./src_STM32Kernel/kernel.su ./src_STM32Kernel/startup_stm32g031c8tx.d ./src_STM32Kernel/startup_stm32g031c8tx.o ./src_STM32Kernel/syscalls.cyclo ./src_STM32Kernel/syscalls.d ./src_STM32Kernel/syscalls.o ./src_STM32Kernel/syscalls.su ./src_STM32Kernel/sysmem.cyclo ./src_STM32Kernel/sysmem.d ./src_STM32Kernel/sysmem.o ./src_STM32Kernel/sysmem.su
+	-$(RM) ./src_STM32Kernel/Core.cyclo ./src_STM32Kernel/Core.d ./src_STM32Kernel/Core.o ./src_STM32Kernel/Core.su ./src_STM32Kernel/Interrupt.cyclo ./src_STM32Kernel/Interrupt.d ./src_STM32Kernel/Interrupt.o ./src_STM32Kernel/Interrupt.su ./src_STM32Kernel/Reset.cyclo ./src_STM32Kernel/Reset.d ./src_STM32Kernel/Reset.o ./src_STM32Kernel/Reset.su ./src_STM32Kernel/kernel.cyclo ./src_STM32Kernel/kernel.d ./src_STM32Kernel/kernel.o ./src_STM32Kernel/kernel.su ./src_STM32Kernel/startup_stm32g031c8tx.d ./src_STM32Kernel/startup_stm32g031c8tx.o ./src_STM32Kernel/syscalls.cyclo ./src_STM32Kernel/syscalls.d ./src_STM32Kernel/syscalls.o ./src_STM32Kernel/syscalls.su ./src_STM32Kernel/sysmem.cyclo ./src_STM32Kernel/sysmem.d ./src_STM32Kernel/sysmem.o ./src_STM32Kernel/sysmem.su
 
 .PHONY: clean-src_STM32Kernel
 
