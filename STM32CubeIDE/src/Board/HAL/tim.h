@@ -3,8 +3,10 @@
 
 #include "stm32g0xx_hal.h"
 
-void TIM_Init(void);
-void TIM_Start(void);
+void TIM2_Init(void);
+void TIM2_Start(void);
 void TIM2_IRQHandler_TIM(void);
-
+void TIM3_Init(void);
+void TIM3_Start(void);
+void TIM3_IRQHandler_TIM(void);
 #endif /* __TIM_H */
