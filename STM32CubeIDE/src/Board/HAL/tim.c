@@ -3,9 +3,6 @@
 
 void TIM2_Init(void)
 {
-	  /* Enable TIM2 and TIM3 clocks */
-	  RCC->APBENR1 |= RCC_APBENR1_TIM2EN | RCC_APBENR1_TIM3EN;
-
 	  /* ---------------- TIM2 ---------------- */
 
 	  /* Reset configuration */
@@ -53,9 +50,6 @@ void TIM2_IRQHandler_TIM(void)
 
 void TIM3_Init(void)
 {
-	  /* Enable TIM2 and TIM3 clocks */
-	  RCC->APBENR1 |= RCC_APBENR1_TIM2EN | RCC_APBENR1_TIM3EN;
-
 	  /* ---------------- TIM3 ---------------- */
 
 	  /* Reset configuration */
