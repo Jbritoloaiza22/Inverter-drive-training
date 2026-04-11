@@ -233,7 +233,7 @@
  *        - Sleep mode clocks
  * @retval None
  */
-void RCC_Init(void);
+void rcc_Init(void);
 
 /**
  * @brief RCC oscillator callback

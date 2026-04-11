@@ -19,6 +19,17 @@
  */
 void cbGPIOS(void);
 
+/**
+ * @brief   PWM update callback.
+ *
+ * This function updates the compare values of the PWM channels used
+ * for three-phase modulation. It typically reads the next values from
+ * a waveform table (e.g., sine table) and writes them to the timer
+ * compare registers to generate the desired waveform.
+ *
+ * @note    Usually executed periodically from a timer interrupt.
+ */
+void cbPWM(void);
 
 /**
  * @brief   Performs system initializations before enabling interrupts.
