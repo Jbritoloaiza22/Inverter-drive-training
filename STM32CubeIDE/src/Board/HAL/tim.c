@@ -15,10 +15,10 @@ void TIM2_Init(void)
 	  TIM2->DIER = 0;
 
 	  /* Set prescaler */
-	  TIM2->PSC = 63;
+	  TIM2->PSC = TIM2_PRESCALER;
 
 	  /* Set auto reload */
-	  TIM2->ARR = 249;
+	  TIM2->ARR = TIM2_ARR;
 
 	  /* Counter mode up */
 	  TIM2->CR1 &= ~TIM_CR1_DIR;
@@ -65,10 +65,10 @@ void TIM3_Init(void)
 	  TIM3->DIER = 0;
 
 	  /* Set prescaler */
-	  TIM3->PSC = 63;
+	  TIM3->PSC = TIM3_PRESCALER;
 
 	  /* Set auto reload */
-	  TIM3->ARR = 999;
+	  TIM3->ARR = TIM3_ARR;
 
 	  /* Counter mode up */
 	  TIM3->CR1 &= ~TIM_CR1_DIR;
