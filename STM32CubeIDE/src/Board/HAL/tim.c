@@ -158,3 +158,15 @@ void tim3_IRQHandler_TIM(void)
     /* Do nothing */
   }
 }
+
+/**
+ * @brief TIM callback function.
+ *
+ * Alias to TIMx_Init(), can be called as a callback or initialization routine.
+ */
+void cbTIM(void){
+	tim2_Init();
+	tim2_Start();
+	tim3_Init();
+	tim3_Start();
+}

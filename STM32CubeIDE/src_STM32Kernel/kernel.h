@@ -1,70 +1,44 @@
-/* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * @file           : main.h
- * @brief          : Header for main.c file.
- *                   This file contains the common defines of the application.
- ******************************************************************************
- * @attention
+ * @file kernel.h
+ * @brief Core kernel definitions and common utilities.
  *
- * Copyright (c) 2026 STMicroelectronics.
- * All rights reserved.
+ * This header file defines core declarations used by the system kernel,
+ * including common error handling mechanisms and shared interfaces
+ * required across the application and hardware abstraction layers.
  *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
+ * It provides compatibility with both C and C++ environments and
+ * includes essential HAL dependencies required by the kernel layer.
  *
- ******************************************************************************
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
-/* USER CODE END Header */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __KERNEL_H
+#define __KERNEL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
-
-/* USER CODE END ET */
-
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
-
-/* Exported functions prototypes ---------------------------------------------*/
+/**
+ * @brief System error handler.
+ *
+ * This function is called when a critical error occurs within the system.
+ * It typically disables interrupts and halts the system execution to
+ * prevent undefined behavior.
+ */
 void Error_Handler(void);
-
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* __KERNEL_H */

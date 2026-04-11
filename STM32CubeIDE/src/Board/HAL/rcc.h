@@ -1,7 +1,21 @@
 /**
  * @file rcc.h
- * @brief RCC register bitfield macros for STM32G031
- * @author Jesus Daniel Britoloaiza
+ * @brief RCC register bitfield macros for STM32G031.
+ *
+ * This header file defines macros and declarations used for configuring
+ * the Reset and Clock Control (RCC) peripheral of the STM32G031
+ * microcontroller. It provides convenient access to register bitfields
+ * and configuration utilities required for enabling and managing
+ * peripheral clocks within the system.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
 
 #include "stm32g031xx.h"

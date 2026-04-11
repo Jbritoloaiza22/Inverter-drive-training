@@ -1,14 +1,25 @@
 /**
  * @file gpio.c
- * @author Jesus Daniel Britoloaiza
- * @brief GPIO configuration for STM32G031 microcontroller, including analog, output, and alternate functions.
+ * @brief GPIO configuration for STM32G031 microcontroller, including analog,
+ * output, and alternate function modes.
  *
- * This module provides a flexible macro-based GPIO initialization system for the STM32G031.
- * It configures pins for ADC inputs, TIM channels, UART, and general-purpose I/O,
- * and allows easy modification of mode, speed, output type, pull-up/pull-down, and alternate functions.
+ * This module provides a flexible macro-based GPIO initialization system
+ * for the STM32G031. It configures pins for ADC inputs, TIM channels,
+ * UART, and general-purpose I/O. The configuration allows easy modification
+ * of mode, speed, output type, pull-up/pull-down resistors, and alternate
+ * function mappings.
  *
- * @note This configuration is intended for the EVS32 motor control board, where certain pins
- *       are reserved for current sensing and PWM outputs.
+ * @note This configuration is intended for the EVS32 motor control board,
+ * where certain pins are reserved for current sensing and PWM outputs.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
 #include "stm32g031xx.h"
 #include "KernelInterface.h"
@@ -158,24 +169,3 @@ void cbGPIOS(void){
 	EnableDrivePinForMotorControl();
 }
 
-/**
- * @brief PWM callback function.
- *
- * Alias to PWM_Init(), can be called as a callback or initialization routine.
- */
-void cbPWM(void){
-	pwm_Init();
-	pwm_Start();
-}
-
-/**
- * @brief TIM callback function.
- *
- * Alias to TIMx_Init(), can be called as a callback or initialization routine.
- */
-void cbTIM(void){
-	tim2_Init();
-	tim2_Start();
-	tim3_Init();
-	tim3_Start();
-}

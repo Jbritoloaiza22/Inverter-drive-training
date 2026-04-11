@@ -15,6 +15,7 @@
  * This source code is provided for educational and research purposes.
  */
 #include "pwm.h"
+#include "KernelInterface.h"
 #include "stm32g031xx.h"
 
 
@@ -139,3 +140,51 @@ void pwm_channel2_set_duty(uint32_t ui32DutyCycle){
 void pwm_channel3_set_duty(uint32_t ui32DutyCycle){
 	TIM1->CCR3 = ui32DutyCycle;
 }
+
+/**
+ * @brief PWM callback function.
+ *
+ * Alias to PWM_Init(), can be called as a callback or initialization routine.
+ */
+void cbPWM(void){
+	pwm_Init();
+	pwm_Start();
+}
+
+/**
+ * @brief Update PWM duty cycle for phase A via kernel interface.
+ *
+ * Provides a hardware abstraction layer allowing the application
+ * to control phase A duty cycle without direct access to the HAL
+ * or low-level PWM driver.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle){
+	pwm_channel1_set_duty(ui32DutyCycle);
+}
+
+/**
+ * @brief Update PWM duty cycle for phase B via kernel interface.
+ *
+ * Provides an interface between the application layer and the
+ * underlying PWM driver managed by the kernel.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
+	pwm_channel1_set_duty(ui32DutyCycle);
+}
+
+/**
+ * @brief Update PWM duty cycle for phase C via kernel interface.
+ *
+ * Allows the application to control the duty cycle of phase C
+ * through the kernel abstraction layer.
+ *
+ * @param ui32DutyCycle Duty cycle value.
+ */
+void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
+	pwm_channel1_set_duty(ui32DutyCycle);;
+}
+

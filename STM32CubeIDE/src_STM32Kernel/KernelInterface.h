@@ -1,21 +1,32 @@
 /**
- * @file    kernelinterface.h
- * @brief   Interface for communication between application and HAL
+ * @file kernelinterface.h
+ * @brief Interface for communication between application and hardware layer.
  *
- * This file contains function prototypes that initialize peripherals
- * and provide an interface layer between the application code and
- * the Hardware Abstraction Layer (HAL). Functions here are meant
- * to configure the system before enabling interrupts.
+ * This file contains function prototypes that initialize system peripherals
+ * and provide an interface layer between the application code and the
+ * low-level hardware configuration. The functions defined here are intended
+ * to configure the system before interrupts are enabled and the main
+ * application starts executing.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
 
 /**
- * @brief   Initializes the GPIOs used by the application.
+ * @brief Initializes the GPIOs used by the application.
  *
- * Configures the microcontroller's input and output pins, setting the mode,
- * output type, speed, and pull-up/pull-down resistors according to system requirements.
- * This allows the application to interact safely with the underlying HAL.
+ * Configures the microcontroller's input and output pins, including
+ * mode, output type, speed, and pull-up/pull-down resistors according
+ * to the system requirements. This allows the application to interact
+ * correctly with the configured hardware peripherals.
  *
- * @note    Must be called before enabling any interrupts that rely on GPIOs.
+ * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
 void cbGPIOS(void);
 
@@ -54,7 +65,7 @@ void cbTIM(void);
  * @note    Recommended to call this at the very start of the program,
  *          after basic hardware initialization.
  */
-void InitBeforeInterruptEnable(void);
+void initBeforeInterruptEnable(void);
 
 /**
  * @brief RCC configuration callback.
@@ -68,3 +79,51 @@ void InitBeforeInterruptEnable(void);
  *       before peripherals dependent on the clock configuration are used.
  */
 void cbRCC(void);
+
+/**
+ * @brief Enable interrupts for all configured peripherals.
+ *
+ * This function enables the NVIC interrupts associated with the
+ * peripherals used by the application. Currently it enables the
+ * interrupts for TIM2 and TIM3 timers.
+ *
+ * @note Must be called after peripheral initialization and before
+ *       starting the timers.
+ */
+void enableInterruptsForAllPeripherals(void);
+
+/**
+ * @brief Set duty cycle for phase A through the kernel interface.
+ *
+ * This function provides an abstraction layer between the application
+ * and the underlying hardware driver (HAL). It allows the application
+ * to update the PWM duty cycle for phase A without directly accessing
+ * the hardware registers or PWM driver.
+ *
+ * @param ui32DutyCycle Duty cycle value to be applied to phase A.
+ */
+void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle);
+
+/**
+ * @brief Set duty cycle for phase B through the kernel interface.
+ *
+ * This function acts as an interface between the application layer
+ * and the hardware abstraction layer (HAL). It updates the PWM duty
+ * cycle corresponding to phase B while keeping the hardware access
+ * encapsulated within the kernel layer.
+ *
+ * @param ui32DutyCycle Duty cycle value to be applied to phase B.
+ */
+void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle);
+
+/**
+ * @brief Set duty cycle for phase C through the kernel interface.
+ *
+ * This function allows the application to modify the PWM duty cycle
+ * for phase C via the kernel interface. It prevents the application
+ * from directly interacting with low-level PWM driver functions,
+ * preserving modularity and hardware abstraction.
+ *
+ * @param ui32DutyCycle Duty cycle value to be applied to phase C.
+ */
+void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle);
