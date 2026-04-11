@@ -1,10 +1,8 @@
 #include "tim.h"
 #include "stm32g031xx.h"
 
-void TIM2_Init(void)
+void tim2_Init(void)
 {
-	  /* ---------------- TIM2 ---------------- */
-
 	  /* Reset configuration */
 	  TIM2->CR1 = 0;
 	  TIM2->CR2 = 0;
@@ -34,24 +32,25 @@ void TIM2_Init(void)
 
 }
 
-void TIM2_Start(void)
+void tim2_Start(void)
 {
   TIM2->CR1 |= TIM_CR1_CEN;
 }
 
-void TIM2_IRQHandler_TIM(void)
+void tim2_IRQHandler_TIM(void)
 {
     if (TIM2->SR & TIM_SR_UIF)
     {
-        TIM2->SR &= ~TIM_SR_UIF;   // limpiar flag
-
+        TIM2->SR &= ~TIM_SR_UIF;   /* clear flag */
+    }
+    else
+    {
+        /*do nothing*/
     }
 }
 
-void TIM3_Init(void)
+void tim3_Init(void)
 {
-	  /* ---------------- TIM3 ---------------- */
-
 	  /* Reset configuration */
 	  TIM3->CR1 = 0;
 	  TIM3->CR2 = 0;
@@ -81,17 +80,20 @@ void TIM3_Init(void)
 
 }
 
-void TIM3_Start(void)
+void tim3_Start(void)
 {
   TIM3->CR1 |= TIM_CR1_CEN;
 }
 
-void TIM3_IRQHandler_TIM(void)
+void tim3_IRQHandler_TIM(void)
 {
     if (TIM3->SR & TIM_SR_UIF)
     {
-        TIM3->SR &= ~TIM_SR_UIF;   // limpiar flag
-
+        TIM3->SR &= ~TIM_SR_UIF;   /*clear flag*/
+    }
+    else
+    {
+        /*do nothing*/
     }
 }
 
