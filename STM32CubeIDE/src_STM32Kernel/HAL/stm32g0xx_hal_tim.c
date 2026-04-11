@@ -279,12 +279,7 @@ HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
     return HAL_ERROR;
   }
 
-  /* Check the parameters */
-  assert_param(IS_TIM_INSTANCE(htim->Instance));
-  assert_param(IS_TIM_COUNTER_MODE(htim->Init.CounterMode));
-  assert_param(IS_TIM_CLOCKDIVISION_DIV(htim->Init.ClockDivision));
-  assert_param(IS_TIM_PERIOD(htim, htim->Init.Period));
-  assert_param(IS_TIM_AUTORELOAD_PRELOAD(htim->Init.AutoReloadPreload));
+
 
   if (htim->State == HAL_TIM_STATE_RESET)
   {
@@ -292,15 +287,6 @@ HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
     htim->Lock = HAL_UNLOCKED;
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
-    /* Reset interrupt callbacks to legacy weak callbacks */
-    TIM_ResetCallback(htim);
-
-    if (htim->Base_MspInitCallback == NULL)
-    {
-      htim->Base_MspInitCallback = HAL_TIM_Base_MspInit;
-    }
-    /* Init the low level hardware : GPIO, CLOCK, NVIC */
-    htim->Base_MspInitCallback(htim);
 #else
     /* Init the low level hardware : GPIO, CLOCK, NVIC */
     HAL_TIM_Base_MspInit(htim);

@@ -19,6 +19,7 @@
 "./src/Board/HAL/gpio.o"
 "./src/Board/HAL/pwm.o"
 "./src/Board/HAL/rcc.o"
+"./src/Board/HAL/tim.o"
 "./src/Board/Interface/BoardInterface.o"
 "./src/Board/Interface/stm32g0xx_hal_msp.o"
 "./src/Board/Interface/stm32g0xx_it.o"

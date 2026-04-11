@@ -5,5 +5,6 @@
 
 void TIM_Init(void);
 void TIM_Start(void);
+void TIM2_IRQHandler_TIM(void);
 
 #endif /* __TIM_H */
