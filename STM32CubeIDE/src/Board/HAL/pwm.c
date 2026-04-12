@@ -185,7 +185,7 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
  * @param ui32DutyCycle Duty cycle value.
  */
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
-	vPWM_channel3SetDuty(ui32DutyCycle);;
+	vPWM_channel3SetDuty(ui32DutyCycle);
 }
 
 void vKernelInterface_SetPhaseA_OFF(uint32_t ui32DutyCycle)

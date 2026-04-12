@@ -78,10 +78,7 @@ int main(void)
   vKernelInterface_TableSinInit();
   while (1)
   {
-    test0 = fKernelInterface_SineLookup(0.0f);
-    test1 = fKernelInterface_SineLookup(dPI / 2);
-    test2 = fKernelInterface_SineLookup(dPI);
-    test3 = fKernelInterface_SineLookup(3 * dPI / 2);
+
   }
 
 }

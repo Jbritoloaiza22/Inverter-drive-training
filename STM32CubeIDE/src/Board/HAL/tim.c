@@ -20,12 +20,20 @@
 
 #include "tim.h"
 #include "stm32g031xx.h"
+#include "KernelInterface.h"
 
 #define dSINTABLESIZE 1024
 #define dPI 3.14159265358979323846f
 float sin_table[dSINTABLESIZE];
 /* global variables */
 volatile float theta = 0.0f; /* radians */
+float phase_v = 0.0f;
+float phase_u = 0.0f;
+float phase_w = 0.0f;
+
+float duty_u = 0.0f;
+float duty_v = 0.0f;
+float duty_w = 0.0f;
 /**
  * @brief Initialize TIM2 peripheral.
  *
@@ -162,12 +170,26 @@ void vTIM3_IRQHandler(void)
   {
     /* Do nothing */
   }
-  theta += 0.1f;
+  theta += 0.06f;
   if(theta >= 2.0f * dPI)
   {
     theta -= 2.0f * dPI;
   }
+  phase_u = fKernelInterface_SineLookup(theta);
+  phase_v = fKernelInterface_SineLookup(theta - 2.0f * dPI / 3.0f);
+  phase_w = fKernelInterface_SineLookup(theta + 2.0f * dPI / 3.0f);
 
+  duty_u = ((phase_u + 1.0f) * 0.5f) * 1999;
+  duty_v = ((phase_v + 1.0f) * 0.5f) * 1999;
+  duty_w = ((phase_w + 1.0f) * 0.5f) * 1999;
+
+  if(duty_u > 1999)duty_u = 1999;
+  if(duty_v > 1999)duty_v = 1999;
+  if(duty_w > 1999)duty_w = 1999;
+
+  vKernelInterface_SetPhaseADuty((uint32_t)duty_u);
+  vKernelInterface_SetPhaseBDuty((uint32_t)duty_v );
+  vKernelInterface_SetPhaseCDuty((uint32_t)duty_w );
 
 }
 
@@ -190,7 +212,7 @@ void vKernelInterface_TableSinInit(void)
   for(uint32_t i = 0; i < dSINTABLESIZE; i++)
   {
     /* Compute sine values scaled to the desired range (e.g., 0 to 1000) */
-    sin_table[i] = (int16_t)((sinf((2 * dPI * i) / dSINTABLESIZE)));
+    sin_table[i] = ((sinf((2 * dPI * (float)i) / (float)dSINTABLESIZE)));
   }
 }
 
