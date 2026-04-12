@@ -21,6 +21,11 @@
 #include "tim.h"
 #include "stm32g031xx.h"
 
+#define dSINTABLESIZE 1024
+#define dPI 3.14159265358979323846f
+float sin_table[dSINTABLESIZE];
+/* global variables */
+volatile float theta = 0.0f; /* radians */
 /**
  * @brief Initialize TIM2 peripheral.
  *
@@ -157,6 +162,13 @@ void vTIM3_IRQHandler(void)
   {
     /* Do nothing */
   }
+  theta += 0.1f;
+  if(theta >= 2.0f * dPI)
+  {
+    theta -= 2.0f * dPI;
+  }
+
+
 }
 
 /**
@@ -169,4 +181,24 @@ void cbTIM(void){
 	vTIM2_Start();
 	vTIM3_Init();
 	vTIM3_Start();
+}
+
+void vKernelInterface_TableSinInit(void)
+{
+  /* Initialize the sine table with precomputed values */
+  /* This function can be called during system initialization if needed */
+  for(uint32_t i = 0; i < dSINTABLESIZE; i++)
+  {
+    /* Compute sine values scaled to the desired range (e.g., 0 to 1000) */
+    sin_table[i] = (int16_t)((sinf((2 * dPI * i) / dSINTABLESIZE)));
+  }
+}
+
+float fKernelInterface_SineLookup(float angle)
+{
+  while(angle < 0)angle += 2.0f * dPI;
+  while(angle >= 2.0f * dPI)angle -= 2.0f * dPI;
+
+  int32_t index = (uint32_t)(angle * (dSINTABLESIZE / (2.0f * dPI)));
+  return sin_table[index];
 }

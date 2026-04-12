@@ -127,3 +127,7 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle);
  * @param ui32DutyCycle Duty cycle value to be applied to phase C.
  */
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle);
+
+
+void vKernelInterface_TableSinInit(void);
+float fKernelInterface_SineLookup(float angle);

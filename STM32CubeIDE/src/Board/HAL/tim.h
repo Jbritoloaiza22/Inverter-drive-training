@@ -95,5 +95,4 @@ void vTIM3_Start(void);
  * by TIM3 and clears the interrupt flag.
  */
 void vTIM3_IRQHandler(void);
-
 #endif /* __TIM_H */
