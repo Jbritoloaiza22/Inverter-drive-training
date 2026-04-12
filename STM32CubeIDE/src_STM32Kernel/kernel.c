@@ -25,7 +25,9 @@
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
 #define dBAUDRATEUART 115200
-
+#define SIN_TABLE_SIZE 1024
+#define PI 3.14159265358979323846f
+float sin_table[SIN_TABLE_SIZE];
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
 
@@ -35,7 +37,8 @@ UART_HandleTypeDef huart1;
 /* Private function prototypes */
 static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
-
+void sin_table_init(void);
+static inline float sin_lookup(float angle);
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
 
@@ -71,12 +74,17 @@ int main(void)
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
-
+  float test0 = 0.0;
+  float test1 = 0.0;
+  float test2 = 0.0;
+  float test3 = 0.0;
+  sin_table_init();
   while (1)
   {
-    vKernelInterface_SetPhaseADuty((uint32_t)1999/2);
-    vKernelInterface_SetPhaseBDuty((uint32_t)1999/3);
-    vKernelInterface_SetPhaseCDuty((uint32_t)1999/7);
+    test0 = sin_lookup(0.0f);
+    test1 = sin_lookup(PI / 2);
+    test2 = sin_lookup(PI);
+    test3 = sin_lookup(3 * PI / 2);
   }
 
 }
@@ -225,4 +233,24 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void)
   /* Enable TIM3 interrupt */
   HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
+}
+
+void sin_table_init(void)
+{
+  /* Initialize the sine table with precomputed values */
+  /* This function can be called during system initialization if needed */
+  for(uint32_t i = 0; i < SIN_TABLE_SIZE; i++)
+  {
+    /* Compute sine values scaled to the desired range (e.g., 0 to 1000) */
+    sin_table[i] = (int16_t)((sinf((2 * PI * i) / SIN_TABLE_SIZE)));
+  }
+}
+
+static inline float sin_lookup(float angle)
+{
+  while(angle < 0)angle += 2.0f * PI;
+  while(angle >= 2.0f * PI)angle -= 2.0f * PI;
+
+  int32_t index = (uint32_t)(angle * (SIN_TABLE_SIZE / (2.0f * PI)));
+  return sin_table[index];
 }
