@@ -57,7 +57,7 @@ void vPWM_Init(void)
   TIM1->CCMR3 = 0;
   TIM1->CCER  = TIM_CCER_CC1E | TIM_CCER_CC1NE | TIM_CCER_CC2E | TIM_CCER_CC2NE | TIM_CCER_CC3E | TIM_CCER_CC3NE;
   TIM1->CNT   = 0;
-  TIM1->BDTR  = TIM_BDTR_BK2P | TIM_BDTR_BKP | TIM_BDTR_MOE;
+  TIM1->BDTR  = TIM_BDTR_BK2P | TIM_BDTR_BKP | TIM_BDTR_MOE | 0xa;
   TIM1->DCR   = 0;
   TIM1->DMAR  = 0;
   TIM1->CR1   |=  TIM_CR1_CEN | TIM_CR1_DIR | TIM_CR1_CMS_1 | TIM_CR1_ARPE | TIM_CR1_CKD_0;
@@ -186,5 +186,30 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
  */
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
 	vPWM_channel3SetDuty(ui32DutyCycle);;
+}
+
+void vKernelInterface_SetPhaseA_OFF(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER &= ~TIM_CCER_CC1E;
+}
+void vKernelInterface_SetPhaseB_OFF(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER &= ~TIM_CCER_CC2E;
+}
+void vKernelInterface_SetPhaseC_OFF(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER &= ~TIM_CCER_CC3E;
+}
+void vKernelInterface_SetPhaseA_ON(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER |= TIM_CCER_CC1E;
+}
+void vKernelInterface_SetPhaseB_ON(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER |= TIM_CCER_CC2E;
+}
+void vKernelInterface_SetPhaseC_ON(uint32_t ui32DutyCycle)
+{
+    TIM1->CCER |= TIM_CCER_CC3E;
 }
 

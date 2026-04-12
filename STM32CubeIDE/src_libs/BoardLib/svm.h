@@ -4,16 +4,16 @@
 #include <stdint.h>
 
 /**
- * @brief Inicializa el módulo SVM (si requiere configuración futura).
+ * @brief Initializes the SVM module.
  */
 void vSVM_Init(void);
 
 /**
- * @brief Genera PWM trifásico usando Space Vector Modulation.
+ * @brief Generates three-phase PWM using Space Vector Modulation.
  *
- * @param Valpha Componente alfa normalizada (-1.0 a 1.0)
- * @param Vbeta  Componente beta normalizada (-1.0 a 1.0)
+ * @param Valpha Alpha component (-1.0 to 1.0)
+ * @param Vbeta  Beta component (-1.0 to 1.0)
  */
 void vSVM_Update(float Valpha, float Vbeta);
 
-#endif
+#endif /* SVM_H */

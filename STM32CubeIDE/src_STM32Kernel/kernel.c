@@ -24,9 +24,21 @@
 #include "kernel.h"
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
-
+#define PWM_MAX 1999
+#define TABLE_SIZE 64
 #define dDUTYCYCLE 1000
 #define dBAUDRATEUART 115200
+#define PI 3.14159265359f
+uint16_t sin_table[TABLE_SIZE] = {
+1000,1097,1193,1287,1378,1466,1550,1630,
+1705,1775,1840,1899,1952,1999,1952,1899,
+1840,1775,1705,1630,1550,1466,1378,1287,
+1193,1097,1000,902,806,712,621,533,
+449,369,294,224,159,100,47,0,
+47,100,159,224,294,369,449,533,
+621,712,806,902,1000,1097,1193,1287,
+1378,1466,1550,1630
+};
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
 
@@ -73,13 +85,28 @@ int main(void)
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
 
-  /* Main application loop */
-  for(;;)
-  {
-	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseBDuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseCDuty((uint32_t)dDUTYCYCLE);
-  }
+  float angle = 0.0f;
+  float speed = 0.0f;
+  uint8_t index = 0;
+    for (volatile int i = 0; i < 20000; i++)
+    {
+        vPWM_UpdatePhaseCompare(1500, 500, 500);
+        for (volatile int d = 0; d < 200; d++);
+    }
+    while (1)
+    {
+        uint16_t dutyA = sin_table[index];
+        uint16_t dutyB = sin_table[(index + 21) & 63]; // 120°
+        uint16_t dutyC = sin_table[(index + 42) & 63]; // 240°
+
+        vPWM_UpdatePhaseCompare(dutyA, dutyB, dutyC);
+
+        index = (index + 1) & 63;
+
+        /* 🔥 CONTROL DE VELOCIDAD */
+        for (volatile int d = 0; d < 40000; d++);
+    }
+
 }
 
 /**
