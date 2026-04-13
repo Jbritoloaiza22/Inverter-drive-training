@@ -95,41 +95,35 @@ void cbRCC(void);
 void vKernelInterface_enableInterruptsForAllPeripherals(void);
 
 /**
- * @brief Set duty cycle for phase A through the kernel interface.
+ * @brief TIM2 interrupt handler interface.
  *
- * This function provides an abstraction layer between the application
- * and the underlying hardware driver (HAL). It allows the application
- * to update the PWM duty cycle for phase A without directly accessing
- * the hardware registers or PWM driver.
+ * This function is called by the hardware interrupt vector when
+ * the TIM2 update interrupt occurs. It acts as a bridge between
+ * the low-level ISR and the KernelInterface layer.
  *
- * @param ui32DutyCycle Duty cycle value to be applied to phase A.
+ * Responsibilities:
+ * - Clear the TIM2 interrupt flag
+ * - Execute timer-related tasks (if required)
+ * - Dispatch events to higher-level modules
+ *
+ * @note This function should be linked to the actual ISR
+ *       (e.g., TIM2_IRQHandler) in the interrupt vector table.
  */
-void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle);
-
-/**
- * @brief Set duty cycle for phase B through the kernel interface.
- *
- * This function acts as an interface between the application layer
- * and the hardware abstraction layer (HAL). It updates the PWM duty
- * cycle corresponding to phase B while keeping the hardware access
- * encapsulated within the kernel layer.
- *
- * @param ui32DutyCycle Duty cycle value to be applied to phase B.
- */
-void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle);
-
-/**
- * @brief Set duty cycle for phase C through the kernel interface.
- *
- * This function allows the application to modify the PWM duty cycle
- * for phase C via the kernel interface. It prevents the application
- * from directly interacting with low-level PWM driver functions,
- * preserving modularity and hardware abstraction.
- *
- * @param ui32DutyCycle Duty cycle value to be applied to phase C.
- */
-void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle);
-
-
 void vKernelInterface_TIM2IRQHandler(void);
+
+/**
+ * @brief TIM3 interrupt handler interface.
+ *
+ * This function is invoked when a TIM3 update interrupt is triggered.
+ * It provides an abstraction layer between the hardware ISR and
+ * the application/kernel logic.
+ *
+ * Responsibilities:
+ * - Clear the TIM3 interrupt flag
+ * - Handle periodic tasks associated with TIM3
+ * - Serve as a hook for scheduler or background processing
+ *
+ * @note This function must be called from the TIM3 ISR
+ *       (e.g., TIM3_IRQHandler).
+ */
 void vKernelInterface_TIM3IRQHandler(void);
