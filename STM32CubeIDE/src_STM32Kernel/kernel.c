@@ -24,9 +24,9 @@
 #include "kernel.h"
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
-
-#define dDUTYCYCLE 1000
 #define dBAUDRATEUART 115200
+#define dPI 3.14159265358979323846f
+
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
 
@@ -36,7 +36,6 @@ UART_HandleTypeDef huart1;
 /* Private function prototypes */
 static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
-
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
 
@@ -72,14 +71,16 @@ int main(void)
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
-
-  /* Main application loop */
-  for(;;)
+  float test0 = 0.0;
+  float test1 = 0.0;
+  float test2 = 0.0;
+  float test3 = 0.0;
+  vSPWM_TableSinInit();
+  while (1)
   {
-	  vKernelInterface_SetPhaseADuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseBDuty((uint32_t)dDUTYCYCLE);
-	  vKernelInterface_SetPhaseCDuty((uint32_t)dDUTYCYCLE);
+
   }
+
 }
 
 /**

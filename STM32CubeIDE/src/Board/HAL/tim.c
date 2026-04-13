@@ -20,7 +20,7 @@
 
 #include "tim.h"
 #include "stm32g031xx.h"
-
+#include "KernelInterface.h"
 /**
  * @brief Initialize TIM2 peripheral.
  *
@@ -78,7 +78,7 @@ void vTIM2_Start(void)
  * Additional application logic can be inserted inside
  * the interrupt service routine.
  */
-void vTIM2_IRQHandler(void)
+void vTIM2_ClearlRQTim2(void)
 {
   if (TIM2->SR & TIM_SR_UIF)
   {
@@ -147,7 +147,7 @@ void vTIM3_Start(void)
  * Additional application logic can be executed inside
  * this interrupt service routine.
  */
-void vTIM3_IRQHandler(void)
+void vTIM3_ClearlRQTim3(void)
 {
   if (TIM3->SR & TIM_SR_UIF)
   {
@@ -157,6 +157,7 @@ void vTIM3_IRQHandler(void)
   {
     /* Do nothing */
   }
+
 }
 
 /**

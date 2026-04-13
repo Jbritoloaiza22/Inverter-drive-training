@@ -70,7 +70,7 @@ void vTIM2_Start(void);
  * This function processes the update interrupt generated
  * by TIM2 and clears the corresponding interrupt flag.
  */
-void vTIM2_IRQHandler(void);
+void vTIM2_ClearlRQTim2(void);
 
 /**
  * @brief Initialize TIM3 peripheral.
@@ -94,6 +94,5 @@ void vTIM3_Start(void);
  * This function handles the update interrupt generated
  * by TIM3 and clears the interrupt flag.
  */
-void vTIM3_IRQHandler(void);
-
+void vTIM3_ClearlRQTim3(void);
 #endif /* __TIM_H */

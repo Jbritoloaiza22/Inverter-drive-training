@@ -20,6 +20,7 @@ RM := rm -rf
 -include src/Board/Interface/subdir.mk
 -include src/Board/HAL/subdir.mk
 -include src/Board/ClassB/subdir.mk
+-include src/Board/BoardApp/subdir.mk
 -include src/APP/Inverter/subdir.mk
 -include src/APP/Interface/subdir.mk
 -include src/APP/subdir.mk

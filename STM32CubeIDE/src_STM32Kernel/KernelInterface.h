@@ -28,6 +28,7 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
+#include <stdint.h>
 void cbGPIOS(void);
 
 /**
@@ -127,3 +128,7 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle);
  * @param ui32DutyCycle Duty cycle value to be applied to phase C.
  */
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle);
+
+
+void vKernelInterface_TIM2IRQHandler(void);
+void vKernelInterface_TIM3IRQHandler(void);
