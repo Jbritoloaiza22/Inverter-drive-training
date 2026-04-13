@@ -27,6 +27,7 @@ SUBDIRS := \
 src/APP \
 src/APP/Interface \
 src/APP/Inverter \
+src/Board/BoardApp \
 src/Board/ClassB \
 src/Board/HAL \
 src/Board/Interface \
