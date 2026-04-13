@@ -57,7 +57,7 @@ static RCC_t rcc;
  *
  * @param[in] self Pointer to RCC object (not used, kept for OOP consistency)
  */
-static void RCC_ConfigureOscillators(RCC_t *self)
+static void vRCC_ConfigureOscillators(RCC_t *self)
 {
     (void)self;
 
@@ -109,7 +109,7 @@ static void RCC_ConfigureOscillators(RCC_t *self)
  *
  * @param[in] self Pointer to RCC object (not used, kept for abstraction)
  */
-static void RCC_ConfigureClocks(RCC_t *self)
+static void vRCC_ConfigureClocks(RCC_t *self)
 {
     (void)self;
 
@@ -157,12 +157,12 @@ static void RCC_ConfigureClocks(RCC_t *self)
  *
  * @param[in,out] self Pointer to RCC object instance
  */
-void RCC_Init(RCC_t *self)
+void vRCC_Init(RCC_t *self)
 {
     if (self == 0) return;
 
-    RCC_ConfigureOscillators(self);
-    RCC_ConfigureClocks(self);
+    vRCC_ConfigureOscillators(self);
+    vRCC_ConfigureClocks(self);
 
     /* Reset interrupt registers */
     RCC->CIER = 0x0U;
@@ -176,7 +176,7 @@ void RCC_Init(RCC_t *self)
     RCC->APBRSTR2 = 0x0U;
 
     /* Enable required peripherals */
-    RCC_EnablePeripherals(self);
+    vRCC_EnablePeripherals(self);
 
     self->initialized = 1U;
 }
@@ -196,7 +196,7 @@ void RCC_Init(RCC_t *self)
  *
  * @param[in] self Pointer to RCC object (not used internally)
  */
-void RCC_EnablePeripherals(RCC_t *self)
+void vRCC_EnablePeripherals(RCC_t *self)
 {
     (void)self;
 
@@ -237,5 +237,5 @@ void RCC_EnablePeripherals(RCC_t *self)
  */
 void cbRCC(void)
 {
-    RCC_Init(&rcc);
+    vRCC_Init(&rcc);
 }

@@ -27,9 +27,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000028  00000000  00000000  0000700c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000090cb  00000000  00000000  00007034  2**0
+ 12 .debug_info   000090c9  00000000  00000000  00007034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001bbc  00000000  00000000  000100ff  2**0
+ 13 .debug_abbrev 00001bbd  00000000  00000000  000100fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00000920  00000000  00000000  00011cc0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  0000efde  00000000  00000000  00012cb3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00009e68  00000000  00000000  00021c91  2**0
+ 17 .debug_line   00009e66  00000000  00000000  00021c91  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0005f5d4  00000000  00000000  0002baf9  2**0
+ 18 .debug_str    0005f5dc  00000000  00000000  0002baf7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0008b0cd  2**0
+ 19 .comment      00000043  00000000  00000000  0008b0d3  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000022ac  00000000  00000000  0008b110  2**2
+ 20 .debug_frame  000022ac  00000000  00000000  0008b118  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000096  00000000  00000000  0008d3bc  2**0
+ 21 .debug_line_str 00000096  00000000  00000000  0008d3c4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2698,10 +2698,10 @@ void vKernelInterface_TIM2IRQHandler(void)
  8001554:	b580      	push	{r7, lr}
  8001556:	af00      	add	r7, sp, #0
 
-  Timer_ClearIRQ(&tim2);
+  vTimer_ClearIRQ(&tim2);
  8001558:	4b03      	ldr	r3, [pc, #12]	@ (8001568 <vKernelInterface_TIM2IRQHandler+0x14>)
  800155a:	0018      	movs	r0, r3
- 800155c:	f000 ff43 	bl	80023e6 <Timer_ClearIRQ>
+ 800155c:	f000 ff43 	bl	80023e6 <vTimer_ClearIRQ>
 }
  8001560:	46c0      	nop			@ (mov r8, r8)
  8001562:	46bd      	mov	sp, r7
@@ -2718,10 +2718,10 @@ void vKernelInterface_TIM3IRQHandler(void)
  800156c:	b580      	push	{r7, lr}
  800156e:	af00      	add	r7, sp, #0
 
-  Timer_ClearIRQ(&tim3);
+  vTimer_ClearIRQ(&tim3);
  8001570:	4b04      	ldr	r3, [pc, #16]	@ (8001584 <vKernelInterface_TIM3IRQHandler+0x18>)
  8001572:	0018      	movs	r0, r3
- 8001574:	f000 ff37 	bl	80023e6 <Timer_ClearIRQ>
+ 8001574:	f000 ff37 	bl	80023e6 <vTimer_ClearIRQ>
   vSPWM_Update();
  8001578:	f002 fcd4 	bl	8003f24 <vSPWM_Update>
 }
@@ -4352,12 +4352,12 @@ void cbPWM(void)
  8002124:	000007cf 	.word	0x000007cf
  8002128:	20000028 	.word	0x20000028
 
-0800212c <RCC_ConfigureOscillators>:
+0800212c <vRCC_ConfigureOscillators>:
  * - Enable PLL and wait for lock
  *
  * @param[in] self Pointer to RCC object (not used, kept for OOP consistency)
  */
-static void RCC_ConfigureOscillators(RCC_t *self)
+static void vRCC_ConfigureOscillators(RCC_t *self)
 {
  800212c:	b580      	push	{r7, lr}
  800212e:	b084      	sub	sp, #16
@@ -4371,27 +4371,27 @@ static void RCC_ConfigureOscillators(RCC_t *self)
 
     /* Disable HSE */
     tmp = RCC->CR;
- 8002138:	4b25      	ldr	r3, [pc, #148]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 8002138:	4b25      	ldr	r3, [pc, #148]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  800213a:	681b      	ldr	r3, [r3, #0]
  800213c:	60fb      	str	r3, [r7, #12]
     tmp &= ~RCC_CR_HSEON;
  800213e:	68fb      	ldr	r3, [r7, #12]
- 8002140:	4a24      	ldr	r2, [pc, #144]	@ (80021d4 <RCC_ConfigureOscillators+0xa8>)
+ 8002140:	4a24      	ldr	r2, [pc, #144]	@ (80021d4 <vRCC_ConfigureOscillators+0xa8>)
  8002142:	4013      	ands	r3, r2
  8002144:	60fb      	str	r3, [r7, #12]
     RCC->CR = tmp;
- 8002146:	4b22      	ldr	r3, [pc, #136]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 8002146:	4b22      	ldr	r3, [pc, #136]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  8002148:	68fa      	ldr	r2, [r7, #12]
  800214a:	601a      	str	r2, [r3, #0]
 
     while (RCC->CR & RCC_CR_HSERDY) {}
  800214c:	46c0      	nop			@ (mov r8, r8)
- 800214e:	4b20      	ldr	r3, [pc, #128]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 800214e:	4b20      	ldr	r3, [pc, #128]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  8002150:	681a      	ldr	r2, [r3, #0]
  8002152:	2380      	movs	r3, #128	@ 0x80
  8002154:	029b      	lsls	r3, r3, #10
  8002156:	4013      	ands	r3, r2
- 8002158:	d1f9      	bne.n	800214e <RCC_ConfigureOscillators+0x22>
+ 8002158:	d1f9      	bne.n	800214e <vRCC_ConfigureOscillators+0x22>
 
     /* Enable HSE */
     tmp |= RCC_CR_HSEON;
@@ -4401,53 +4401,53 @@ static void RCC_ConfigureOscillators(RCC_t *self)
  8002160:	4313      	orrs	r3, r2
  8002162:	60fb      	str	r3, [r7, #12]
     RCC->CR = tmp;
- 8002164:	4b1a      	ldr	r3, [pc, #104]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 8002164:	4b1a      	ldr	r3, [pc, #104]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  8002166:	68fa      	ldr	r2, [r7, #12]
  8002168:	601a      	str	r2, [r3, #0]
 
     while (!(RCC->CR & RCC_CR_HSERDY)) {}
  800216a:	46c0      	nop			@ (mov r8, r8)
- 800216c:	4b18      	ldr	r3, [pc, #96]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 800216c:	4b18      	ldr	r3, [pc, #96]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  800216e:	681a      	ldr	r2, [r3, #0]
  8002170:	2380      	movs	r3, #128	@ 0x80
  8002172:	029b      	lsls	r3, r3, #10
  8002174:	4013      	ands	r3, r2
- 8002176:	d0f9      	beq.n	800216c <RCC_ConfigureOscillators+0x40>
+ 8002176:	d0f9      	beq.n	800216c <vRCC_ConfigureOscillators+0x40>
 
     /* HSI calibration */
     RCC->ICSCR = 0x406FU;
- 8002178:	4b15      	ldr	r3, [pc, #84]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
- 800217a:	4a17      	ldr	r2, [pc, #92]	@ (80021d8 <RCC_ConfigureOscillators+0xac>)
+ 8002178:	4b15      	ldr	r3, [pc, #84]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
+ 800217a:	4a17      	ldr	r2, [pc, #92]	@ (80021d8 <vRCC_ConfigureOscillators+0xac>)
  800217c:	605a      	str	r2, [r3, #4]
 
     /* Disable PLL */
     tmp = RCC->CR;
- 800217e:	4b14      	ldr	r3, [pc, #80]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 800217e:	4b14      	ldr	r3, [pc, #80]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  8002180:	681b      	ldr	r3, [r3, #0]
  8002182:	60fb      	str	r3, [r7, #12]
     tmp &= ~RCC_CR_PLLON;
  8002184:	68fb      	ldr	r3, [r7, #12]
- 8002186:	4a15      	ldr	r2, [pc, #84]	@ (80021dc <RCC_ConfigureOscillators+0xb0>)
+ 8002186:	4a15      	ldr	r2, [pc, #84]	@ (80021dc <vRCC_ConfigureOscillators+0xb0>)
  8002188:	4013      	ands	r3, r2
  800218a:	60fb      	str	r3, [r7, #12]
     RCC->CR = tmp;
- 800218c:	4b10      	ldr	r3, [pc, #64]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 800218c:	4b10      	ldr	r3, [pc, #64]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  800218e:	68fa      	ldr	r2, [r7, #12]
  8002190:	601a      	str	r2, [r3, #0]
 
     while (RCC->CR & RCC_CR_PLLRDY) {}
  8002192:	46c0      	nop			@ (mov r8, r8)
- 8002194:	4b0e      	ldr	r3, [pc, #56]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 8002194:	4b0e      	ldr	r3, [pc, #56]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  8002196:	681a      	ldr	r2, [r3, #0]
  8002198:	2380      	movs	r3, #128	@ 0x80
  800219a:	049b      	lsls	r3, r3, #18
  800219c:	4013      	ands	r3, r2
- 800219e:	d1f9      	bne.n	8002194 <RCC_ConfigureOscillators+0x68>
+ 800219e:	d1f9      	bne.n	8002194 <vRCC_ConfigureOscillators+0x68>
 
     /* Configure PLL */
     RCC->PLLCFGR = 0x73021002U;
- 80021a0:	4b0b      	ldr	r3, [pc, #44]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
- 80021a2:	4a0f      	ldr	r2, [pc, #60]	@ (80021e0 <RCC_ConfigureOscillators+0xb4>)
+ 80021a0:	4b0b      	ldr	r3, [pc, #44]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
+ 80021a2:	4a0f      	ldr	r2, [pc, #60]	@ (80021e0 <vRCC_ConfigureOscillators+0xb4>)
  80021a4:	60da      	str	r2, [r3, #12]
 
     /* Enable PLL */
@@ -4458,18 +4458,18 @@ static void RCC_ConfigureOscillators(RCC_t *self)
  80021ac:	4313      	orrs	r3, r2
  80021ae:	60fb      	str	r3, [r7, #12]
     RCC->CR = tmp;
- 80021b0:	4b07      	ldr	r3, [pc, #28]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 80021b0:	4b07      	ldr	r3, [pc, #28]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  80021b2:	68fa      	ldr	r2, [r7, #12]
  80021b4:	601a      	str	r2, [r3, #0]
 
     while (!(RCC->CR & RCC_CR_PLLRDY)) {}
  80021b6:	46c0      	nop			@ (mov r8, r8)
- 80021b8:	4b05      	ldr	r3, [pc, #20]	@ (80021d0 <RCC_ConfigureOscillators+0xa4>)
+ 80021b8:	4b05      	ldr	r3, [pc, #20]	@ (80021d0 <vRCC_ConfigureOscillators+0xa4>)
  80021ba:	681a      	ldr	r2, [r3, #0]
  80021bc:	2380      	movs	r3, #128	@ 0x80
  80021be:	049b      	lsls	r3, r3, #18
  80021c0:	4013      	ands	r3, r2
- 80021c2:	d0f9      	beq.n	80021b8 <RCC_ConfigureOscillators+0x8c>
+ 80021c2:	d0f9      	beq.n	80021b8 <vRCC_ConfigureOscillators+0x8c>
 }
  80021c4:	46c0      	nop			@ (mov r8, r8)
  80021c6:	46c0      	nop			@ (mov r8, r8)
@@ -4483,12 +4483,12 @@ static void RCC_ConfigureOscillators(RCC_t *self)
  80021dc:	feffffff 	.word	0xfeffffff
  80021e0:	73021002 	.word	0x73021002
 
-080021e4 <RCC_ConfigureClocks>:
+080021e4 <vRCC_ConfigureClocks>:
  * It ensures proper synchronization and waits for clock switch completion.
  *
  * @param[in] self Pointer to RCC object (not used, kept for abstraction)
  */
-static void RCC_ConfigureClocks(RCC_t *self)
+static void vRCC_ConfigureClocks(RCC_t *self)
 {
  80021e4:	b580      	push	{r7, lr}
  80021e6:	b084      	sub	sp, #16
@@ -4502,18 +4502,18 @@ static void RCC_ConfigureClocks(RCC_t *self)
 
     /* Configure FLASH latency */
     FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_0;
- 80021f0:	4b20      	ldr	r3, [pc, #128]	@ (8002274 <RCC_ConfigureClocks+0x90>)
+ 80021f0:	4b20      	ldr	r3, [pc, #128]	@ (8002274 <vRCC_ConfigureClocks+0x90>)
  80021f2:	681b      	ldr	r3, [r3, #0]
  80021f4:	2207      	movs	r2, #7
  80021f6:	4393      	bics	r3, r2
  80021f8:	001a      	movs	r2, r3
- 80021fa:	4b1e      	ldr	r3, [pc, #120]	@ (8002274 <RCC_ConfigureClocks+0x90>)
+ 80021fa:	4b1e      	ldr	r3, [pc, #120]	@ (8002274 <vRCC_ConfigureClocks+0x90>)
  80021fc:	2101      	movs	r1, #1
  80021fe:	430a      	orrs	r2, r1
  8002200:	601a      	str	r2, [r3, #0]
 
     while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_0)
- 8002202:	e005      	b.n	8002210 <RCC_ConfigureClocks+0x2c>
+ 8002202:	e005      	b.n	8002210 <vRCC_ConfigureClocks+0x2c>
     {
         if (++tick > dtimeout) break;
  8002204:	68fb      	ldr	r3, [r7, #12]
@@ -4521,36 +4521,36 @@ static void RCC_ConfigureClocks(RCC_t *self)
  8002208:	60fb      	str	r3, [r7, #12]
  800220a:	68fb      	ldr	r3, [r7, #12]
  800220c:	2b64      	cmp	r3, #100	@ 0x64
- 800220e:	d806      	bhi.n	800221e <RCC_ConfigureClocks+0x3a>
+ 800220e:	d806      	bhi.n	800221e <vRCC_ConfigureClocks+0x3a>
     while ((FLASH->ACR & FLASH_ACR_LATENCY) != FLASH_ACR_LATENCY_0)
- 8002210:	4b18      	ldr	r3, [pc, #96]	@ (8002274 <RCC_ConfigureClocks+0x90>)
+ 8002210:	4b18      	ldr	r3, [pc, #96]	@ (8002274 <vRCC_ConfigureClocks+0x90>)
  8002212:	681b      	ldr	r3, [r3, #0]
  8002214:	2207      	movs	r2, #7
  8002216:	4013      	ands	r3, r2
  8002218:	2b01      	cmp	r3, #1
- 800221a:	d1f3      	bne.n	8002204 <RCC_ConfigureClocks+0x20>
- 800221c:	e000      	b.n	8002220 <RCC_ConfigureClocks+0x3c>
+ 800221a:	d1f3      	bne.n	8002204 <vRCC_ConfigureClocks+0x20>
+ 800221c:	e000      	b.n	8002220 <vRCC_ConfigureClocks+0x3c>
         if (++tick > dtimeout) break;
  800221e:	46c0      	nop			@ (mov r8, r8)
     }
 
     /* HCLK = SYSCLK (no prescaler) */
     RCC->CFGR &= ~RCC_CFGR_HPRE;
- 8002220:	4b15      	ldr	r3, [pc, #84]	@ (8002278 <RCC_ConfigureClocks+0x94>)
+ 8002220:	4b15      	ldr	r3, [pc, #84]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
  8002222:	689a      	ldr	r2, [r3, #8]
- 8002224:	4b14      	ldr	r3, [pc, #80]	@ (8002278 <RCC_ConfigureClocks+0x94>)
- 8002226:	4915      	ldr	r1, [pc, #84]	@ (800227c <RCC_ConfigureClocks+0x98>)
+ 8002224:	4b14      	ldr	r3, [pc, #80]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
+ 8002226:	4915      	ldr	r1, [pc, #84]	@ (800227c <vRCC_ConfigureClocks+0x98>)
  8002228:	400a      	ands	r2, r1
  800222a:	609a      	str	r2, [r3, #8]
 
     /* Select PLL as system clock */
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_1;
- 800222c:	4b12      	ldr	r3, [pc, #72]	@ (8002278 <RCC_ConfigureClocks+0x94>)
+ 800222c:	4b12      	ldr	r3, [pc, #72]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
  800222e:	689b      	ldr	r3, [r3, #8]
  8002230:	2207      	movs	r2, #7
  8002232:	4393      	bics	r3, r2
  8002234:	001a      	movs	r2, r3
- 8002236:	4b10      	ldr	r3, [pc, #64]	@ (8002278 <RCC_ConfigureClocks+0x94>)
+ 8002236:	4b10      	ldr	r3, [pc, #64]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
  8002238:	2102      	movs	r1, #2
  800223a:	430a      	orrs	r2, r1
  800223c:	609a      	str	r2, [r3, #8]
@@ -4559,7 +4559,7 @@ static void RCC_ConfigureClocks(RCC_t *self)
  800223e:	2300      	movs	r3, #0
  8002240:	60fb      	str	r3, [r7, #12]
     while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_CFGR_SW_1 << 2U))
- 8002242:	e005      	b.n	8002250 <RCC_ConfigureClocks+0x6c>
+ 8002242:	e005      	b.n	8002250 <vRCC_ConfigureClocks+0x6c>
     {
         if (++tick > dtimeout) break;
  8002244:	68fb      	ldr	r3, [r7, #12]
@@ -4567,25 +4567,25 @@ static void RCC_ConfigureClocks(RCC_t *self)
  8002248:	60fb      	str	r3, [r7, #12]
  800224a:	68fb      	ldr	r3, [r7, #12]
  800224c:	2b64      	cmp	r3, #100	@ 0x64
- 800224e:	d806      	bhi.n	800225e <RCC_ConfigureClocks+0x7a>
+ 800224e:	d806      	bhi.n	800225e <vRCC_ConfigureClocks+0x7a>
     while ((RCC->CFGR & RCC_CFGR_SWS) != (RCC_CFGR_SW_1 << 2U))
- 8002250:	4b09      	ldr	r3, [pc, #36]	@ (8002278 <RCC_ConfigureClocks+0x94>)
+ 8002250:	4b09      	ldr	r3, [pc, #36]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
  8002252:	689b      	ldr	r3, [r3, #8]
  8002254:	2238      	movs	r2, #56	@ 0x38
  8002256:	4013      	ands	r3, r2
  8002258:	2b08      	cmp	r3, #8
- 800225a:	d1f3      	bne.n	8002244 <RCC_ConfigureClocks+0x60>
- 800225c:	e000      	b.n	8002260 <RCC_ConfigureClocks+0x7c>
+ 800225a:	d1f3      	bne.n	8002244 <vRCC_ConfigureClocks+0x60>
+ 800225c:	e000      	b.n	8002260 <vRCC_ConfigureClocks+0x7c>
         if (++tick > dtimeout) break;
  800225e:	46c0      	nop			@ (mov r8, r8)
     }
 
     /* APB prescaler = 1 */
     RCC->CFGR &= ~RCC_CFGR_PPRE;
- 8002260:	4b05      	ldr	r3, [pc, #20]	@ (8002278 <RCC_ConfigureClocks+0x94>)
+ 8002260:	4b05      	ldr	r3, [pc, #20]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
  8002262:	689a      	ldr	r2, [r3, #8]
- 8002264:	4b04      	ldr	r3, [pc, #16]	@ (8002278 <RCC_ConfigureClocks+0x94>)
- 8002266:	4906      	ldr	r1, [pc, #24]	@ (8002280 <RCC_ConfigureClocks+0x9c>)
+ 8002264:	4b04      	ldr	r3, [pc, #16]	@ (8002278 <vRCC_ConfigureClocks+0x94>)
+ 8002266:	4906      	ldr	r1, [pc, #24]	@ (8002280 <vRCC_ConfigureClocks+0x9c>)
  8002268:	400a      	ands	r2, r1
  800226a:	609a      	str	r2, [r3, #8]
 }
@@ -4598,12 +4598,12 @@ static void RCC_ConfigureClocks(RCC_t *self)
  800227c:	fffff0ff 	.word	0xfffff0ff
  8002280:	ffff8fff 	.word	0xffff8fff
 
-08002284 <RCC_Init>:
+08002284 <vRCC_Init>:
  * After successful execution, the RCC object is marked as initialized.
  *
  * @param[in,out] self Pointer to RCC object instance
  */
-void RCC_Init(RCC_t *self)
+void vRCC_Init(RCC_t *self)
 {
  8002284:	b580      	push	{r7, lr}
  8002286:	b082      	sub	sp, #8
@@ -4612,60 +4612,60 @@ void RCC_Init(RCC_t *self)
     if (self == 0) return;
  800228c:	687b      	ldr	r3, [r7, #4]
  800228e:	2b00      	cmp	r3, #0
- 8002290:	d024      	beq.n	80022dc <RCC_Init+0x58>
+ 8002290:	d024      	beq.n	80022dc <vRCC_Init+0x58>
 
-    RCC_ConfigureOscillators(self);
+    vRCC_ConfigureOscillators(self);
  8002292:	687b      	ldr	r3, [r7, #4]
  8002294:	0018      	movs	r0, r3
- 8002296:	f7ff ff49 	bl	800212c <RCC_ConfigureOscillators>
-    RCC_ConfigureClocks(self);
+ 8002296:	f7ff ff49 	bl	800212c <vRCC_ConfigureOscillators>
+    vRCC_ConfigureClocks(self);
  800229a:	687b      	ldr	r3, [r7, #4]
  800229c:	0018      	movs	r0, r3
- 800229e:	f7ff ffa1 	bl	80021e4 <RCC_ConfigureClocks>
+ 800229e:	f7ff ffa1 	bl	80021e4 <vRCC_ConfigureClocks>
 
     /* Reset interrupt registers */
     RCC->CIER = 0x0U;
- 80022a2:	4b10      	ldr	r3, [pc, #64]	@ (80022e4 <RCC_Init+0x60>)
+ 80022a2:	4b10      	ldr	r3, [pc, #64]	@ (80022e4 <vRCC_Init+0x60>)
  80022a4:	2200      	movs	r2, #0
  80022a6:	619a      	str	r2, [r3, #24]
     RCC->CIFR = 0x0U;
- 80022a8:	4b0e      	ldr	r3, [pc, #56]	@ (80022e4 <RCC_Init+0x60>)
+ 80022a8:	4b0e      	ldr	r3, [pc, #56]	@ (80022e4 <vRCC_Init+0x60>)
  80022aa:	2200      	movs	r2, #0
  80022ac:	61da      	str	r2, [r3, #28]
     RCC->CICR = 0x0U;
- 80022ae:	4b0d      	ldr	r3, [pc, #52]	@ (80022e4 <RCC_Init+0x60>)
+ 80022ae:	4b0d      	ldr	r3, [pc, #52]	@ (80022e4 <vRCC_Init+0x60>)
  80022b0:	2200      	movs	r2, #0
  80022b2:	621a      	str	r2, [r3, #32]
 
     /* Reset peripheral reset registers */
     RCC->IOPRSTR  = 0x0U;
- 80022b4:	4b0b      	ldr	r3, [pc, #44]	@ (80022e4 <RCC_Init+0x60>)
+ 80022b4:	4b0b      	ldr	r3, [pc, #44]	@ (80022e4 <vRCC_Init+0x60>)
  80022b6:	2200      	movs	r2, #0
  80022b8:	625a      	str	r2, [r3, #36]	@ 0x24
     RCC->AHBRSTR  = 0x0U;
- 80022ba:	4b0a      	ldr	r3, [pc, #40]	@ (80022e4 <RCC_Init+0x60>)
+ 80022ba:	4b0a      	ldr	r3, [pc, #40]	@ (80022e4 <vRCC_Init+0x60>)
  80022bc:	2200      	movs	r2, #0
  80022be:	629a      	str	r2, [r3, #40]	@ 0x28
     RCC->APBRSTR1 = 0x0U;
- 80022c0:	4b08      	ldr	r3, [pc, #32]	@ (80022e4 <RCC_Init+0x60>)
+ 80022c0:	4b08      	ldr	r3, [pc, #32]	@ (80022e4 <vRCC_Init+0x60>)
  80022c2:	2200      	movs	r2, #0
  80022c4:	62da      	str	r2, [r3, #44]	@ 0x2c
     RCC->APBRSTR2 = 0x0U;
- 80022c6:	4b07      	ldr	r3, [pc, #28]	@ (80022e4 <RCC_Init+0x60>)
+ 80022c6:	4b07      	ldr	r3, [pc, #28]	@ (80022e4 <vRCC_Init+0x60>)
  80022c8:	2200      	movs	r2, #0
  80022ca:	631a      	str	r2, [r3, #48]	@ 0x30
 
     /* Enable required peripherals */
-    RCC_EnablePeripherals(self);
+    vRCC_EnablePeripherals(self);
  80022cc:	687b      	ldr	r3, [r7, #4]
  80022ce:	0018      	movs	r0, r3
- 80022d0:	f000 f80a 	bl	80022e8 <RCC_EnablePeripherals>
+ 80022d0:	f000 f80a 	bl	80022e8 <vRCC_EnablePeripherals>
 
     self->initialized = 1U;
  80022d4:	687b      	ldr	r3, [r7, #4]
  80022d6:	2201      	movs	r2, #1
  80022d8:	701a      	strb	r2, [r3, #0]
- 80022da:	e000      	b.n	80022de <RCC_Init+0x5a>
+ 80022da:	e000      	b.n	80022de <vRCC_Init+0x5a>
     if (self == 0) return;
  80022dc:	46c0      	nop			@ (mov r8, r8)
 }
@@ -4674,12 +4674,12 @@ void RCC_Init(RCC_t *self)
  80022e2:	bd80      	pop	{r7, pc}
  80022e4:	40021000 	.word	0x40021000
 
-080022e8 <RCC_EnablePeripherals>:
+080022e8 <vRCC_EnablePeripherals>:
  * - Power interface (PWR)
  *
  * @param[in] self Pointer to RCC object (not used internally)
  */
-void RCC_EnablePeripherals(RCC_t *self)
+void vRCC_EnablePeripherals(RCC_t *self)
 {
  80022e8:	b580      	push	{r7, lr}
  80022ea:	b082      	sub	sp, #8
@@ -4689,7 +4689,7 @@ void RCC_EnablePeripherals(RCC_t *self)
 
     /* Enable GPIO clocks */
     RCC->IOPENR =
- 80022f0:	4b08      	ldr	r3, [pc, #32]	@ (8002314 <RCC_EnablePeripherals+0x2c>)
+ 80022f0:	4b08      	ldr	r3, [pc, #32]	@ (8002314 <vRCC_EnablePeripherals+0x2c>)
  80022f2:	2203      	movs	r2, #3
  80022f4:	635a      	str	r2, [r3, #52]	@ 0x34
         (1U << 0) |  /* GPIOA */
@@ -4697,7 +4697,7 @@ void RCC_EnablePeripherals(RCC_t *self)
 
     /* Enable AHB peripherals */
     RCC->AHBENR =
- 80022f6:	4b07      	ldr	r3, [pc, #28]	@ (8002314 <RCC_EnablePeripherals+0x2c>)
+ 80022f6:	4b07      	ldr	r3, [pc, #28]	@ (8002314 <vRCC_EnablePeripherals+0x2c>)
  80022f8:	2280      	movs	r2, #128	@ 0x80
  80022fa:	0052      	lsls	r2, r2, #1
  80022fc:	639a      	str	r2, [r3, #56]	@ 0x38
@@ -4705,8 +4705,8 @@ void RCC_EnablePeripherals(RCC_t *self)
 
     /* Enable APB1 peripherals */
     RCC->APBENR1 =
- 80022fe:	4b05      	ldr	r3, [pc, #20]	@ (8002314 <RCC_EnablePeripherals+0x2c>)
- 8002300:	4a05      	ldr	r2, [pc, #20]	@ (8002318 <RCC_EnablePeripherals+0x30>)
+ 80022fe:	4b05      	ldr	r3, [pc, #20]	@ (8002314 <vRCC_EnablePeripherals+0x2c>)
+ 8002300:	4a05      	ldr	r2, [pc, #20]	@ (8002318 <vRCC_EnablePeripherals+0x30>)
  8002302:	63da      	str	r2, [r3, #60]	@ 0x3c
         (1U << 0) |  /* TIM2 */
         (1U << 1) |  /* TIM3 */
@@ -4714,8 +4714,8 @@ void RCC_EnablePeripherals(RCC_t *self)
 
     /* Enable APB2 peripherals */
     RCC->APBENR2 =
- 8002304:	4b03      	ldr	r3, [pc, #12]	@ (8002314 <RCC_EnablePeripherals+0x2c>)
- 8002306:	4a05      	ldr	r2, [pc, #20]	@ (800231c <RCC_EnablePeripherals+0x34>)
+ 8002304:	4b03      	ldr	r3, [pc, #12]	@ (8002314 <vRCC_EnablePeripherals+0x2c>)
+ 8002306:	4a05      	ldr	r2, [pc, #20]	@ (800231c <vRCC_EnablePeripherals+0x34>)
  8002308:	641a      	str	r2, [r3, #64]	@ 0x40
         (1U << 11) | /* TIM1 */
         (1U << 14) | /* USART1 */
@@ -4739,21 +4739,21 @@ void cbRCC(void)
 {
  8002320:	b580      	push	{r7, lr}
  8002322:	af00      	add	r7, sp, #0
-    RCC_Init(&rcc);
+    vRCC_Init(&rcc);
  8002324:	4b03      	ldr	r3, [pc, #12]	@ (8002334 <cbRCC+0x14>)
  8002326:	0018      	movs	r0, r3
- 8002328:	f7ff ffac 	bl	8002284 <RCC_Init>
+ 8002328:	f7ff ffac 	bl	8002284 <vRCC_Init>
  800232c:	46c0      	nop			@ (mov r8, r8)
  800232e:	46bd      	mov	sp, r7
  8002330:	bd80      	pop	{r7, pc}
  8002332:	46c0      	nop			@ (mov r8, r8)
  8002334:	20000030 	.word	0x20000030
 
-08002338 <Timer_Init>:
+08002338 <vTimer_Init>:
  * @param[in] psc Prescaler value
  * @param[in] arr Auto-reload value (period)
  */
-void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
                 uint32_t psc, uint32_t arr)
 {
  8002338:	b580      	push	{r7, lr}
@@ -4822,7 +4822,7 @@ void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
     instance->CR1 &= ~TIM_CR1_CKD;
  8002390:	68bb      	ldr	r3, [r7, #8]
  8002392:	681b      	ldr	r3, [r3, #0]
- 8002394:	4a09      	ldr	r2, [pc, #36]	@ (80023bc <Timer_Init+0x84>)
+ 8002394:	4a09      	ldr	r2, [pc, #36]	@ (80023bc <vTimer_Init+0x84>)
  8002396:	401a      	ands	r2, r3
  8002398:	68bb      	ldr	r3, [r7, #8]
  800239a:	601a      	str	r2, [r3, #0]
@@ -4854,12 +4854,12 @@ void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
  80023ba:	bd80      	pop	{r7, pc}
  80023bc:	fffffcff 	.word	0xfffffcff
 
-080023c0 <Timer_Start>:
+080023c0 <vTimer_Start>:
  * Enables the timer counter and begins counting.
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_Start(Timer_t *self)
+void vTimer_Start(Timer_t *self)
 {
  80023c0:	b580      	push	{r7, lr}
  80023c2:	b082      	sub	sp, #8
@@ -4884,12 +4884,12 @@ void Timer_Start(Timer_t *self)
  80023e2:	b002      	add	sp, #8
  80023e4:	bd80      	pop	{r7, pc}
 
-080023e6 <Timer_ClearIRQ>:
+080023e6 <vTimer_ClearIRQ>:
  * This function should be called inside the ISR handler.
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_ClearIRQ(Timer_t *self)
+void vTimer_ClearIRQ(Timer_t *self)
 {
  80023e6:	b580      	push	{r7, lr}
  80023e8:	b082      	sub	sp, #8
@@ -4901,7 +4901,7 @@ void Timer_ClearIRQ(Timer_t *self)
  80023f2:	691b      	ldr	r3, [r3, #16]
  80023f4:	2201      	movs	r2, #1
  80023f6:	4013      	ands	r3, r2
- 80023f8:	d007      	beq.n	800240a <Timer_ClearIRQ+0x24>
+ 80023f8:	d007      	beq.n	800240a <vTimer_ClearIRQ+0x24>
     {
         self->instance->SR &= ~TIM_SR_UIF;
  80023fa:	687b      	ldr	r3, [r7, #4]
@@ -4929,28 +4929,28 @@ void cbTIM(void)
 {
  8002414:	b580      	push	{r7, lr}
  8002416:	af00      	add	r7, sp, #0
-    Timer_Init(&tim2, TIM2, 63U, 249U);
+    vTimer_Init(&tim2, TIM2, 63U, 249U);
  8002418:	2380      	movs	r3, #128	@ 0x80
  800241a:	05d9      	lsls	r1, r3, #23
  800241c:	480a      	ldr	r0, [pc, #40]	@ (8002448 <cbTIM+0x34>)
  800241e:	23f9      	movs	r3, #249	@ 0xf9
  8002420:	223f      	movs	r2, #63	@ 0x3f
- 8002422:	f7ff ff89 	bl	8002338 <Timer_Init>
-    Timer_Init(&tim3, TIM3, 63U, 999U);
+ 8002422:	f7ff ff89 	bl	8002338 <vTimer_Init>
+    vTimer_Init(&tim3, TIM3, 63U, 999U);
  8002426:	4b09      	ldr	r3, [pc, #36]	@ (800244c <cbTIM+0x38>)
  8002428:	4909      	ldr	r1, [pc, #36]	@ (8002450 <cbTIM+0x3c>)
  800242a:	480a      	ldr	r0, [pc, #40]	@ (8002454 <cbTIM+0x40>)
  800242c:	223f      	movs	r2, #63	@ 0x3f
- 800242e:	f7ff ff83 	bl	8002338 <Timer_Init>
+ 800242e:	f7ff ff83 	bl	8002338 <vTimer_Init>
 
-    Timer_Start(&tim2);
+    vTimer_Start(&tim2);
  8002432:	4b05      	ldr	r3, [pc, #20]	@ (8002448 <cbTIM+0x34>)
  8002434:	0018      	movs	r0, r3
- 8002436:	f7ff ffc3 	bl	80023c0 <Timer_Start>
-    Timer_Start(&tim3);
+ 8002436:	f7ff ffc3 	bl	80023c0 <vTimer_Start>
+    vTimer_Start(&tim3);
  800243a:	4b06      	ldr	r3, [pc, #24]	@ (8002454 <cbTIM+0x40>)
  800243c:	0018      	movs	r0, r3
- 800243e:	f7ff ffbf 	bl	80023c0 <Timer_Start>
+ 800243e:	f7ff ffbf 	bl	80023c0 <vTimer_Start>
  8002442:	46c0      	nop			@ (mov r8, r8)
  8002444:	46bd      	mov	sp, r7
  8002446:	bd80      	pop	{r7, pc}

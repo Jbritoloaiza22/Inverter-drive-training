@@ -53,7 +53,7 @@ extern Timer_t tim3;
 void vKernelInterface_TIM2IRQHandler(void)
 {
 
-  Timer_ClearIRQ(&tim2);
+  vTimer_ClearIRQ(&tim2);
 }
 /**
   * @brief This function handles TIM2 global interrupt.
@@ -61,7 +61,7 @@ void vKernelInterface_TIM2IRQHandler(void)
 void vKernelInterface_TIM3IRQHandler(void)
 {
 
-  Timer_ClearIRQ(&tim3);
+  vTimer_ClearIRQ(&tim3);
   vSPWM_Update();
 }
 

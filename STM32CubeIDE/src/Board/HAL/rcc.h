@@ -78,7 +78,7 @@ typedef struct
  *
  * @param[in,out] self Pointer to RCC object instance
  */
-void RCC_Init(RCC_t *self);
+void vRCC_Init(RCC_t *self);
 
 /**
  * @brief Enable peripheral clocks.
@@ -91,7 +91,7 @@ void RCC_Init(RCC_t *self);
  *
  * @param[in] self Pointer to RCC object instance
  */
-void RCC_EnablePeripherals(RCC_t *self);
+void vRCC_EnablePeripherals(RCC_t *self);
 
 /**
  * @brief RCC initialization callback.

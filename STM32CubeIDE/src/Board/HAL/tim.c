@@ -57,7 +57,7 @@ Timer_t tim3;
  * @param[in] psc Prescaler value
  * @param[in] arr Auto-reload value (period)
  */
-void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
                 uint32_t psc, uint32_t arr)
 {
     self->instance = instance;
@@ -102,7 +102,7 @@ void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_Start(Timer_t *self)
+void vTimer_Start(Timer_t *self)
 {
     self->instance->CR1 |= TIM_CR1_CEN;
     self->enabled = 1U;
@@ -115,7 +115,7 @@ void Timer_Start(Timer_t *self)
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_Stop(Timer_t *self)
+void vTimer_Stop(Timer_t *self)
 {
     self->instance->CR1 &= ~TIM_CR1_CEN;
     self->enabled = 0U;
@@ -134,7 +134,7 @@ void Timer_Stop(Timer_t *self)
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_ClearIRQ(Timer_t *self)
+void vTimer_ClearIRQ(Timer_t *self)
 {
     if (self->instance->SR & TIM_SR_UIF)
     {
@@ -162,9 +162,9 @@ void Timer_ClearIRQ(Timer_t *self)
  */
 void cbTIM(void)
 {
-    Timer_Init(&tim2, TIM2, 63U, 249U);
-    Timer_Init(&tim3, TIM3, 63U, 999U);
+    vTimer_Init(&tim2, TIM2, 63U, 249U);
+    vTimer_Init(&tim3, TIM3, 63U, 999U);
 
-    Timer_Start(&tim2);
-    Timer_Start(&tim3);
+    vTimer_Start(&tim2);
+    vTimer_Start(&tim3);
 }

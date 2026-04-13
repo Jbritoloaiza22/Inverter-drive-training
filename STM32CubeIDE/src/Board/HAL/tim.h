@@ -86,7 +86,7 @@ typedef struct
  * @param[in] psc Prescaler value
  * @param[in] arr Auto-reload value (period)
  */
-void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
                 uint32_t psc, uint32_t arr);
 
 /**
@@ -96,7 +96,7 @@ void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_Start(Timer_t *self);
+void vTimer_Start(Timer_t *self);
 
 /**
  * @brief Stop timer.
@@ -105,7 +105,7 @@ void Timer_Start(Timer_t *self);
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_Stop(Timer_t *self);
+void vTimer_Stop(Timer_t *self);
 
 /**
  * @brief Clear timer interrupt flag.
@@ -115,7 +115,7 @@ void Timer_Stop(Timer_t *self);
  *
  * @param[in,out] self Pointer to Timer object
  */
-void Timer_ClearIRQ(Timer_t *self);
+void vTimer_ClearIRQ(Timer_t *self);
 
 /**
  * @brief Timer initialization callback.
