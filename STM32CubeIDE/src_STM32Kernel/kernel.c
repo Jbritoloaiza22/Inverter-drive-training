@@ -71,11 +71,6 @@ int main(void)
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
-  float test0 = 0.0;
-  float test1 = 0.0;
-  float test2 = 0.0;
-  float test3 = 0.0;
-  vSPWM_TableSinInit();
   while (1)
   {
 
@@ -164,7 +159,7 @@ static void MX_USART1_UART_Init(void)
 
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
-    Error_Handler();
+    //Error_Handler();
   }
   else
   {
@@ -205,6 +200,7 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
+  cbSPWM();
 }
 
 /**

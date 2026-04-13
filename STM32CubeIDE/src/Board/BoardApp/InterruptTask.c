@@ -45,6 +45,7 @@
 #include "KernelInterface.h"
 #include "stm32g031xx.h"
 
+extern SPWM_t spwm;
 extern Timer_t tim2;
 extern Timer_t tim3;
 /**
@@ -62,6 +63,6 @@ void vKernelInterface_TIM3IRQHandler(void)
 {
 
   vTimer_ClearIRQ(&tim3);
-  vSPWM_Update();
+  vSPWM_Update(&spwm);
 }
 
