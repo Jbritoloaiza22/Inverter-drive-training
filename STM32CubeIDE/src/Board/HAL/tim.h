@@ -22,77 +22,107 @@
 #ifndef __TIM_H
 #define __TIM_H
 
-#include "stm32g0xx_hal.h"
+#include "stm32g031xx.h"
+#include <stdint.h>
+
+/* =========================================================
+ * TIMER OBJECT
+ * ========================================================= */
 
 /**
- * @brief Prescaler value for TIM2.
+ * @brief Timer object structure.
  *
- * Defines the clock division applied to the timer input clock.
- */
-#define TIM2_PRESCALER 63U
-
-/**
- * @brief Auto-reload value for TIM2.
+ * Represents a hardware timer instance and its configuration.
  *
- * Determines the timer overflow period and interrupt frequency.
+ * @note This is a lightweight abstraction over STM32 TIM peripherals.
  */
-#define TIM2_ARR 249U
+typedef struct
+{
+    /**
+     * @brief Pointer to hardware timer instance.
+     *
+     * Example:
+     * - TIM2
+     * - TIM3
+     */
+    TIM_TypeDef *instance;
+
+    /**
+     * @brief Prescaler value.
+     *
+     * Divides the input clock frequency.
+     */
+    uint32_t psc;
+
+    /**
+     * @brief Auto-reload value.
+     *
+     * Defines the timer period.
+     */
+    uint32_t arr;
+
+    /**
+     * @brief Runtime enable flag.
+     *
+     * - 0: Timer stopped
+     * - 1: Timer running
+     */
+    uint8_t enabled;
+
+} Timer_t;
+
+/* =========================================================
+ * PUBLIC API
+ * ========================================================= */
 
 /**
- * @brief Prescaler value for TIM3.
- */
-#define TIM3_PRESCALER 63U
-
-/**
- * @brief Auto-reload value for TIM3.
- */
-#define TIM3_ARR 999U
-
-/**
- * @brief Initialize TIM2 peripheral.
+ * @brief Initialize timer instance.
  *
- * Configures TIM2 as a periodic timer generating update interrupts
- * based on the configured prescaler and auto-reload values.
+ * Configures the timer hardware and stores parameters
+ * inside the Timer_t object.
+ *
+ * @param[in,out] self Pointer to Timer object
+ * @param[in] instance Timer peripheral base (TIM2, TIM3, etc.)
+ * @param[in] psc Prescaler value
+ * @param[in] arr Auto-reload value (period)
  */
-void vTIM2_Init(void);
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
+                uint32_t psc, uint32_t arr);
 
 /**
- * @brief Start TIM2 timer.
+ * @brief Start timer.
  *
- * Enables the TIM2 counter allowing it to begin counting
- * and generating periodic update events.
+ * Enables the timer counter.
+ *
+ * @param[in,out] self Pointer to Timer object
  */
-void vTIM2_Start(void);
+void vTimer_Start(Timer_t *self);
 
 /**
- * @brief TIM2 interrupt service routine handler.
+ * @brief Stop timer.
  *
- * This function processes the update interrupt generated
- * by TIM2 and clears the corresponding interrupt flag.
+ * Disables the timer counter.
+ *
+ * @param[in,out] self Pointer to Timer object
  */
-void vTIM2_ClearlRQTim2(void);
+void vTimer_Stop(Timer_t *self);
 
 /**
- * @brief Initialize TIM3 peripheral.
+ * @brief Clear timer interrupt flag.
  *
- * Configures TIM3 as a periodic timer generating update interrupts
- * according to the configured prescaler and auto-reload values.
+ * Clears the update interrupt flag (UIF).
+ * Should be called inside the ISR.
+ *
+ * @param[in,out] self Pointer to Timer object
  */
-void vTIM3_Init(void);
+void vTimer_ClearIRQ(Timer_t *self);
 
 /**
- * @brief Start TIM3 timer.
+ * @brief Timer initialization callback.
  *
- * Enables the TIM3 counter allowing it to begin counting
- * and generating periodic update events.
+ * Intended for integration with the KernelInterface layer.
+ * Initializes and starts system timers.
  */
-void vTIM3_Start(void);
+void cbTIM(void);
 
-/**
- * @brief TIM3 interrupt service routine handler.
- *
- * This function handles the update interrupt generated
- * by TIM3 and clears the interrupt flag.
- */
-void vTIM3_ClearlRQTim3(void);
 #endif /* __TIM_H */

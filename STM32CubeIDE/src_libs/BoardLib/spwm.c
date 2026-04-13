@@ -35,65 +35,175 @@
  * @license
  * This source code is provided for educational and research purposes.
  */
+
 #include "spwm.h"
 #include "pwm.h"
 #include "stm32g031xx.h"
+#include "KernelInterface.h"
 #include <math.h>
-#include <stdint.h>
 
-#define dSINTABLESIZE 1024
-#define dPI 3.14159265358979323846f
-float sin_table[dSINTABLESIZE];
+/* =========================================================
+ * PRIVATE DATA
+ * ========================================================= */
 
-/* global variables */
-volatile float theta = 0.0f; /* radians */
-float phase_v = 0.0f;
-float phase_u = 0.0f;
-float phase_w = 0.0f;
+/**
+ * @brief Sine lookup table.
+ *
+ * Stores precomputed sine values in the range [-1, 1].
+ */
+static float sin_table[dSPWM_TABLE_SIZE];
 
-float duty_u = 0.0f;
-float duty_v = 0.0f;
-float duty_w = 0.0f;
+/**
+ * @brief Global SPWM instance.
+ *
+ * Used by kernel callback (cbSPWM).
+ */
+SPWM_t spwm;
 
-void vSPWM_TableSinInit(void)
+/**
+ * @brief External PWM object reference.
+ */
+extern PWM_t pwm;
+
+/* =========================================================
+ * PRIVATE FUNCTIONS
+ * ========================================================= */
+
+/**
+ * @brief Normalize angle to the range [0, 2π).
+ *
+ * @param angle Input angle in radians
+ * @return Normalized angle
+ */
+static float fSPWM_NormalizeAngle(float angle)
 {
-  /* Initialize the sine table with precomputed values */
-  /* This function can be called during system initialization if needed */
-  for(uint32_t i = 0; i < dSINTABLESIZE; i++)
-  {
-    /* Compute sine values scaled to the desired range (e.g., 0 to 1000) */
-    sin_table[i] = ((sinf((2 * dPI * (float)i) / (float)dSINTABLESIZE)));
-  }
+    while (angle < 0.0f) angle += 2.0f * dSPWM_PI;
+    while (angle >= 2.0f * dSPWM_PI) angle -= 2.0f * dSPWM_PI;
+    return angle;
 }
 
-float fSPWM_SineLookup(float angle)
-{
-  while(angle < 0)angle += 2.0f * dPI;
-  while(angle >= 2.0f * dPI)angle -= 2.0f * dPI;
+/* =========================================================
+ * PUBLIC FUNCTIONS
+ * ========================================================= */
 
-  int32_t index = (uint32_t)(angle * (dSINTABLESIZE / (2.0f * dPI)));
-  return sin_table[index];
+/**
+ * @brief Initialize sine lookup table.
+ *
+ * Precomputes sine values to improve runtime performance.
+ *
+ * @note Must be called before using fSPWM_Sine().
+ */
+void vSPWM_TableInit(void)
+{
+    for (uint32_t i = 0; i < dSPWM_TABLE_SIZE; i++)
+    {
+        sin_table[i] = sinf((2.0f * dSPWM_PI * i) / dSPWM_TABLE_SIZE);
+    }
 }
-void vSPWM_Update(void)
+
+/**
+ * @brief Get sine value using lookup table.
+ *
+ * @param angle Angle in radians
+ * @return Sine value in range [-1, 1]
+ */
+float fSPWM_Sine(float angle)
 {
-  theta += 0.06f;
-  if(theta >= 2.0f * dPI)
-  {
-    theta -= 2.0f * dPI;
-  }
-  phase_u = fSPWM_SineLookup(theta);
-  phase_v = fSPWM_SineLookup(theta - 2.0f * dPI / 3.0f);
-  phase_w = fSPWM_SineLookup(theta + 2.0f * dPI / 3.0f);
+    angle = fSPWM_NormalizeAngle(angle);
 
-  duty_u = ((phase_u + 1.0f) * 0.5f) * 1999;
-  duty_v = ((phase_v + 1.0f) * 0.5f) * 1999;
-  duty_w = ((phase_w + 1.0f) * 0.5f) * 1999;
+    uint32_t index = (uint32_t)(angle * (dSPWM_TABLE_SIZE / (2.0f * dSPWM_PI)));
+    return sin_table[index];
+}
 
-  if(duty_u > 1999)duty_u = 1999;
-  if(duty_v > 1999)duty_v = 1999;
-  if(duty_w > 1999)duty_w = 1999;
+/**
+ * @brief Initialize SPWM object.
+ *
+ * Configures the internal state of the SPWM generator.
+ *
+ * @param[in,out] self Pointer to SPWM object
+ * @param[in] step Angle increment per update (controls frequency)
+ * @param[in] arr Timer auto-reload value (PWM resolution)
+ *
+ * @note Also initializes the sine lookup table.
+ */
+void vSPWM_Init(SPWM_t *self, float step, uint32_t arr)
+{
+    if (self == 0) return;
 
-  vKernelInterface_SetPhaseADuty((uint32_t)duty_u);
-  vKernelInterface_SetPhaseBDuty((uint32_t)duty_v );
-  vKernelInterface_SetPhaseCDuty((uint32_t)duty_w );
+    self->theta = 0.0f;
+    self->step = step;
+    self->arr = arr;
+    self->initialized = 1U;
+
+    vSPWM_TableInit();
+}
+
+/**
+ * @brief Update SPWM output.
+ *
+ * Generates three-phase sinusoidal signals and updates PWM duty cycles.
+ *
+ * Steps:
+ * 1. Advance electrical angle
+ * 2. Generate 3-phase sine signals (120° shifted)
+ * 3. Normalize to PWM duty range (0..ARR)
+ * 4. Apply to PWM driver
+ *
+ * @param[in,out] self Pointer to SPWM object
+ *
+ * @note Typically called periodically from a timer ISR.
+ */
+void vSPWM_Update(SPWM_t *self)
+{
+    if ((self == 0) || (self->initialized == 0U)) return;
+
+    float phase_u, phase_v, phase_w;
+    float duty_u, duty_v, duty_w;
+
+    /* Advance electrical angle */
+    self->theta += self->step;
+    if (self->theta >= 2.0f * dSPWM_PI)
+    {
+        self->theta -= 2.0f * dSPWM_PI;
+    }
+
+    /* Generate 3-phase sinusoidal signals */
+    phase_u = fSPWM_Sine(self->theta);
+    phase_v = fSPWM_Sine(self->theta - 2.0f * dSPWM_PI / 3.0f);
+    phase_w = fSPWM_Sine(self->theta + 2.0f * dSPWM_PI / 3.0f);
+
+    /* Convert to PWM duty cycles */
+    duty_u = ((phase_u + 1.0f) * 0.5f) * self->arr;
+    duty_v = ((phase_v + 1.0f) * 0.5f) * self->arr;
+    duty_w = ((phase_w + 1.0f) * 0.5f) * self->arr;
+
+    /* Clamp to valid range */
+    if (duty_u > self->arr) duty_u = self->arr;
+    if (duty_v > self->arr) duty_v = self->arr;
+    if (duty_w > self->arr) duty_w = self->arr;
+
+    /* Apply duty cycles to PWM hardware */
+    vPWM_SetPhaseA(&pwm, (uint32_t)duty_u);
+    vPWM_SetPhaseB(&pwm, (uint32_t)duty_v);
+    vPWM_SetPhaseC(&pwm, (uint32_t)duty_w);
+}
+
+/* =========================================================
+ * CALLBACK (KERNEL)
+ * ========================================================= */
+
+/**
+ * @brief SPWM initialization callback.
+ *
+ * Initializes the global SPWM instance with default parameters.
+ *
+ * Configuration:
+ * - Step: 0.06 rad/update (defines output frequency)
+ * - ARR:  TIM1 auto-reload value (PWM resolution)
+ *
+ * @note Typically called during system startup by the kernel.
+ */
+void cbSPWM(void)
+{
+    vSPWM_Init(&spwm, 0.06f, (uint32_t)TIM1->ARR);
 }

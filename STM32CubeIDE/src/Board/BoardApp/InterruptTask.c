@@ -45,14 +45,16 @@
 #include "KernelInterface.h"
 #include "stm32g031xx.h"
 
-
+extern SPWM_t spwm;
+extern Timer_t tim2;
+extern Timer_t tim3;
 /**
   * @brief This function handles TIM2 global interrupt.
   */
 void vKernelInterface_TIM2IRQHandler(void)
 {
 
-  vTIM2_ClearlRQTim2();
+  vTimer_ClearIRQ(&tim2);
 }
 /**
   * @brief This function handles TIM2 global interrupt.
@@ -60,7 +62,7 @@ void vKernelInterface_TIM2IRQHandler(void)
 void vKernelInterface_TIM3IRQHandler(void)
 {
 
-  vTIM3_ClearlRQTim3();
-  vSPWM_Update();
+  vTimer_ClearIRQ(&tim3);
+  vSPWM_Update(&spwm);
 }
 

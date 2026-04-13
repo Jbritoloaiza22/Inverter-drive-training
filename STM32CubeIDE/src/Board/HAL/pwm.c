@@ -1,215 +1,220 @@
 /**
  * @file pwm.c
- * @brief PWM driver using TIM1 for three-phase control.
+ * @brief PWM driver using TIM1 for three-phase control (OOP style).
  *
  * This module implements a low-level PWM driver for TIM1 to generate
  * three-phase complementary PWM signals typically used in motor
  * control or inverter applications.
  *
+ * The driver is structured in an object-oriented style using C,
+ * allowing better scalability for SPWM, SVPWM, and FOC systems.
+ *
  * @author Jesus Daniel Britoloaiza
- *
- * @copyright
- * Copyright (c) 2026 Jesus Daniel Britoloaiza
- *
- * @license
- * This source code is provided for educational and research purposes.
+ * @copyright Copyright (c) 2026
  */
+
 #include "pwm.h"
 #include "KernelInterface.h"
 #include "stm32g031xx.h"
 
+PWM_t pwm;
+
+/* =========================================================
+ * CONSTRUCTOR
+ * ========================================================= */
 
 /**
- * @brief Initialize PWM peripheral using TIM1.
+ * @brief Initializes TIM1 as a 3-phase PWM generator.
  *
- * Configures TIM1 registers for PWM generation on channels 1, 2 and 3,
- * including complementary outputs (CHxN). The timer is configured with
- * the selected prescaler and auto-reload value corresponding to the
- * desired PWM frequency (e.g., 16 kHz).
+ * Configures TIM1 for PWM generation on channels 1, 2, and 3,
+ * including complementary outputs (CHxN).
  *
- * This function:
- * - Resets timer configuration registers
- * - Sets the PWM frequency using ARR
- * - Configures PWM mode for channels 1, 2 and 3
- * - Enables complementary outputs
- * - Configures deadtime and break settings
- * - Generates an update event to load registers
+ * The configuration includes:
+ * - PWM frequency via ARR
+ * - PWM mode 1
+ * - Preload enable
+ * - Complementary outputs enabled
+ * - Main output enable (MOE)
  *
- * @note Must be called before starting PWM generation.
- *
- * @author Jesus Daniel Britoloaiza
+ * @param self Pointer to PWM object instance.
+ * @param arr Auto-reload value defining PWM period.
  */
-void vPWM_Init(void)
+void vPWM_Init(PWM_t *self, uint32_t arr)
 {
-  /* Configure TIM1 */
-  TIM1->CR1   = 0;
-  TIM1->CR2   = 0;
-  TIM1->SMCR  = 0;
-  TIM1->DIER  = 0;
-  TIM1->PSC   = 0;
-  TIM1->ARR   = dPWM_FREQ_16KHZ;
-  TIM1->RCR   = 0;
-  TIM1->CCR1  = 0;
-  TIM1->CCR2  = 0;
-  TIM1->CCR3  = 0;
-  TIM1->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE | TIM_CCMR1_OC1FE | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2PE | TIM_CCMR1_OC2FE;
-  TIM1->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3PE | TIM_CCMR2_OC3FE;
-  TIM1->CCMR3 = 0;
-  TIM1->CCER  = TIM_CCER_CC1E | TIM_CCER_CC1NE | TIM_CCER_CC2E | TIM_CCER_CC2NE | TIM_CCER_CC3E | TIM_CCER_CC3NE;
-  TIM1->CNT   = 0;
-  TIM1->BDTR  = TIM_BDTR_BK2P | TIM_BDTR_BKP | TIM_BDTR_MOE | 0xa;
-  TIM1->DCR   = 0;
-  TIM1->DMAR  = 0;
-  TIM1->CR1   |=  TIM_CR1_CEN | TIM_CR1_DIR | TIM_CR1_CMS_1 | TIM_CR1_ARPE | TIM_CR1_CKD_0;
-  TIM1->EGR   = TIM_EGR_UG;
+    self->arr = arr;
+    self->enabled = 0;
+
+    TIM1->CR1   = 0;
+    TIM1->CR2   = 0;
+    TIM1->SMCR  = 0;
+    TIM1->DIER  = 0;
+
+    TIM1->PSC   = 0;
+    TIM1->ARR   = arr;
+
+    TIM1->CCR1  = 0;
+    TIM1->CCR2  = 0;
+    TIM1->CCR3  = 0;
+
+    TIM1->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 |
+                  TIM_CCMR1_OC1PE | TIM_CCMR1_OC1FE |
+                  TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 |
+                  TIM_CCMR1_OC2PE | TIM_CCMR1_OC2FE;
+
+    TIM1->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1 |
+                  TIM_CCMR2_OC3PE | TIM_CCMR2_OC3FE;
+
+    TIM1->CCER  = TIM_CCER_CC1E | TIM_CCER_CC1NE |
+                  TIM_CCER_CC2E | TIM_CCER_CC2NE |
+                  TIM_CCER_CC3E | TIM_CCER_CC3NE;
+
+    TIM1->BDTR  = TIM_BDTR_MOE;
+
+    TIM1->EGR   = TIM_EGR_UG;
 }
 
+/* =========================================================
+ * START
+ * ========================================================= */
+
 /**
- * @brief Start PWM generation.
+ * @brief Starts PWM generation on TIM1.
  *
- * Enables the TIM1 counter allowing PWM signals to start toggling
- * on the configured channels.
+ * Enables the TIM1 counter, allowing PWM signals to be
+ * output on configured channels.
  *
- * @author Jesus Daniel Britoloaiza
+ * @param self Pointer to PWM object instance.
  */
-void vPWM_Start(void)
+void vPWM_Start(PWM_t *self)
 {
-  TIM1->CR1 |= TIM_CR1_CEN;
+    TIM1->CR1 |= TIM_CR1_CEN;
+    self->enabled = 1;
 }
 
+/* =========================================================
+ * DUTY CYCLE CONTROL
+ * ========================================================= */
+
 /**
- * @brief Update compare values for the three PWM phases.
+ * @brief Sets duty cycle for Phase A (TIM1 Channel 1).
  *
- * Updates the compare registers (CCR1, CCR2, CCR3) corresponding
- * to phases A, B, and C. These values define the duty cycle of
- * each PWM output.
- *
- * @param compareA Compare value for phase A (TIM1->CCR1)
- * @param compareB Compare value for phase B (TIM1->CCR2)
- * @param compareC Compare value for phase C (TIM1->CCR3)
- *
- * @note Values must be between 0 and TIM1->ARR.
- *
- * @author Jesus Daniel Britoloaiza
+ * @param self Pointer to PWM object instance.
+ * @param duty Duty cycle value (0 to ARR).
  */
-void vPWM_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC)
+void vPWM_SetPhaseA(PWM_t *self, uint32_t duty)
 {
-  TIM1->CCR1 = compareA;
-  TIM1->CCR2 = compareB;
-  TIM1->CCR3 = compareC;
+    TIM1->CCR1 = duty;
 }
 
 /**
- * @brief Set duty cycle for PWM channel 1.
+ * @brief Sets duty cycle for Phase B (TIM1 Channel 2).
  *
- * Writes directly to TIM1 CCR1 register to update the duty cycle
- * for channel 1.
- *
- * @param ui32DutyCycle Duty cycle compare value (0 to ARR)
- *
- * @author Jesus Daniel Britoloaiza
+ * @param self Pointer to PWM object instance.
+ * @param duty Duty cycle value (0 to ARR).
  */
-void vPWM_channel1SetDuty(uint32_t ui32DutyCycle){
-	TIM1->CCR1 = ui32DutyCycle;
-}
-
-/**
- * @brief Set duty cycle for PWM channel 2.
- *
- * Writes directly to TIM1 CCR2 register to update the duty cycle
- * for channel 2.
- *
- * @param ui32DutyCycle Duty cycle compare value (0 to ARR)
- *
- * @author Jesus Daniel Britoloaiza
- */
-void vPWM_channel2SetDuty(uint32_t ui32DutyCycle){
-	TIM1->CCR2 = ui32DutyCycle;
-}
-
-/**
- * @brief Set duty cycle for PWM channel 3.
- *
- * Writes directly to TIM1 CCR3 register to update the duty cycle
- * for channel 3.
- *
- * @param ui32DutyCycle Duty cycle compare value (0 to ARR)
- *
- * @author Jesus Daniel Britoloaiza
- */
-void vPWM_channel3SetDuty(uint32_t ui32DutyCycle){
-	TIM1->CCR3 = ui32DutyCycle;
-}
-
-/**
- * @brief PWM callback function.
- *
- * Alias to vPWM_Init(), can be called as a callback or initialization routine.
- */
-void cbPWM(void){
-	vPWM_Init();
-	vPWM_Start();
-}
-
-/**
- * @brief Update PWM duty cycle for phase A via kernel interface.
- *
- * Provides a hardware abstraction layer allowing the application
- * to control phase A duty cycle without direct access to the HAL
- * or low-level PWM driver.
- *
- * @param ui32DutyCycle Duty cycle value.
- */
-void vKernelInterface_SetPhaseADuty(uint32_t ui32DutyCycle){
-	vPWM_channel1SetDuty(ui32DutyCycle);
-}
-
-/**
- * @brief Update PWM duty cycle for phase B via kernel interface.
- *
- * Provides an interface between the application layer and the
- * underlying PWM driver managed by the kernel.
- *
- * @param ui32DutyCycle Duty cycle value.
- */
-void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle){
-	vPWM_channel2SetDuty(ui32DutyCycle);
-}
-
-/**
- * @brief Update PWM duty cycle for phase C via kernel interface.
- *
- * Allows the application to control the duty cycle of phase C
- * through the kernel abstraction layer.
- *
- * @param ui32DutyCycle Duty cycle value.
- */
-void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle){
-	vPWM_channel3SetDuty(ui32DutyCycle);
-}
-
-void vKernelInterface_SetPhaseA_OFF(uint32_t ui32DutyCycle)
+void vPWM_SetPhaseB(PWM_t *self, uint32_t duty)
 {
-    TIM1->CCER &= ~TIM_CCER_CC1E;
+    TIM1->CCR2 = duty;
 }
-void vKernelInterface_SetPhaseB_OFF(uint32_t ui32DutyCycle)
+
+/**
+ * @brief Sets duty cycle for Phase C (TIM1 Channel 3).
+ *
+ * @param self Pointer to PWM object instance.
+ * @param duty Duty cycle value (0 to ARR).
+ */
+void vPWM_SetPhaseC(PWM_t *self, uint32_t duty)
 {
-    TIM1->CCER &= ~TIM_CCER_CC2E;
+    TIM1->CCR3 = duty;
 }
-void vKernelInterface_SetPhaseC_OFF(uint32_t ui32DutyCycle)
+
+/**
+ * @brief Updates all three PWM phases simultaneously.
+ *
+ * Useful for synchronized updates in:
+ * - SPWM
+ * - SVPWM
+ * - FOC control loops
+ *
+ * @param self Pointer to PWM object instance.
+ * @param a Duty cycle for phase A.
+ * @param b Duty cycle for phase B.
+ * @param c Duty cycle for phase C.
+ */
+void vPWM_SetPhases(PWM_t *self,
+                   uint32_t a,
+                   uint32_t b,
+                   uint32_t c)
 {
-    TIM1->CCER &= ~TIM_CCER_CC3E;
+    TIM1->CCR1 = a;
+    TIM1->CCR2 = b;
+    TIM1->CCR3 = c;
 }
-void vKernelInterface_SetPhaseA_ON(uint32_t ui32DutyCycle)
+
+/* =========================================================
+ * CALLBACK
+ * ========================================================= */
+
+/**
+ * @brief PWM initialization callback.
+ *
+ * Kernel-level initialization wrapper. Initializes and starts
+ * PWM generation using global PWM object.
+ */
+void cbPWM(void)
+{
+    vPWM_Init(&pwm, dPWM_FREQ_16KHZ);
+    vPWM_Start(&pwm);
+}
+
+/* =========================================================
+ * PHASE ENABLE / DISABLE
+ * ========================================================= */
+
+/**
+ * @brief Enables Phase A output (CH1 + CH1N).
+ */
+void vPWM_EnablePhaseA(PWM_t *self)
 {
     TIM1->CCER |= TIM_CCER_CC1E;
 }
-void vKernelInterface_SetPhaseB_ON(uint32_t ui32DutyCycle)
+
+/**
+ * @brief Enables Phase B output (CH2 + CH2N).
+ */
+void vPWM_EnablePhaseB(PWM_t *self)
 {
     TIM1->CCER |= TIM_CCER_CC2E;
 }
-void vKernelInterface_SetPhaseC_ON(uint32_t ui32DutyCycle)
+
+/**
+ * @brief Enables Phase C output (CH3 + CH3N).
+ */
+void vPWM_EnablePhaseC(PWM_t *self)
 {
     TIM1->CCER |= TIM_CCER_CC3E;
 }
 
+/**
+ * @brief Disables Phase A output.
+ */
+void vPWM_DisablePhaseA(PWM_t *self)
+{
+    TIM1->CCER &= ~TIM_CCER_CC1E;
+}
+
+/**
+ * @brief Disables Phase B output.
+ */
+void vPWM_DisablePhaseB(PWM_t *self)
+{
+    TIM1->CCER &= ~TIM_CCER_CC2E;
+}
+
+/**
+ * @brief Disables Phase C output.
+ */
+void vPWM_DisablePhaseC(PWM_t *self)
+{
+    TIM1->CCER &= ~TIM_CCER_CC3E;
+}
