@@ -14,10 +14,14 @@
  * @license
  * This source code is provided for educational and research purposes.
  */
-#ifndef __PWM_H
-#define __PWM_H
+#ifndef PWM_H
+#define PWM_H
 
-#include "stm32g0xx_hal.h"
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 /** @brief PWM frequency setting for 8 kHz */
 #define dPWM_FREQ_8KHZ      3999U
 
@@ -38,62 +42,48 @@
 
 /** @brief PWM frequency setting for 512 kHz */
 #define dPWM_FREQ_512KHZ    61U
+/* =========================================================
+ * PWM OBJECT
+ * ========================================================= */
+typedef struct
+{
+    uint32_t arr;
 
-/**
- * @brief Initialize PWM peripheral using TIM1.
- *
- * Configures TIM1 to generate three-phase complementary PWM signals.
- * The timer is configured according to the selected ARR value which
- * determines the PWM switching frequency.
- */
-void vPWM_Init(void);
+    /* internal state (optional future use) */
+    uint8_t enabled;
+} PWM_t;
 
-/**
- * @brief Start PWM generation.
- *
- * Enables TIM1 counter allowing PWM outputs to start switching.
- */
-void vPWM_Start(void);
+/* =========================================================
+ * CONSTRUCTOR
+ * ========================================================= */
+void vPWM_Init(PWM_t *self, uint32_t arr);
+void vPWM_Start(PWM_t *self);
 
-/**
- * @brief Update duty cycle for three phases.
- *
- * Writes new compare values into CCR registers for phases A, B and C.
- *
- * @param compareA Duty cycle value for phase A (CCR1)
- * @param compareB Duty cycle value for phase B (CCR2)
- * @param compareC Duty cycle value for phase C (CCR3)
- */
-void vPWM_UpdatePhaseCompare(uint32_t compareA, uint32_t compareB, uint32_t compareC);
+/* =========================================================
+ * METHODS
+ * ========================================================= */
+void vPWM_SetPhaseA(PWM_t *self, uint32_t duty);
+void vPWM_SetPhaseB(PWM_t *self, uint32_t duty);
+void vPWM_SetPhaseC(PWM_t *self, uint32_t duty);
 
-/**
- * @brief Set duty cycle for PWM channel 1.
- *
- * Updates the compare register CCR1 which controls the duty cycle
- * of phase A output.
- *
- * @param ui32DutyCycle Duty cycle value (0 to ARR)
- */
-void vPWM_channel1SetDuty(uint32_t ui32DutyCycle);
+void vPWM_SetPhases(PWM_t *self,
+                   uint32_t a,
+                   uint32_t b,
+                   uint32_t c);
 
-/**
- * @brief Set duty cycle for PWM channel 2.
- *
- * Updates the compare register CCR1 which controls the duty cycle
- * of phase B output.
- *
- * @param ui32DutyCycle Duty cycle value (0 to ARR)
- */
-void vPWM_channel2SetDuty(uint32_t ui32DutyCycle);
+/* =========================================================
+ * PHASE CONTROL (ON/OFF)
+ * ========================================================= */
+void vPWM_EnablePhaseA(PWM_t *self);
+void vPWM_EnablePhaseB(PWM_t *self);
+void vPWM_EnablePhaseC(PWM_t *self);
 
-/**
- * @brief Set duty cycle for PWM channel 3.
- *
- * Updates the compare register CCR1 which controls the duty cycle
- * of phase C output.
- *
- * @param ui32DutyCycle Duty cycle value (0 to ARR)
- */
-void vPWM_channel3SetDuty(uint32_t ui32DutyCycle);
+void vPWM_DisablePhaseA(PWM_t *self);
+void vPWM_DisablePhaseB(PWM_t *self);
+void vPWM_DisablePhaseC(PWM_t *self);
 
-#endif /* __PWM_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* PWM_H */

@@ -55,6 +55,8 @@ float duty_u = 0.0f;
 float duty_v = 0.0f;
 float duty_w = 0.0f;
 
+extern PWM_t pwm;
+
 void vSPWM_TableSinInit(void)
 {
   /* Initialize the sine table with precomputed values */
@@ -93,7 +95,7 @@ void vSPWM_Update(void)
   if(duty_v > 1999)duty_v = 1999;
   if(duty_w > 1999)duty_w = 1999;
 
-  vKernelInterface_SetPhaseADuty((uint32_t)duty_u);
-  vKernelInterface_SetPhaseBDuty((uint32_t)duty_v );
-  vKernelInterface_SetPhaseCDuty((uint32_t)duty_w );
+  vPWM_SetPhaseA(&pwm,(uint32_t)duty_u);
+  vPWM_SetPhaseB(&pwm,(uint32_t)duty_v);
+  vPWM_SetPhaseC(&pwm,(uint32_t)duty_w);
 }
