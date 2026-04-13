@@ -24,75 +24,31 @@
 
 #include "stm32g0xx_hal.h"
 
-/**
- * @brief Prescaler value for TIM2.
- *
- * Defines the clock division applied to the timer input clock.
- */
-#define TIM2_PRESCALER 63U
+/* =========================================================
+ * TIMER OBJECT
+ * ========================================================= */
 
-/**
- * @brief Auto-reload value for TIM2.
- *
- * Determines the timer overflow period and interrupt frequency.
- */
-#define TIM2_ARR 249U
+typedef struct
+{
+    TIM_TypeDef *instance;   /**< TIM peripheral base address */
+    uint32_t psc;            /**< Prescaler value */
+    uint32_t arr;            /**< Auto-reload value */
+    uint8_t enabled;        /**< Runtime state */
+} Timer_t;
 
-/**
- * @brief Prescaler value for TIM3.
- */
-#define TIM3_PRESCALER 63U
+/* =========================================================
+ * API
+ * ========================================================= */
 
-/**
- * @brief Auto-reload value for TIM3.
- */
-#define TIM3_ARR 999U
+void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
+                uint32_t psc, uint32_t arr);
 
-/**
- * @brief Initialize TIM2 peripheral.
- *
- * Configures TIM2 as a periodic timer generating update interrupts
- * based on the configured prescaler and auto-reload values.
- */
-void vTIM2_Init(void);
+void Timer_Start(Timer_t *self);
+void Timer_Stop(Timer_t *self);
 
-/**
- * @brief Start TIM2 timer.
- *
- * Enables the TIM2 counter allowing it to begin counting
- * and generating periodic update events.
- */
-void vTIM2_Start(void);
+void Timer_ClearIRQ(Timer_t *self);
 
-/**
- * @brief TIM2 interrupt service routine handler.
- *
- * This function processes the update interrupt generated
- * by TIM2 and clears the corresponding interrupt flag.
- */
-void vTIM2_ClearlRQTim2(void);
+/* Callback style (optional kernel hook) */
+void cbTIM(void);
 
-/**
- * @brief Initialize TIM3 peripheral.
- *
- * Configures TIM3 as a periodic timer generating update interrupts
- * according to the configured prescaler and auto-reload values.
- */
-void vTIM3_Init(void);
-
-/**
- * @brief Start TIM3 timer.
- *
- * Enables the TIM3 counter allowing it to begin counting
- * and generating periodic update events.
- */
-void vTIM3_Start(void);
-
-/**
- * @brief TIM3 interrupt service routine handler.
- *
- * This function handles the update interrupt generated
- * by TIM3 and clears the interrupt flag.
- */
-void vTIM3_ClearlRQTim3(void);
-#endif /* __TIM_H */
+#endif

@@ -21,153 +21,87 @@
 #include "tim.h"
 #include "stm32g031xx.h"
 #include "KernelInterface.h"
+/* =========================================================
+ * INIT
+ * ========================================================= */
+
 /**
- * @brief Initialize TIM2 peripheral.
+ * @brief Initializes a timer instance.
  *
- * Configures TIM2 as a basic up-counter timer using the prescaler
- * and auto-reload values defined by TIM2_PRESCALER and TIM2_ARR.
- * The timer generates an update interrupt on overflow.
+ * Configures hardware registers and stores configuration
+ * inside the object.
  */
-void vTIM2_Init(void)
+void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
+                uint32_t psc, uint32_t arr)
 {
-  /* Reset configuration */
-  TIM2->CR1 = 0;
-  TIM2->CR2 = 0;
-  TIM2->SMCR = 0;
-  TIM2->DIER = 0;
+    self->instance = instance;
+    self->psc = psc;
+    self->arr = arr;
+    self->enabled = 0;
 
-  /* Set prescaler */
-  TIM2->PSC = TIM2_PRESCALER;
+    /* Reset timer */
+    instance->CR1 = 0;
+    instance->CR2 = 0;
+    instance->SMCR = 0;
+    instance->DIER = 0;
 
-  /* Set auto reload value */
-  TIM2->ARR = TIM2_ARR;
+    instance->PSC = psc;
+    instance->ARR = arr;
 
-  /* Counter mode: up */
-  TIM2->CR1 &= ~TIM_CR1_DIR;
+    instance->CR1 &= ~TIM_CR1_DIR;  /* upcounter */
+    instance->CR1 &= ~TIM_CR1_CKD;
 
-  /* Clock division */
-  TIM2->CR1 &= ~TIM_CR1_CKD;
+    instance->DIER |= TIM_DIER_UIE; /* interrupt enable */
 
-  /* Enable update interrupt */
-  TIM2->DIER |= TIM_DIER_UIE;
-
-  /* Reset counter */
-  TIM2->CNT = 0;
-
-  /* Generate update event to load registers */
-  TIM2->EGR = TIM_EGR_UG;
+    instance->CNT = 0;
+    instance->EGR = TIM_EGR_UG;
 }
 
-/**
- * @brief Start TIM2 timer.
- *
- * Enables the counter allowing TIM2 to begin counting
- * and generating periodic update events.
- */
-void vTIM2_Start(void)
+/* =========================================================
+ * START / STOP
+ * ========================================================= */
+
+void Timer_Start(Timer_t *self)
 {
-  TIM2->CR1 |= TIM_CR1_CEN;
+    self->instance->CR1 |= TIM_CR1_CEN;
+    self->enabled = 1;
 }
 
-/**
- * @brief TIM2 interrupt handler routine.
- *
- * This function checks for the update interrupt flag (UIF)
- * and clears it when triggered.
- *
- * Additional application logic can be inserted inside
- * the interrupt service routine.
- */
-void vTIM2_ClearlRQTim2(void)
+void Timer_Stop(Timer_t *self)
 {
-  if (TIM2->SR & TIM_SR_UIF)
-  {
-    TIM2->SR &= ~TIM_SR_UIF;   /* Clear update interrupt flag */
-  }
-  else
-  {
-    /* Do nothing */
-  }
+    self->instance->CR1 &= ~TIM_CR1_CEN;
+    self->enabled = 0;
 }
 
-/**
- * @brief Initialize TIM3 peripheral.
- *
- * Configures TIM3 as a basic up-counter timer using the prescaler
- * and auto-reload values defined by TIM3_PRESCALER and TIM3_ARR.
- * The timer generates an update interrupt on overflow.
- */
-void vTIM3_Init(void)
+/* =========================================================
+ * IRQ HANDLING
+ * ========================================================= */
+
+void Timer_ClearIRQ(Timer_t *self)
 {
-  /* Reset configuration */
-  TIM3->CR1 = 0;
-  TIM3->CR2 = 0;
-  TIM3->SMCR = 0;
-  TIM3->DIER = 0;
-
-  /* Set prescaler */
-  TIM3->PSC = TIM3_PRESCALER;
-
-  /* Set auto reload value */
-  TIM3->ARR = TIM3_ARR;
-
-  /* Counter mode: up */
-  TIM3->CR1 &= ~TIM_CR1_DIR;
-
-  /* Clock division */
-  TIM3->CR1 &= ~TIM_CR1_CKD;
-
-  /* Enable update interrupt */
-  TIM3->DIER |= TIM_DIER_UIE;
-
-  /* Reset counter */
-  TIM3->CNT = 0;
-
-  /* Generate update event to load registers */
-  TIM3->EGR = TIM_EGR_UG;
+    if (self->instance->SR & TIM_SR_UIF)
+    {
+        self->instance->SR &= ~TIM_SR_UIF;
+    }
 }
 
+/* =========================================================
+ * CALLBACK (KERNEL LAYER)
+ * ========================================================= */
+
+Timer_t tim2;
+Timer_t tim3;
+
 /**
- * @brief Start TIM3 timer.
+ * @brief Initializes system timers (TIM2 + TIM3).
  *
- * Enables the counter allowing TIM3 to begin counting
- * and generating periodic update events.
+ * OOP-style kernel callback initializer.
  */
-void vTIM3_Start(void)
+void cbTIM(void)
 {
-  TIM3->CR1 |= TIM_CR1_CEN;
-}
+    Timer_Init(&tim2, TIM2, 63, 249);
+    Timer_Init(&tim3, TIM3, 63, 999);
 
-/**
- * @brief TIM3 interrupt handler routine.
- *
- * This function checks for the update interrupt flag (UIF)
- * and clears it when triggered.
- *
- * Additional application logic can be executed inside
- * this interrupt service routine.
- */
-void vTIM3_ClearlRQTim3(void)
-{
-  if (TIM3->SR & TIM_SR_UIF)
-  {
-    TIM3->SR &= ~TIM_SR_UIF;   /* Clear update interrupt flag */
-  }
-  else
-  {
-    /* Do nothing */
-  }
-
-}
-
-/**
- * @brief TIM callback function.
- *
- * Alias to TIMx_Init(), can be called as a callback or initialization routine.
- */
-void cbTIM(void){
-	vTIM2_Init();
-	vTIM2_Start();
-	vTIM3_Init();
-	vTIM3_Start();
+    Timer_Start(&tim2);
+    Timer_Start(&tim3);
 }

@@ -29,6 +29,7 @@
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
 #include <stdint.h>
+#include <tim.h>
 void cbGPIOS(void);
 
 /**
