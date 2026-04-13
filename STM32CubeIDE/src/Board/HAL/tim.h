@@ -22,33 +22,107 @@
 #ifndef __TIM_H
 #define __TIM_H
 
-#include "stm32g0xx_hal.h"
+#include "stm32g031xx.h"
+#include <stdint.h>
 
 /* =========================================================
  * TIMER OBJECT
  * ========================================================= */
 
+/**
+ * @brief Timer object structure.
+ *
+ * Represents a hardware timer instance and its configuration.
+ *
+ * @note This is a lightweight abstraction over STM32 TIM peripherals.
+ */
 typedef struct
 {
-    TIM_TypeDef *instance;   /**< TIM peripheral base address */
-    uint32_t psc;            /**< Prescaler value */
-    uint32_t arr;            /**< Auto-reload value */
-    uint8_t enabled;        /**< Runtime state */
+    /**
+     * @brief Pointer to hardware timer instance.
+     *
+     * Example:
+     * - TIM2
+     * - TIM3
+     */
+    TIM_TypeDef *instance;
+
+    /**
+     * @brief Prescaler value.
+     *
+     * Divides the input clock frequency.
+     */
+    uint32_t psc;
+
+    /**
+     * @brief Auto-reload value.
+     *
+     * Defines the timer period.
+     */
+    uint32_t arr;
+
+    /**
+     * @brief Runtime enable flag.
+     *
+     * - 0: Timer stopped
+     * - 1: Timer running
+     */
+    uint8_t enabled;
+
 } Timer_t;
 
 /* =========================================================
- * API
+ * PUBLIC API
  * ========================================================= */
 
+/**
+ * @brief Initialize timer instance.
+ *
+ * Configures the timer hardware and stores parameters
+ * inside the Timer_t object.
+ *
+ * @param[in,out] self Pointer to Timer object
+ * @param[in] instance Timer peripheral base (TIM2, TIM3, etc.)
+ * @param[in] psc Prescaler value
+ * @param[in] arr Auto-reload value (period)
+ */
 void Timer_Init(Timer_t *self, TIM_TypeDef *instance,
                 uint32_t psc, uint32_t arr);
 
+/**
+ * @brief Start timer.
+ *
+ * Enables the timer counter.
+ *
+ * @param[in,out] self Pointer to Timer object
+ */
 void Timer_Start(Timer_t *self);
+
+/**
+ * @brief Stop timer.
+ *
+ * Disables the timer counter.
+ *
+ * @param[in,out] self Pointer to Timer object
+ */
 void Timer_Stop(Timer_t *self);
 
+/**
+ * @brief Clear timer interrupt flag.
+ *
+ * Clears the update interrupt flag (UIF).
+ * Should be called inside the ISR.
+ *
+ * @param[in,out] self Pointer to Timer object
+ */
 void Timer_ClearIRQ(Timer_t *self);
 
-/* Callback style (optional kernel hook) */
+/**
+ * @brief Timer initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes and starts system timers.
+ */
 void cbTIM(void);
 
-#endif
+#endif /* __TIM_H */
