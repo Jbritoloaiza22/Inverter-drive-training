@@ -21,19 +21,6 @@
 #include "tim.h"
 #include "stm32g031xx.h"
 #include "KernelInterface.h"
-
-#define dSINTABLESIZE 1024
-#define dPI 3.14159265358979323846f
-float sin_table[dSINTABLESIZE];
-/* global variables */
-volatile float theta = 0.0f; /* radians */
-float phase_v = 0.0f;
-float phase_u = 0.0f;
-float phase_w = 0.0f;
-
-float duty_u = 0.0f;
-float duty_v = 0.0f;
-float duty_w = 0.0f;
 /**
  * @brief Initialize TIM2 peripheral.
  *
@@ -91,7 +78,7 @@ void vTIM2_Start(void)
  * Additional application logic can be inserted inside
  * the interrupt service routine.
  */
-void vTIM2_IRQHandler(void)
+void vTIM2_ClearlRQTim2(void)
 {
   if (TIM2->SR & TIM_SR_UIF)
   {
@@ -160,7 +147,7 @@ void vTIM3_Start(void)
  * Additional application logic can be executed inside
  * this interrupt service routine.
  */
-void vTIM3_IRQHandler(void)
+void vTIM3_ClearlRQTim3(void)
 {
   if (TIM3->SR & TIM_SR_UIF)
   {
@@ -170,26 +157,6 @@ void vTIM3_IRQHandler(void)
   {
     /* Do nothing */
   }
-  theta += 0.06f;
-  if(theta >= 2.0f * dPI)
-  {
-    theta -= 2.0f * dPI;
-  }
-  phase_u = fKernelInterface_SineLookup(theta);
-  phase_v = fKernelInterface_SineLookup(theta - 2.0f * dPI / 3.0f);
-  phase_w = fKernelInterface_SineLookup(theta + 2.0f * dPI / 3.0f);
-
-  duty_u = ((phase_u + 1.0f) * 0.5f) * 1999;
-  duty_v = ((phase_v + 1.0f) * 0.5f) * 1999;
-  duty_w = ((phase_w + 1.0f) * 0.5f) * 1999;
-
-  if(duty_u > 1999)duty_u = 1999;
-  if(duty_v > 1999)duty_v = 1999;
-  if(duty_w > 1999)duty_w = 1999;
-
-  vKernelInterface_SetPhaseADuty((uint32_t)duty_u);
-  vKernelInterface_SetPhaseBDuty((uint32_t)duty_v );
-  vKernelInterface_SetPhaseCDuty((uint32_t)duty_w );
 
 }
 
@@ -203,24 +170,4 @@ void cbTIM(void){
 	vTIM2_Start();
 	vTIM3_Init();
 	vTIM3_Start();
-}
-
-void vKernelInterface_TableSinInit(void)
-{
-  /* Initialize the sine table with precomputed values */
-  /* This function can be called during system initialization if needed */
-  for(uint32_t i = 0; i < dSINTABLESIZE; i++)
-  {
-    /* Compute sine values scaled to the desired range (e.g., 0 to 1000) */
-    sin_table[i] = ((sinf((2 * dPI * (float)i) / (float)dSINTABLESIZE)));
-  }
-}
-
-float fKernelInterface_SineLookup(float angle)
-{
-  while(angle < 0)angle += 2.0f * dPI;
-  while(angle >= 2.0f * dPI)angle -= 2.0f * dPI;
-
-  int32_t index = (uint32_t)(angle * (dSINTABLESIZE / (2.0f * dPI)));
-  return sin_table[index];
 }

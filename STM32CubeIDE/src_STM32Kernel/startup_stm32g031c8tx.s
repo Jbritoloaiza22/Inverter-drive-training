@@ -160,8 +160,8 @@ g_pfnVectors:
   .word ADC1_IRQHandler                   /* ADC1                        */
   .word TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
-  .word TIM2_IRQHandler                   /* TIM2                         */
-  .word TIM3_IRQHandler                   /* TIM3                         */
+  .word vKernelInterface_TIM2IRQHandler                   /* TIM2                         */
+  .word vKernelInterface_TIM3IRQHandler                   /* TIM3                         */
   .word LPTIM1_IRQHandler                 /* LPTIM1                       */
   .word LPTIM2_IRQHandler                 /* LPTIM2                       */
   .word TIM14_IRQHandler                  /* TIM14                        */
@@ -244,11 +244,11 @@ g_pfnVectors:
   .weak      TIM1_CC_IRQHandler
   .thumb_set TIM1_CC_IRQHandler,Default_Handler
 
-  .weak      TIM2_IRQHandler
-  .thumb_set TIM2_IRQHandler,Default_Handler
+  .weak      vKernelInterface_TIM2IRQHandler
+  .thumb_set vKernelInterface_TIM2IRQHandler,Default_Handler
 
-  .weak      TIM3_IRQHandler
-  .thumb_set TIM3_IRQHandler,Default_Handler
+  .weak      vKernelInterface_TIM3IRQHandler
+  .thumb_set vKernelInterface_TIM3IRQHandler,Default_Handler
 
   .weak      LPTIM1_IRQHandler
   .thumb_set LPTIM1_IRQHandler,Default_Handler

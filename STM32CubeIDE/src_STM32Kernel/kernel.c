@@ -75,7 +75,7 @@ int main(void)
   float test1 = 0.0;
   float test2 = 0.0;
   float test3 = 0.0;
-  vKernelInterface_TableSinInit();
+  vSPWM_TableSinInit();
   while (1)
   {
 

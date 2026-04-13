@@ -28,6 +28,7 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
+#include <stdint.h>
 void cbGPIOS(void);
 
 /**
@@ -129,5 +130,5 @@ void vKernelInterface_SetPhaseBDuty(uint32_t ui32DutyCycle);
 void vKernelInterface_SetPhaseCDuty(uint32_t ui32DutyCycle);
 
 
-void vKernelInterface_TableSinInit(void);
-float fKernelInterface_SineLookup(float angle);
+void vKernelInterface_TIM2IRQHandler(void);
+void vKernelInterface_TIM3IRQHandler(void);
