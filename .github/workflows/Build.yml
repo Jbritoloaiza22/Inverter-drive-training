@@ -1,4 +1,5 @@
 name: STM32 Build
+
 on:
   push:
   pull_request:
@@ -14,15 +15,27 @@ jobs:
       - name: Build Docker image
         run: docker build -t stm32-build ./docker
 
-      - name: Compile firmware
+      - name: Compile firmware inside container
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             stm32-build \
-            bash -c "cd /workspace/STM32CubeIDE/Debug && make all"
+            bash -c "
+              cd /workspace/STM32CubeIDE/Debug &&
+              make clean &&
+              make all
+            "
 
-      - name: Upload artifacts
+      - name: Verify build outputs
+        run: |
+          ls -R STM32CubeIDE/Debug || true
+
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware
-          path: STM32CubeIDE/Debug/*.elf
+          name: stm32-firmware
+          path: |
+            STM32CubeIDE/Debug/*.elf
+            STM32CubeIDE/Debug/*.bin
+            STM32CubeIDE/Debug/*.hex
+            STM32CubeIDE/Debug/*.map
