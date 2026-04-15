@@ -200,7 +200,6 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
-  cbSPWM();
 }
 
 /**
