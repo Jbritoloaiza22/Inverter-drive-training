@@ -281,7 +281,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32g0xx_hal.h"
+#include "defs.h"
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
@@ -292,7 +292,6 @@
   * @{
   */
 
-#ifdef HAL_ADC_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -388,43 +387,21 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef *hadc)
   }
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  assert_param(IS_ADC_CLOCKPRESCALER(hadc->Init.ClockPrescaler));
-  assert_param(IS_ADC_RESOLUTION(hadc->Init.Resolution));
-  assert_param(IS_ADC_DATA_ALIGN(hadc->Init.DataAlign));
-  assert_param(IS_ADC_SCAN_MODE(hadc->Init.ScanConvMode));
-  assert_param(IS_FUNCTIONAL_STATE(hadc->Init.ContinuousConvMode));
-  assert_param(IS_ADC_EXTTRIG_EDGE(hadc->Init.ExternalTrigConvEdge));
-  assert_param(IS_ADC_EXTTRIG(hadc->Init.ExternalTrigConv));
-  assert_param(IS_FUNCTIONAL_STATE(hadc->Init.DMAContinuousRequests));
-  assert_param(IS_ADC_EOC_SELECTION(hadc->Init.EOCSelection));
-  assert_param(IS_ADC_OVERRUN(hadc->Init.Overrun));
-  assert_param(IS_FUNCTIONAL_STATE(hadc->Init.LowPowerAutoWait));
-  assert_param(IS_FUNCTIONAL_STATE(hadc->Init.LowPowerAutoPowerOff));
-  assert_param(IS_ADC_SAMPLE_TIME(hadc->Init.SamplingTimeCommon1));
-  assert_param(IS_ADC_SAMPLE_TIME(hadc->Init.SamplingTimeCommon2));
-  assert_param(IS_FUNCTIONAL_STATE(hadc->Init.OversamplingMode));
   if (hadc->Init.OversamplingMode == ENABLE)
   {
-    assert_param(IS_ADC_OVERSAMPLING_RATIO(hadc->Init.Oversampling.Ratio));
-    assert_param(IS_ADC_RIGHT_BIT_SHIFT(hadc->Init.Oversampling.RightBitShift));
-    assert_param(IS_ADC_TRIGGERED_OVERSAMPLING_MODE(hadc->Init.Oversampling.TriggeredMode));
+
   }
-  assert_param(IS_ADC_TRIGGER_FREQ(hadc->Init.TriggerFrequencyMode));
 
   if (hadc->Init.ScanConvMode != ADC_SCAN_DISABLE)
   {
-    assert_param(IS_FUNCTIONAL_STATE(hadc->Init.DiscontinuousConvMode));
 
     if (hadc->Init.ScanConvMode == ADC_SCAN_ENABLE)
     {
-      assert_param(IS_ADC_REGULAR_NB_CONV(hadc->Init.NbrOfConversion));
     }
   }
 
   /* ADC group regular discontinuous mode can be enabled only if              */
   /* continuous mode is disabled.                                             */
-  assert_param(!((hadc->Init.DiscontinuousConvMode == ENABLE) && (hadc->Init.ContinuousConvMode == ENABLE)));
 
   /* Actions performed only if ADC is coming from state reset:                */
   /* - Initialization of ADC MSP                                              */
@@ -738,7 +715,6 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc)
   }
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Set ADC state */
   SET_BIT(hadc->State, HAL_ADC_STATE_BUSY_INTERNAL);
@@ -1145,7 +1121,6 @@ HAL_StatusTypeDef HAL_ADC_Start(ADC_HandleTypeDef *hadc)
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Perform ADC enable and conversion start if no conversion is on going */
   if (LL_ADC_REG_IsConversionOngoing(hadc->Instance) == 0UL)
@@ -1212,7 +1187,6 @@ HAL_StatusTypeDef HAL_ADC_Stop(ADC_HandleTypeDef *hadc)
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   __HAL_LOCK(hadc);
 
@@ -1264,7 +1238,6 @@ HAL_StatusTypeDef HAL_ADC_PollForConversion(ADC_HandleTypeDef *hadc, uint32_t Ti
   uint32_t tmp_flag_end;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* If end of conversion selected to end of sequence conversions */
   if (hadc->Init.EOCSelection == ADC_EOC_SEQ_CONV)
@@ -1396,8 +1369,6 @@ HAL_StatusTypeDef HAL_ADC_PollForEvent(ADC_HandleTypeDef *hadc, uint32_t EventTy
   uint32_t tickstart;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  assert_param(IS_ADC_EVENT_TYPE(EventType));
 
   /* Get tick count */
   tickstart = HAL_GetTick();
@@ -1526,7 +1497,6 @@ HAL_StatusTypeDef HAL_ADC_Start_IT(ADC_HandleTypeDef *hadc)
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Perform ADC enable and conversion start if no conversion is on going */
   if (LL_ADC_REG_IsConversionOngoing(hadc->Instance) == 0UL)
@@ -1617,7 +1587,6 @@ HAL_StatusTypeDef HAL_ADC_Stop_IT(ADC_HandleTypeDef *hadc)
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   __HAL_LOCK(hadc);
 
@@ -1664,7 +1633,6 @@ HAL_StatusTypeDef HAL_ADC_Start_DMA(ADC_HandleTypeDef *hadc, uint32_t *pData, ui
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Perform ADC enable and conversion start if no conversion is on going */
   if (LL_ADC_REG_IsConversionOngoing(hadc->Instance) == 0UL)
@@ -1747,7 +1715,6 @@ HAL_StatusTypeDef HAL_ADC_Stop_DMA(ADC_HandleTypeDef *hadc)
   HAL_StatusTypeDef tmp_hal_status;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   __HAL_LOCK(hadc);
 
@@ -1812,7 +1779,6 @@ HAL_StatusTypeDef HAL_ADC_Stop_DMA(ADC_HandleTypeDef *hadc)
 uint32_t HAL_ADC_GetValue(const ADC_HandleTypeDef *hadc)
 {
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Note: EOC flag is not cleared here by software because automatically     */
   /*       cleared by hardware when reading register DR.                      */
@@ -1832,9 +1798,7 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef *hadc)
   uint32_t tmp_isr = hadc->Instance->ISR;
   uint32_t tmp_ier = hadc->Instance->IER;
 
-  /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  assert_param(IS_ADC_EOC_SELECTION(hadc->Init.EOCSelection));
+
 
   /* ========== Check End of Sampling flag for ADC group regular ========== */
   if (((tmp_isr & ADC_FLAG_EOSMP) == ADC_FLAG_EOSMP) && ((tmp_ier & ADC_IT_EOSMP) == ADC_IT_EOSMP))
@@ -1850,7 +1814,6 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef *hadc)
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
     hadc->EndOfSamplingCallback(hadc);
 #else
-    HAL_ADCEx_EndOfSamplingCallback(hadc);
 #endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 
     /* Clear regular group conversion flag */
@@ -1950,7 +1913,6 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef *hadc)
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
     hadc->LevelOutOfWindow2Callback(hadc);
 #else
-    HAL_ADCEx_LevelOutOfWindow2Callback(hadc);
 #endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 
     /* Clear ADC analog watchdog flag */
@@ -1967,7 +1929,6 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef *hadc)
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
     hadc->LevelOutOfWindow3Callback(hadc);
 #else
-    HAL_ADCEx_LevelOutOfWindow3Callback(hadc);
 #endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 
     /* Clear ADC analog watchdog flag */
@@ -2024,7 +1985,6 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef *hadc)
   if (((tmp_isr & ADC_FLAG_CCRDY) == ADC_FLAG_CCRDY) && ((tmp_ier & ADC_IT_CCRDY) == ADC_IT_CCRDY))
   {
     /* Channel configuration ready callback */
-    HAL_ADCEx_ChannelConfigReadyCallback(hadc);
 
     /* Clear ADC analog watchdog flag */
     __HAL_ADC_CLEAR_FLAG(hadc, ADC_FLAG_CCRDY);
@@ -2140,21 +2100,15 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef *hadc, const ADC_Chann
   uint32_t tmp_config_internal_channel;
   __IO uint32_t wait_loop_index = 0UL;
 
-  /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  assert_param(IS_ADC_CHANNEL(pConfig->Channel));
-  assert_param(IS_ADC_SAMPLING_TIME_COMMON(pConfig->SamplingTime));
+
 
   if ((hadc->Init.ScanConvMode == ADC_SCAN_SEQ_FIXED)       ||
       (hadc->Init.ScanConvMode == ADC_SCAN_SEQ_FIXED_BACKWARD))
   {
-    assert_param(IS_ADC_REGULAR_RANK_SEQ_FIXED(pConfig->Rank));
   }
   else
   {
-    assert_param(IS_ADC_REGULAR_NB_CONV(hadc->Init.NbrOfConversion));
 
-    assert_param(IS_ADC_REGULAR_RANK(pConfig->Rank));
   }
 
   __HAL_LOCK(hadc);
@@ -2350,30 +2304,19 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef *hadc, const ADC_Ana
   uint32_t backup_setting_adc_enable_state = 0UL;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  assert_param(IS_ADC_ANALOG_WATCHDOG_NUMBER(pAnalogWDGConfig->WatchdogNumber));
-  assert_param(IS_ADC_ANALOG_WATCHDOG_MODE(pAnalogWDGConfig->WatchdogMode));
-  assert_param(IS_FUNCTIONAL_STATE(pAnalogWDGConfig->ITMode));
+
 
   if (pAnalogWDGConfig->WatchdogMode == ADC_ANALOGWATCHDOG_SINGLE_REG)
   {
-    assert_param(IS_ADC_CHANNEL(pAnalogWDGConfig->Channel));
   }
 
   /* Verify thresholds range */
   if (hadc->Init.OversamplingMode == ENABLE)
   {
-    /* Case of oversampling enabled: depending on ratio and shift configuration,
-       analog watchdog thresholds can be higher than ADC resolution.
-       Verify if thresholds are within maximum thresholds range. */
-    assert_param(IS_ADC_RANGE(ADC_RESOLUTION_12B, pAnalogWDGConfig->HighThreshold));
-    assert_param(IS_ADC_RANGE(ADC_RESOLUTION_12B, pAnalogWDGConfig->LowThreshold));
+
   }
   else
   {
-    /* Verify if thresholds are within the selected ADC resolution */
-    assert_param(IS_ADC_RANGE(ADC_GET_RESOLUTION(hadc), pAnalogWDGConfig->HighThreshold));
-    assert_param(IS_ADC_RANGE(ADC_GET_RESOLUTION(hadc), pAnalogWDGConfig->LowThreshold));
   }
 
   __HAL_LOCK(hadc);
@@ -2581,7 +2524,6 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef *hadc, const ADC_Ana
 uint32_t HAL_ADC_GetState(const ADC_HandleTypeDef *hadc)
 {
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Return ADC handle state */
   return hadc->State;
@@ -2595,7 +2537,6 @@ uint32_t HAL_ADC_GetState(const ADC_HandleTypeDef *hadc)
 uint32_t HAL_ADC_GetError(const ADC_HandleTypeDef *hadc)
 {
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   return hadc->ErrorCode;
 }
@@ -2624,7 +2565,6 @@ HAL_StatusTypeDef ADC_ConversionStop(ADC_HandleTypeDef *hadc)
   uint32_t tickstart;
 
   /* Check the parameters */
-  assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Verification if ADC is not already stopped on regular group to bypass    */
   /* this function if not needed.                                             */
@@ -2828,8 +2768,6 @@ HAL_StatusTypeDef ADC_Disable(ADC_HandleTypeDef *hadc)
 /**
   * @}
   */
-
-#endif /* HAL_ADC_MODULE_ENABLED */
 /**
   * @}
   */

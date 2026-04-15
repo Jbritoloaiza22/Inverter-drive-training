@@ -131,8 +131,8 @@ Infinite_Loop:
 g_pfnVectors:
   .word _estack
   .word Reset_Handler
-  .word NMI_Handler
-  .word HardFault_Handler
+  .word vIRQ_NMIHandler
+  .word vIRQ_HardFaultHandler
   .word 0
   .word 0
   .word 0
@@ -140,11 +140,11 @@ g_pfnVectors:
   .word 0
   .word 0
   .word 0
-  .word SVC_Handler
+  .word vIRQ_SVCHandler
   .word 0
   .word 0
-  .word PendSV_Handler
-  .word SysTick_Handler
+  .word vIRQ_PendSVHandler
+  .word vIRQ_SysTickHandler
   .word WWDG_IRQHandler                   /* Window WatchDog              */
   .word PVD_IRQHandler                    /* PVD through EXTI Line detect */
   .word RTC_TAMP_IRQHandler               /* RTC through the EXTI line    */
@@ -157,7 +157,7 @@ g_pfnVectors:
   .word DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
   .word DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler /* DMA1 Channel 4 to Channel 5, DMAMUX1 overrun */
-  .word ADC1_IRQHandler                   /* ADC1                        */
+  .word vIRQ_ADC1IRQHandler                   /* ADC1                        */
   .word TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
   .word vKernelInterface_TIM2IRQHandler                   /* TIM2                         */
@@ -187,20 +187,20 @@ g_pfnVectors:
 *
 *******************************************************************************/
 
-  .weak      NMI_Handler
-  .thumb_set NMI_Handler,Default_Handler
+  .weak      vIRQ_NMIHandler
+  .thumb_set vIRQ_NMIHandler,Default_Handler
 
-  .weak      HardFault_Handler
-  .thumb_set HardFault_Handler,Default_Handler
+  .weak      vIRQ_HardFaultHandler
+  .thumb_set vIRQ_HardFaultHandler,Default_Handler
 
-  .weak      SVC_Handler
-  .thumb_set SVC_Handler,Default_Handler
+  .weak      vIRQ_SVCHandler
+  .thumb_set vIRQ_SVCHandler,Default_Handler
 
-  .weak      PendSV_Handler
-  .thumb_set PendSV_Handler,Default_Handler
+  .weak      vIRQ_PendSVHandler
+  .thumb_set vIRQ_PendSVHandler,Default_Handler
 
-  .weak      SysTick_Handler
-  .thumb_set SysTick_Handler,Default_Handler
+  .weak      vIRQ_SysTickHandler
+  .thumb_set vIRQ_SysTickHandler,Default_Handler
 
   .weak      WWDG_IRQHandler
   .thumb_set WWDG_IRQHandler,Default_Handler
@@ -235,8 +235,8 @@ g_pfnVectors:
   .weak      DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler
   .thumb_set DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler,Default_Handler
 
-  .weak      ADC1_IRQHandler
-  .thumb_set ADC1_IRQHandler,Default_Handler
+  .weak      vIRQ_ADC1IRQHandler
+  .thumb_set vIRQ_ADC1IRQHandler,Default_Handler
 
   .weak      TIM1_BRK_UP_TRG_COM_IRQHandler
   .thumb_set TIM1_BRK_UP_TRG_COM_IRQHandler,Default_Handler
