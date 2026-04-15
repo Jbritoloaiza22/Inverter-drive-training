@@ -48,13 +48,14 @@
 extern SPWM_t spwm;
 extern Timer_t tim2;
 extern Timer_t tim3;
+extern SVM_t svm;
 /**
   * @brief This function handles TIM2 global interrupt.
   */
 void vKernelInterface_TIM2IRQHandler(void)
 {
-
   vTimer_ClearIRQ(&tim2);
+  SVM_Run(&svm);
 }
 /**
   * @brief This function handles TIM2 global interrupt.
@@ -63,6 +64,6 @@ void vKernelInterface_TIM3IRQHandler(void)
 {
 
   vTimer_ClearIRQ(&tim3);
-  vSPWM_Update(&spwm);
+  //vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode
 }
 

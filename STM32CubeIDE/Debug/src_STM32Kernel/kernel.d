@@ -16,7 +16,8 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
  ../src/Board/HAL/stm32g0xx_hal_uart.h \
  ../src/Board/HAL/stm32g0xx_hal_uart_ex.h \
  ../src_STM32Kernel/KernelInterface.h ../src/Board/HAL/tim.h \
- ../src_GFLib/uC/PC/stm32g031xx.h ../src_libs/BoardLib/spwm.h
+ ../src_GFLib/uC/PC/stm32g031xx.h ../src_libs/BoardLib/spwm.h \
+ ../src_libs/BoardLib/svm.h
 ../src_STM32Kernel/kernel.h:
 ../src/Board/HAL/stm32g0xx_hal.h:
 ../src/Board/Interface/stm32g0xx_hal_conf.h:
@@ -41,3 +42,4 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
 ../src/Board/HAL/tim.h:
 ../src_GFLib/uC/PC/stm32g031xx.h:
 ../src_libs/BoardLib/spwm.h:
+../src_libs/BoardLib/svm.h:

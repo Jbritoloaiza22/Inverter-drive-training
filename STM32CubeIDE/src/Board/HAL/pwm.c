@@ -44,7 +44,7 @@ void vPWM_Init(PWM_t *self, uint32_t arr)
     self->arr = arr;
     self->enabled = 0;
 
-    TIM1->CR1   = 0;
+    TIM1->CR1   = TIM_CR1_CMS_0 ;
     TIM1->CR2   = 0;
     TIM1->SMCR  = 0;
     TIM1->DIER  = 0;

@@ -22,182 +22,306 @@
  * @license
  * This source code is provided for educational and research purposes.
  */
-
 #include "svm.h"
 #include "pwm.h"
-#include "stm32g031xx.h"
+#include <math.h>
 
-/* =========================================================
- * PRIVATE DEFINES
- * ========================================================= */
+/* External PWM handle */
+extern PWM_t pwm;
+
+/** @brief Initial counter before frequency ramp starts */
+#define dSVMINITIALCOUNTERLIMIT     (8000U)
+
+/** @brief PWM timer period (ARR value) */
+#define dSVMPWMPERIOD               (1999U)
+
+/** @brief Initial alpha-axis amplitude */
+#define dSVMSTARTAMPLITUDE          (0.8f)
+
+/** @brief Running modulation amplitude */
+#define dSVMRUNAMPLITUDE           (0.8f)
+
+/** @brief Maximum frequency (Hz) */
+#define dSVMFREQMAXHZ              (25.0f)
+
+/** @brief Frequency increment per ISR */
+#define dSVMFREQSTEP               (0.02f)
+
+/** @brief Sampling period (seconds) */
+#define dSVMSAMPLETIMESEC          (0.0000625f)
+
+/** @brief Zero float constant */
+#define dSVMZEROFLOAT              (0.0f)
+
+/** @brief One float constant */
+#define dSVMONEFLOAT               (1.0f)
+
+#ifndef dTWOPI
+#define dTWOPI (6.28318530718f)
+#endif
+
+/* =========================
+ *  STATIC FUNCTION PROTOTYPES
+ * ========================= */
+static void vSVM_NormalizeAngleRad(float *theta);
+static void vSVM_ComputeDutyCycles(SVM_t *self,
+                                   float valpha,
+                                   float vbeta,
+                                   float vbus,
+                                   uint32_t period,
+                                   uint32_t *pwm_u,
+                                   uint32_t *pwm_v,
+                                   uint32_t *pwm_w);
+
+static uint8_t u8SVM_GetSector(float alpha, float beta);
+SVM_t svm;
+
+
+/* =========================
+ *  INTERNAL FUNCTIONS
+ * ========================= */
 
 /**
- * @brief Square root of 3 constant.
- *
- * Used in Clarke transformation calculations.
+ * @brief Initialize SVM object
  */
-#define dSQRT3 1.73205080757f
-
-/* =========================================================
- * GLOBAL OBJECT
- * ========================================================= */
-
-/**
- * @brief Global SVM instance.
- *
- * Used internally by the kernel callback.
- */
-static SVM_t svm;
-
-/* =========================================================
- * PRIVATE METHODS
- * ========================================================= */
-
-/**
- * @brief Clamp value within [-1, 1].
- *
- * Ensures modulation inputs remain within valid range.
- *
- * @param x Input value
- * @return Clamped value
- */
-static float vSVM_Clamp(float x)
+void SVM_Init(SVM_t *self, void *pwmHandle, uint32_t pwmPeriod)
 {
-    if (x > 1.0f) return 1.0f;
-    if (x < -1.0f) return -1.0f;
-    return x;
+    self->theta = dSVMZEROFLOAT;
+    self->freq = dSVMZEROFLOAT;
+    self->counter = 0U;
+    self->pwm = pwmHandle;
+    self->pwmPeriod = pwmPeriod;
 }
 
 /**
- * @brief Convert αβ components to three-phase abc.
- *
- * Implements inverse Clarke transformation.
- *
- * @param alpha Alpha component
- * @param beta  Beta component
- * @param a     Output phase A
- * @param b     Output phase B
- * @param c     Output phase C
+ * @brief Run SVM step (call from ISR)
  */
-static void vSVM_AlphaBetaToABC(float alpha, float beta,
-                                float *a, float *b, float *c)
+void SVM_Run(SVM_t *self)
 {
-    *a = alpha;
-    *b = -0.5f * alpha + (dSQRT3 * 0.5f) * beta;
-    *c = -0.5f * alpha - (dSQRT3 * 0.5f) * beta;
-}
+    uint32_t ui32dutyA;
+    uint32_t ui32dutyB;
+    uint32_t ui32dutyC;
 
-/**
- * @brief Normalize phase voltages to PWM range [0,1].
- *
- * Applies offset injection to maximize DC bus utilization
- * and centers the waveform before scaling.
- *
- * @param a Phase A (input/output)
- * @param b Phase B (input/output)
- * @param c Phase C (input/output)
- */
-static void vSVM_Normalize(float *a, float *b, float *c)
-{
-    float vmax = *a;
-    float vmin = *a;
+    float Valpha;
+    float Vbeta;
 
-    if (*b > vmax) vmax = *b;
-    if (*c > vmax) vmax = *c;
+    if (self->counter < dSVMINITIALCOUNTERLIMIT)
+    {
+        Valpha = dSVMSTARTAMPLITUDE;
+        Vbeta  = dSVMZEROFLOAT;
+    }
+    else
+    {
+        self->freq += dSVMFREQSTEP;
 
-    if (*b < vmin) vmin = *b;
-    if (*c < vmin) vmin = *c;
+        if (self->freq > dSVMFREQMAXHZ)
+        {
+            self->freq = dSVMFREQMAXHZ;
+        }
 
-    float offset = (vmax + vmin) * 0.5f;
+        self->theta += dTWOPI * self->freq * dSVMSAMPLETIMESEC;
+        vSVM_NormalizeAngleRad(&self->theta);
 
-    /* Center signals */
-    *a -= offset;
-    *b -= offset;
-    *c -= offset;
+        Valpha = dSVMRUNAMPLITUDE * cosf(self->theta);
+        Vbeta  = dSVMRUNAMPLITUDE * sinf(self->theta);
+    }
 
-    /* Scale to 0..1 */
-    *a = (*a + 1.0f) * 0.5f;
-    *b = (*b + 1.0f) * 0.5f;
-    *c = (*c + 1.0f) * 0.5f;
+    self->counter++;
 
-    /* Clamp again for safety */
-    *a = vSVM_Clamp(*a);
-    *b = vSVM_Clamp(*b);
-    *c = vSVM_Clamp(*c);
+    vSVM_ComputeDutyCycles(self,
+                           Valpha,
+                           Vbeta,
+                           dSVMONEFLOAT,
+                           self->pwmPeriod,
+                           &ui32dutyA,
+                           &ui32dutyB,
+                           &ui32dutyC);
+
+    vPWM_SetPhaseA(self->pwm, ui32dutyA);
+    vPWM_SetPhaseB(self->pwm, ui32dutyB);
+    vPWM_SetPhaseC(self->pwm, ui32dutyC);
 }
 
 /* =========================================================
- * PUBLIC METHODS
+ *  INTERNAL IMPLEMENTATION
  * ========================================================= */
 
-/**
- * @brief Initialize SVM object.
+ /**
+ * @brief Normalize angle into range [0, 2π]
  *
- * Marks the SVM instance as initialized and ready for use.
- *
- * @param self Pointer to SVM object
+ * @param[in,out] theta Angle in radians
  */
-void vSVM_Init(SVM_t *self)
+static void vSVM_NormalizeAngleRad(float *theta)
 {
-    if (self == 0) return;
+    if (*theta >= dTWOPI)
+    {
+        *theta -= dTWOPI;
+    }
+        else
+    {
+        /* MISRA-friendly structure */
+    }
 
-    self->initialized = 1U;
+    if (*theta < dSVMZEROFLOAT)
+    {
+        *theta += dTWOPI;
+    }
+    else
+    {
+        /* MISRA-friendly structure */
+    }
 }
 
 /**
- * @brief Update SVM modulation output.
+ * @brief Compute SVPWM duty cycles from alpha-beta voltages
  *
- * This function:
- * 1. Clamps input voltages
- * 2. Transforms αβ → abc
- * 3. Normalizes signals to PWM range
- * 4. Converts to timer compare values
- * 5. Updates PWM hardware
- *
- * @param self   Pointer to SVM object
- * @param Valpha Alpha component (-1.0 to 1.0)
- * @param Vbeta  Beta component (-1.0 to 1.0)
+ * @param[in] valpha Alpha-axis voltage reference
+ * @param[in] vbeta  Beta-axis voltage reference
+ * @param[in] vbus   DC bus voltage (normalized here as 1.0f)
+ * @param[in] ui32pwmPeriod PWM period (ARR value)
+ * @param[out] pwm_u Phase U duty cycle
+ * @param[out] pwm_v Phase V duty cycle
+ * @param[out] pwm_w Phase W duty cycle
  */
-void vSVM_Update(SVM_t *self, float Valpha, float Vbeta)
+static void vSVM_ComputeDutyCycles(SVM_t *self,
+                                   float valpha,
+                                   float vbeta,
+                                   float vbus,
+                                   uint32_t period,
+                                   uint32_t *pwm_u,
+                                   uint32_t *pwm_v,
+                                   uint32_t *pwm_w)
 {
-    if ((self == 0) || (self->initialized == 0U)) return;
+    int32_t i32t1;
+    int32_t i32t2;
 
-    float a, b, c;
+    float alpha = valpha / vbus;
+    float beta  = vbeta  / vbus;
 
-    /* Clamp inputs */
-    Valpha = vSVM_Clamp(Valpha);
-    Vbeta  = vSVM_Clamp(Vbeta);
+    uint8_t sector = u8SVM_GetSector(alpha, beta);
 
-    /* αβ → abc */
-    vSVM_AlphaBetaToABC(Valpha, Vbeta, &a, &b, &c);
+    switch (sector)
+    {
+        case 1U:
+            i32t1 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)period);
+            *pwm_u = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_v = *pwm_u - (uint32_t)i32t1;
+            *pwm_w = *pwm_v - (uint32_t)i32t2;
+            break;
 
-    /* Normalize */
-    vSVM_Normalize(&a, &b, &c);
+        case 2U:
+            i32t1 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_v = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_u = *pwm_v - (uint32_t)i32t2;
+            *pwm_w = *pwm_u - (uint32_t)i32t1;
+            break;
 
-    /* Convert to timer counts */
-    uint32_t arr = TIM1->ARR;
+        case 3U:
+            i32t1 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_v = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_w = *pwm_v - (uint32_t)i32t1;
+            *pwm_u = *pwm_w - (uint32_t)i32t2;
+            break;
 
-    uint32_t dutyA = (uint32_t)(a * arr);
-    uint32_t dutyB = (uint32_t)(b * arr);
-    uint32_t dutyC = (uint32_t)(c * arr);
+        case 4U:
+            i32t1 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)period);
+            *pwm_w = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_v = *pwm_w - (uint32_t)i32t2;
+            *pwm_u = *pwm_v - (uint32_t)i32t1;
+            break;
 
-    /* Update PWM */
-    vPWM_UpdatePhaseCompare(dutyA, dutyB, dutyC);
+        case 5U:
+            i32t1 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_w = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_u = *pwm_w - (uint32_t)i32t1;
+            *pwm_v = *pwm_u - (uint32_t)i32t2;
+            break;
+
+        case 6U:
+            i32t1 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_u = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            *pwm_w = *pwm_u - (uint32_t)i32t2;
+            *pwm_v = *pwm_w - (uint32_t)i32t1;
+            break;
+
+        default:
+            *pwm_u = (period / 2U);
+            *pwm_v = (period / 2U);
+            *pwm_w = (period / 2U);
+            break;
+    }
+
+    /* saturation */
+    if (*pwm_u > period) 
+    {
+        *pwm_u = period;
+    }
+    else
+    {
+        /* MISRA-friendly structure */
+    }
+    if (*pwm_v > period) 
+    {
+        *pwm_v = period;
+    }
+    else
+    {
+        /* MISRA-friendly structure */
+    }
+    if (*pwm_w > period) 
+    {
+        *pwm_w = period;
+    }
+    else
+    {
+        /* MISRA-friendly structure */
+    }
 }
 
-/* =========================================================
- * CALLBACK (KERNEL)
- * ========================================================= */
-
 /**
- * @brief SVM initialization callback.
+ * @brief Determine SVPWM sector from alpha-beta plane
  *
- * This function is intended to be called by the Kernel layer
- * during system initialization.
- *
- * It initializes the global SVM instance.
+ * @param[in] alpha Alpha-axis component
+ * @param[in] beta  Beta-axis component
+ * @return Sector number (1–6)
  */
-void cbSVM(void)
+static uint8_t u8SVM_GetSector(float alpha, float beta)
 {
-    vSVM_Init(&svm);
+    uint8_t sector = 0U;
+
+    if (beta >= dSVMZEROFLOAT)
+    {
+        if (alpha >= dSVMZEROFLOAT)
+        {
+            sector = ((dONE_BY_SQRT3 * beta) > alpha) ? 2U : 1U;
+        }
+        else
+        {
+            sector = ((-dONE_BY_SQRT3 * beta) > alpha) ? 3U : 2U;
+        }
+    }
+    else
+    {
+        if (alpha >= dSVMZEROFLOAT)
+        {
+            sector = ((-dONE_BY_SQRT3 * beta) > alpha) ? 5U : 6U;
+        }
+        else
+        {
+            sector = ((dONE_BY_SQRT3 * beta) > alpha) ? 4U : 5U;
+        }
+    }
+
+    return sector;
+}
+
+void cbSVPWM(void)
+{
+	SVM_Init(&svm, &pwm, dSVMPWMPERIOD);
 }

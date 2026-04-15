@@ -27,50 +27,55 @@
 #include <stdint.h>
 
 /* =========================================================
- * SVM OBJECT
+ *  CONSTANTS (shared math definitions)
+ * ========================================================= */
+
+#define dTWO_BY_SQRT3   (1.15470053838f)
+#define dONE_BY_SQRT3   (0.57735026919f)
+#define dSQRT3          (1.73205080757f)
+#define dTWOPI          (6.28318530718f)
+#define dPI             (3.14159265359f)
+
+/* =========================================================
+ *  OBJECT DEFINITION (SVM "CLASS")
  * ========================================================= */
 
 /**
- * @brief SVM object structure.
- *
- * Represents a Space Vector Modulation instance.
+ * @brief SVM object structure (encapsulated state)
  */
 typedef struct
 {
-    /**
-     * @brief Initialization flag.
-     * - 0: Not initialized
-     * - 1: Initialized
-     */
-    uint8_t initialized;
+    float theta;        /**< Electrical angle [rad] */
+    float freq;         /**< Output frequency [Hz] */
+    uint32_t counter;   /**< Internal startup counter */
+
+    float amplitude;    /**< Modulation amplitude */
+
+    uint32_t pwmPeriod; /**< PWM timer period (ARR) */
+
+    void *pwm;          /**< Pointer to PWM driver (opaque handle) */
 
 } SVM_t;
 
 /* =========================================================
- * PUBLIC API
+ *  PUBLIC API
  * ========================================================= */
 
 /**
- * @brief Initialize SVM module.
+ * @brief Initialize SVM object
  *
- * @param[in,out] self Pointer to SVM object
+ * @param self Pointer to SVM instance
+ * @param pwmHandle Pointer to PWM driver object
+ * @param pwmPeriod Timer period (ARR)
  */
-void vSVM_Init(SVM_t *self);
+void SVM_Init(SVM_t *self, void *pwmHandle, uint32_t pwmPeriod);
 
 /**
- * @brief Update SVM output.
+ * @brief Execute one SVPWM update step (call in ISR)
  *
- * Generates PWM duty cycles from αβ components.
- *
- * @param[in,out] self Pointer to SVM object
- * @param[in] Valpha Alpha component (-1.0 to 1.0)
- * @param[in] Vbeta  Beta component (-1.0 to 1.0)
+ * @param self Pointer to SVM instance
  */
-void vSVM_Update(SVM_t *self, float Valpha, float Vbeta);
+void SVM_Run(SVM_t *self);
 
-/**
- * @brief Kernel callback for SVM.
- */
-void cbSVM(void);
 
 #endif /* SVM_H */

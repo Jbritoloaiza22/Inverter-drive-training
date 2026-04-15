@@ -25,7 +25,6 @@
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
 #define dBAUDRATEUART 115200
-#define dPI 3.14159265358979323846f
 
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
@@ -200,7 +199,7 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
-  cbSPWM();
+	cbSVPWM();
 }
 
 /**
