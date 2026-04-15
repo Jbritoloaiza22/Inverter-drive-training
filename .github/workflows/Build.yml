@@ -19,7 +19,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             stm32-build \
-            bash -c "cd /workspace/STM32CubeIDE/Debug && make"
+            bash -c "cd /workspace/STM32CubeIDE/Debug && make all"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
