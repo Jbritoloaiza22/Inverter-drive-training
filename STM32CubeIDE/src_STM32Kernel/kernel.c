@@ -20,10 +20,14 @@
  * @license
  * This source code is provided for educational and research purposes.
  */
-#define FW_VERSION "v1.0.0"
 #include "kernel.h"
 #include "KernelInterface.h"
 #include "stm32g0xx_hal_uart.h"
+
+/* tracking version */
+#define FW_VERSION "v1.0.0"
+
+
 #define dBAUDRATEUART 115200
 
 /** @brief ADC handle structure */
