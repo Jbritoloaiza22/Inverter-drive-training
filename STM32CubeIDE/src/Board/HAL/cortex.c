@@ -34,7 +34,7 @@
  * This source code is provided for educational and research purposes.
  */
 
-#include "stm32g0xx_hal.h"
+#include "defs.h"
 
 /* =========================================================
  * NVIC CONFIGURATION

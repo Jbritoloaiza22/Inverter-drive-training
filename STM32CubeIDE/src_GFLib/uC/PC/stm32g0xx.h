@@ -227,7 +227,7 @@ typedef enum
   */
 
 #if defined (USE_HAL_DRIVER)
- #include "stm32g0xx_hal.h"
+ #include "defs.h"
 #endif /* USE_HAL_DRIVER */
 
 #ifdef __cplusplus

@@ -159,7 +159,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32g0xx_hal.h"
+#include "defs.h"
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
@@ -170,7 +170,6 @@
   * @{
   */
 
-#ifdef HAL_UART_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -305,12 +304,10 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
   if (huart->Init.HwFlowCtl != UART_HWCONTROL_NONE)
   {
     /* Check the parameters */
-    assert_param(IS_UART_HWFLOW_INSTANCE(huart->Instance));
   }
   else
   {
     /* Check the parameters */
-    assert_param((IS_UART_INSTANCE(huart->Instance)) || (IS_LPUART_INSTANCE(huart->Instance)));
   }
 
   if (huart->gState == HAL_UART_STATE_RESET)
@@ -378,7 +375,6 @@ HAL_StatusTypeDef HAL_HalfDuplex_Init(UART_HandleTypeDef *huart)
   }
 
   /* Check UART instance */
-  assert_param(IS_UART_HALFDUPLEX_INSTANCE(huart->Instance));
 
   if (huart->gState == HAL_UART_STATE_RESET)
   {
@@ -453,9 +449,7 @@ HAL_StatusTypeDef HAL_LIN_Init(UART_HandleTypeDef *huart, uint32_t BreakDetectLe
   }
 
   /* Check the LIN UART instance */
-  assert_param(IS_UART_LIN_INSTANCE(huart->Instance));
   /* Check the Break detection length parameter */
-  assert_param(IS_UART_LIN_BREAK_DETECT_LENGTH(BreakDetectLength));
 
   /* LIN mode limited to 16-bit oversampling only */
   if (huart->Init.OverSampling == UART_OVERSAMPLING_8)
@@ -552,7 +546,6 @@ HAL_StatusTypeDef HAL_MultiProcessor_Init(UART_HandleTypeDef *huart, uint8_t Add
   }
 
   /* Check the wake up method parameter */
-  assert_param(IS_UART_WAKEUPMETHOD(WakeUpMethod));
 
   if (huart->gState == HAL_UART_STATE_RESET)
   {
@@ -628,7 +621,6 @@ HAL_StatusTypeDef HAL_UART_DeInit(UART_HandleTypeDef *huart)
   }
 
   /* Check the parameters */
-  assert_param((IS_UART_INSTANCE(huart->Instance)) || (IS_LPUART_INSTANCE(huart->Instance)));
 
   huart->gState = HAL_UART_STATE_BUSY;
 
@@ -2263,7 +2255,6 @@ void HAL_UART_ReceiverTimeout_Config(UART_HandleTypeDef *huart, uint32_t Timeout
 {
   if (!(IS_LPUART_INSTANCE(huart->Instance)))
   {
-    assert_param(IS_UART_RECEIVER_TIMEOUT_VALUE(TimeoutValue));
     MODIFY_REG(huart->Instance->RTOR, USART_RTOR_RTO, TimeoutValue);
   }
 }
@@ -2450,7 +2441,6 @@ HAL_StatusTypeDef HAL_HalfDuplex_EnableReceiver(UART_HandleTypeDef *huart)
 HAL_StatusTypeDef HAL_LIN_SendBreak(UART_HandleTypeDef *huart)
 {
   /* Check the parameters */
-  assert_param(IS_UART_LIN_INSTANCE(huart->Instance));
 
   __HAL_LOCK(huart);
 
@@ -2565,23 +2555,14 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
   uint32_t pclk;
 
   /* Check the parameters */
-  assert_param(IS_UART_BAUDRATE(huart->Init.BaudRate));
-  assert_param(IS_UART_WORD_LENGTH(huart->Init.WordLength));
+
   if (UART_INSTANCE_LOWPOWER(huart))
   {
-    assert_param(IS_LPUART_STOPBITS(huart->Init.StopBits));
   }
   else
   {
-    assert_param(IS_UART_STOPBITS(huart->Init.StopBits));
-    assert_param(IS_UART_ONE_BIT_SAMPLE(huart->Init.OneBitSampling));
-  }
 
-  assert_param(IS_UART_PARITY(huart->Init.Parity));
-  assert_param(IS_UART_MODE(huart->Init.Mode));
-  assert_param(IS_UART_HARDWARE_FLOW_CONTROL(huart->Init.HwFlowCtl));
-  assert_param(IS_UART_OVERSAMPLING(huart->Init.OverSampling));
-  assert_param(IS_UART_PRESCALER(huart->Init.ClockPrescaler));
+  }
 
   /*-------------------------- USART CR1 Configuration -----------------------*/
   /* Clear M, PCE, PS, TE, RE and OVER8 bits and configure
@@ -2767,60 +2748,50 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
 void UART_AdvFeatureConfig(UART_HandleTypeDef *huart)
 {
   /* Check whether the set of advanced features to configure is properly set */
-  assert_param(IS_UART_ADVFEATURE_INIT(huart->AdvancedInit.AdvFeatureInit));
 
   /* if required, configure RX/TX pins swap */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_SWAP_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_SWAP(huart->AdvancedInit.Swap));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_SWAP, huart->AdvancedInit.Swap);
   }
 
   /* if required, configure TX pin active level inversion */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_TXINVERT_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_TXINV(huart->AdvancedInit.TxPinLevelInvert));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_TXINV, huart->AdvancedInit.TxPinLevelInvert);
   }
 
   /* if required, configure RX pin active level inversion */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_RXINVERT_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_RXINV(huart->AdvancedInit.RxPinLevelInvert));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_RXINV, huart->AdvancedInit.RxPinLevelInvert);
   }
 
   /* if required, configure data inversion */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_DATAINVERT_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_DATAINV(huart->AdvancedInit.DataInvert));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_DATAINV, huart->AdvancedInit.DataInvert);
   }
 
   /* if required, configure RX overrun detection disabling */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_RXOVERRUNDISABLE_INIT))
   {
-    assert_param(IS_UART_OVERRUN(huart->AdvancedInit.OverrunDisable));
     MODIFY_REG(huart->Instance->CR3, USART_CR3_OVRDIS, huart->AdvancedInit.OverrunDisable);
   }
 
   /* if required, configure DMA disabling on reception error */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_DMADISABLEONERROR_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_DMAONRXERROR(huart->AdvancedInit.DMADisableonRxError));
     MODIFY_REG(huart->Instance->CR3, USART_CR3_DDRE, huart->AdvancedInit.DMADisableonRxError);
   }
 
   /* if required, configure auto Baud rate detection scheme */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_AUTOBAUDRATE_INIT))
   {
-    assert_param(IS_USART_AUTOBAUDRATE_DETECTION_INSTANCE(huart->Instance));
-    assert_param(IS_UART_ADVFEATURE_AUTOBAUDRATE(huart->AdvancedInit.AutoBaudRateEnable));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_ABREN, huart->AdvancedInit.AutoBaudRateEnable);
     /* set auto Baudrate detection parameters if detection is enabled */
     if (huart->AdvancedInit.AutoBaudRateEnable == UART_ADVFEATURE_AUTOBAUDRATE_ENABLE)
     {
-      assert_param(IS_UART_ADVFEATURE_AUTOBAUDRATEMODE(huart->AdvancedInit.AutoBaudRateMode));
       MODIFY_REG(huart->Instance->CR2, USART_CR2_ABRMODE, huart->AdvancedInit.AutoBaudRateMode);
     }
   }
@@ -2828,7 +2799,6 @@ void UART_AdvFeatureConfig(UART_HandleTypeDef *huart)
   /* if required, configure MSB first on communication line */
   if (HAL_IS_BIT_SET(huart->AdvancedInit.AdvFeatureInit, UART_ADVFEATURE_MSBFIRST_INIT))
   {
-    assert_param(IS_UART_ADVFEATURE_MSBFIRST(huart->AdvancedInit.MSBFirst));
     MODIFY_REG(huart->Instance->CR2, USART_CR2_MSBFIRST, huart->AdvancedInit.MSBFirst);
   }
 }
@@ -3760,7 +3730,6 @@ static void UART_RxISR_16BIT_FIFOEN(UART_HandleTypeDef *huart)
   * @}
   */
 
-#endif /* HAL_UART_MODULE_ENABLED */
 /**
   * @}
   */

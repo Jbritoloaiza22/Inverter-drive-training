@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-#include "stm32g0xx_hal.h"
+#include "defs.h"
 
 /**
  * @brief System error handler.
