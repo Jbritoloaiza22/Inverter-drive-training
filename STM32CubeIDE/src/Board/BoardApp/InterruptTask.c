@@ -53,8 +53,8 @@ extern Timer_t tim3;
   */
 void vKernelInterface_TIM2IRQHandler(void)
 {
-
   vTimer_ClearIRQ(&tim2);
+  vSVM_PeriodElapsedCallback();
 }
 /**
   * @brief This function handles TIM2 global interrupt.
@@ -63,6 +63,6 @@ void vKernelInterface_TIM3IRQHandler(void)
 {
 
   vTimer_ClearIRQ(&tim3);
-  vSPWM_Update(&spwm);
+  //vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode
 }
 
