@@ -828,21 +828,6 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc)
 }
 
 /**
-  * @brief  Initialize the ADC MSP.
-  * @param hadc ADC handle
-  * @retval None
-  */
-__weak void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(hadc);
-
-  /* NOTE : This function should not be modified. When the callback is needed,
-            function HAL_ADC_MspInit must be implemented in the user file.
-   */
-}
-
-/**
   * @brief  DeInitialize the ADC MSP.
   * @param hadc ADC handle
   * @note   All ADC instances use the same core clock at RCC level, disabling
@@ -2764,7 +2749,24 @@ HAL_StatusTypeDef ADC_Disable(ADC_HandleTypeDef *hadc)
 }
 
 
+void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
+{
+  if(hadc->Instance==ADC1)
+  {
+    /* USER CODE BEGIN ADC1_MspInit 0 */
 
+    /* USER CODE END ADC1_MspInit 0 */
+
+    /* ADC1 interrupt Init */
+    vCORTEX_NVICSetPriority(ADC1_IRQn, 0, 0);
+    vCORTEX_NVICEnableIRQ(ADC1_IRQn);
+    /* USER CODE BEGIN ADC1_MspInit 1 */
+
+    /* USER CODE END ADC1_MspInit 1 */
+
+  }
+
+}
 /**
   * @}
   */
