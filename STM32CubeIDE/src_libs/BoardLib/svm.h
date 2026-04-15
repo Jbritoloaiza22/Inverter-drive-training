@@ -25,52 +25,17 @@
 #define SVM_H
 
 #include <stdint.h>
+#include <complex.h>
 
-/* =========================================================
- * SVM OBJECT
- * ========================================================= */
+#define dTWO_BY_SQRT3 1.15470053838f
+#define dONE_BY_SQRT3 0.57735026919f
+#define dSQRT3 1.73205080757f
+#define dTWOPI 6.2831853f
+#define dPI 3.1415926f
 
-/**
- * @brief SVM object structure.
- *
- * Represents a Space Vector Modulation instance.
- */
-typedef struct
-{
-    /**
-     * @brief Initialization flag.
-     * - 0: Not initialized
-     * - 1: Initialized
-     */
-    uint8_t initialized;
 
-} SVM_t;
 
-/* =========================================================
- * PUBLIC API
- * ========================================================= */
+void vSVM_PeriodElapsedCallback(void);
 
-/**
- * @brief Initialize SVM module.
- *
- * @param[in,out] self Pointer to SVM object
- */
-void vSVM_Init(SVM_t *self);
-
-/**
- * @brief Update SVM output.
- *
- * Generates PWM duty cycles from αβ components.
- *
- * @param[in,out] self Pointer to SVM object
- * @param[in] Valpha Alpha component (-1.0 to 1.0)
- * @param[in] Vbeta  Beta component (-1.0 to 1.0)
- */
-void vSVM_Update(SVM_t *self, float Valpha, float Vbeta);
-
-/**
- * @brief Kernel callback for SVM.
- */
-void cbSVM(void);
 
 #endif /* SVM_H */
