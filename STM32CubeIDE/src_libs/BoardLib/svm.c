@@ -29,18 +29,32 @@
 /* External PWM handle */
 extern PWM_t pwm;
 
-/* =========================
- *  CONSTANTS (NO MAGIC NUMBERS)
- * ========================= */
+/** @brief Initial counter before frequency ramp starts */
 #define dSVMINITIALCOUNTERLIMIT     (8000U)
-#define dSVMPWMPERIOD                (1999U)
-#define dSVMSTARTAMPLITUDE           (0.8f)
-#define dSVMRUNAMPLITUDE             (0.8f)
+
+/** @brief PWM timer period (ARR value) */
+#define dSVMPWMPERIOD               (1999U)
+
+/** @brief Initial alpha-axis amplitude */
+#define dSVMSTARTAMPLITUDE          (0.8f)
+
+/** @brief Running modulation amplitude */
+#define dSVMRUNAMPLITUDE           (0.8f)
+
+/** @brief Maximum frequency (Hz) */
 #define dSVMFREQMAXHZ              (25.0f)
-#define dSVMFREQSTEP                (0.02f)
+
+/** @brief Frequency increment per ISR */
+#define dSVMFREQSTEP               (0.02f)
+
+/** @brief Sampling period (seconds) */
 #define dSVMSAMPLETIMESEC          (0.0000625f)
-#define dSVMZEROFLOAT               (0.0f)
-#define dSVMONEFLOAT                (1.0f)
+
+/** @brief Zero float constant */
+#define dSVMZEROFLOAT              (0.0f)
+
+/** @brief One float constant */
+#define dSVMONEFLOAT               (1.0f)
 
 /* Math constants (if not already in svm.h) */
 #ifndef dTWOPI
@@ -59,6 +73,15 @@ static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
 
 static uint8_t u8SVM_GetSector(float alpha, float beta);
 
+/* =========================
+ *  INTERNAL FUNCTIONS
+ * ========================= */
+
+ /**
+ * @brief Normalize angle into range [0, 2π]
+ *
+ * @param[in,out] theta Angle in radians
+ */
 static inline void vSVM_NormalizeAngleRad(float *theta)
 {
     if (*theta >= dTWOPI)
@@ -80,7 +103,17 @@ static inline void vSVM_NormalizeAngleRad(float *theta)
     }
 }
 
-
+/**
+ * @brief Compute SVPWM duty cycles from alpha-beta voltages
+ *
+ * @param[in] valpha Alpha-axis voltage reference
+ * @param[in] vbeta  Beta-axis voltage reference
+ * @param[in] vbus   DC bus voltage (normalized here as 1.0f)
+ * @param[in] ui32pwmPeriod PWM period (ARR value)
+ * @param[out] pwm_u Phase U duty cycle
+ * @param[out] pwm_v Phase V duty cycle
+ * @param[out] pwm_w Phase W duty cycle
+ */
 static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
                                    uint32_t ui32pwmPeriod,
                                    uint32_t *pwm_u,
@@ -178,6 +211,13 @@ static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
     }
 }
 
+/**
+ * @brief Determine SVPWM sector from alpha-beta plane
+ *
+ * @param[in] alpha Alpha-axis component
+ * @param[in] beta  Beta-axis component
+ * @return Sector number (1–6)
+ */
 static uint8_t u8SVM_GetSector(float alpha, float beta)
 {
     uint8_t sector = 0U;
@@ -208,7 +248,12 @@ static uint8_t u8SVM_GetSector(float alpha, float beta)
     return sector;
 }
 
-
+/**
+ * @brief SVPWM periodic ISR callback
+ *
+ * This function generates test alpha-beta references and updates PWM outputs.
+ * It simulates a frequency ramp and produces rotating voltage vector.
+ */
 void vSVM_PeriodElapsedCallback(void)
 {
     static float theta = dSVMZEROFLOAT;
