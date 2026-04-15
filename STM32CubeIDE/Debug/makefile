@@ -1,124 +1,100 @@
-################################################################################
-# Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
-################################################################################
+#/**
+# * @file    project firmware
+# * @brief   inverter drive firmware for STM32G031C8T6
+# *
+# * @copyright
+# * Copyright (c) 2026 Jesus Daniel Britoloaiza
+# * All rights reserved.
+#*/
+# ================= TOOLCHAIN =================
+CC = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+SIZE = arm-none-eabi-size
 
--include ../makefile.init
+# ================= PROJECT =================
+TARGET = inverter_drive
+MCU = cortex-m0plus
 
-RM := rm -rf
+LINKER_SCRIPT = ../src/Board/HAL/STM32G0xx/STM32G031C8TX_FLASH.ld
 
-# All of the sources participating in the build are defined here
--include sources.mk
--include src_libs/MainsLib/subdir.mk
--include src_libs/MCLib/subdir.mk
--include src_libs/BoardLib/subdir.mk
--include src_STM32Kernel/subdir.mk
--include src_GFLib/Math/ARM/subdir.mk
--include src_GFLib/Math/subdir.mk
--include src/EXTI/subdir.mk
--include src/Board/Interface/subdir.mk
--include src/Board/HAL/subdir.mk
--include src/Board/ClassB/subdir.mk
--include src/APP/Inverter/subdir.mk
--include src/APP/Interface/subdir.mk
--include src/APP/subdir.mk
--include Drivers/STM32G0xx_HAL_Driver/Src/subdir.mk
--include Core/Src/subdir.mk
--include Application/User/Startup/subdir.mk
--include Application/User/Core/subdir.mk
--include objects.mk
+# ================= FLAGS =================
+CFLAGS = -mcpu=$(MCU) -mthumb -std=gnu11 \
+         -O0 -g3 \
+         -ffunction-sections -fdata-sections \
+         -Wall -Wextra -fno-common \
+         -DUSE_HAL_DRIVER -DSTM32G031xx \
+         -mfloat-abi=soft
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(strip $(S_DEPS)),)
--include $(S_DEPS)
-endif
-ifneq ($(strip $(S_UPPER_DEPS)),)
--include $(S_UPPER_DEPS)
-endif
-ifneq ($(strip $(C_DEPS)),)
--include $(C_DEPS)
-endif
-endif
+LDFLAGS = -mcpu=$(MCU) -mthumb \
+          -T$(LINKER_SCRIPT) \
+          -Wl,--gc-sections \
+          -Wl,-Map=$(TARGET).map \
+          --specs=nano.specs \
+          --specs=nosys.specs \
+          -mfloat-abi=soft
 
--include ../makefile.defs
+# ================= INCLUDE PATHS =================
+INCLUDES = \
+-I../src \
+-I../src/APP \
+-I../src/Board \
+-I../src/Board/BoardApp \
+-I../src/Board/HAL \
+-I../src/Board/Interface \
+-I../src_STM32Kernel \
+-I../src_STM32Kernel/HAL \
+-I../src_STM32Kernel/Device/STM32G0xx/Include \
+-I../src_STM32Kernel/CMSIS/Core/Include \
+-I../src_libs \
+-I../src_libs/BoardLib \
+-I../src_GFLib \
+-I../src_GFLib/Math \
+-I../src_GFLib/uC/PC \
+-I../src_GFLib/uC/PC/CMSIS \
+-I../src_GFLib/uC/ARM_CM0 \
+-I../src/EXTI
 
-OPTIONAL_TOOL_DEPS := \
-$(wildcard ../makefile.defs) \
-$(wildcard ../makefile.init) \
-$(wildcard ../makefile.targets) \
+# ================= SOURCES =================
+C_SRCS := $(shell find ../src -type f -name "*.c")
+C_SRCS += $(shell find ../src_STM32Kernel -type f -name "*.c")
+C_SRCS += $(shell find ../src_libs -type f -name "*.c")
+C_SRCS += $(shell find ../src_GFLib -type f -name "*.c")
 
+S_SRCS := $(shell find ../src_STM32Kernel -type f -name "*.s")
 
-BUILD_ARTIFACT_NAME := inverter_drive
-BUILD_ARTIFACT_EXTENSION := elf
-BUILD_ARTIFACT_PREFIX :=
-BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
+# remove duplicates sources
+OBJS := $(sort $(C_SRCS:.c=.o) $(S_SRCS:.s=.o))
 
-# Add inputs and outputs from these tool invocations to the build variables 
-EXECUTABLES += \
-inverter_drive.elf \
+# ================= BUILD =================
+all: $(TARGET).elf
 
-MAP_FILES += \
-inverter_drive.map \
+$(TARGET).elf: $(OBJS)
+	@echo "Linking firmware..."
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
+	$(SIZE) $@
 
-SIZE_OUTPUT += \
-default.size.stdout \
+# ================= COMPILE =================
+%.o: %.c
+	@echo "CC $<"
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-OBJDUMP_LIST += \
-inverter_drive.list \
+%.o: %.s
+	@echo "ASM $<"
+	$(CC) -x assembler-with-cpp $(CFLAGS) -c $< -o $@
 
-OBJCOPY_HEX += \
-inverter_drive.hex \
+# ================= OUTPUT =================
+bin: $(TARGET).elf
+	$(OBJCOPY) -O binary $< $(TARGET).bin
 
-OBJCOPY_BIN += \
-inverter_drive.bin \
+hex: $(TARGET).elf
+	$(OBJCOPY) -O ihex $< $(TARGET).hex
 
-
-# All Target
-all: main-build
-
-# Main-build Target
-main-build: inverter_drive.elf secondary-outputs
-
-# Tool invocations
-inverter_drive.elf inverter_drive.map: $(OBJS) $(USER_OBJS) ../STM32G031C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "inverter_drive.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"../STM32G031C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="inverter_drive.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-	@echo 'Finished building target: $@'
-	@echo ' '
-
-default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-size  $(EXECUTABLES)
-	@echo 'Finished building: $@'
-	@echo ' '
-
-inverter_drive.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "inverter_drive.list"
-	@echo 'Finished building: $@'
-	@echo ' '
-
-inverter_drive.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "inverter_drive.hex"
-	@echo 'Finished building: $@'
-	@echo ' '
-
-inverter_drive.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "inverter_drive.bin"
-	@echo 'Finished building: $@'
-	@echo ' '
-
-# Other Targets
+# ================= CLEAN =================
 clean:
-	-$(RM) default.size.stdout inverter_drive.bin inverter_drive.elf inverter_drive.hex inverter_drive.list inverter_drive.map
-	-@echo ' '
+	rm -rf $(OBJS) \
+	       $(TARGET).elf \
+	       $(TARGET).bin \
+	       $(TARGET).hex \
+	       $(TARGET).map
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
-
-fail-specified-linker-script-missing:
-	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
-	@exit 2
-
-warn-no-linker-script-specified:
-	@echo 'Warning: No linker script specified. Check the linker settings in the build configuration.'
-
-.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified
-
--include ../makefile.targets
+.PHONY: all clean bin hex

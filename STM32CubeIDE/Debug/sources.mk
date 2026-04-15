@@ -24,13 +24,10 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Application/User/Core \
-Application/User/Startup \
-Core/Src \
-Drivers/STM32G0xx_HAL_Driver/Src \
 src/APP \
 src/APP/Interface \
 src/APP/Inverter \
+src/Board/BoardApp \
 src/Board/ClassB \
 src/Board/HAL \
 src/Board/Interface \
@@ -38,6 +35,7 @@ src/EXTI \
 src_GFLib/Math/ARM \
 src_GFLib/Math \
 src_STM32Kernel \
+src_STM32Kernel/HAL \
 src_libs/BoardLib \
 src_libs/MCLib \
 src_libs/MainsLib \

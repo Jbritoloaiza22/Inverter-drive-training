@@ -1,34 +1,41 @@
-name: Build STM32CubeIDE Project
+name: STM32 Build
 
 on:
   push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Compilación con el Action oficial
-      - name: Build with STM32CubeIDE Action
-        uses: xanderhendriks/action-build-stm32cubeide@v15.0
-        with:
-          project-path: STM32CubeIDE
-          project-target: inverter_drive
+      - name: Build Docker image
+        run: docker build -t stm32-build ./docker
 
-      # Subir artefactos generados
-      - name: Upload build artifacts
+      - name: Compile firmware inside container
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            stm32-build \
+            bash -c "
+              cd /workspace/STM32CubeIDE/Debug &&
+              make clean &&
+              make all
+            "
+
+      - name: Verify build outputs
+        run: |
+          ls -R STM32CubeIDE/Debug || true
+
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-build
+          name: stm32-firmware
           path: |
             STM32CubeIDE/Debug/*.elf
+            STM32CubeIDE/Debug/*.bin
+            STM32CubeIDE/Debug/*.hex
             STM32CubeIDE/Debug/*.map
-            STM32CubeIDE/Debug/*.list

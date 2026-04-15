@@ -1,28 +1,44 @@
 /**
  * @file kernel.h
- * @brief Declarations for the STM32 application kernel.
+ * @brief Core kernel definitions and common utilities.
  *
- * This header defines the entry point and initialization routines
- * for the custom application kernel. The CubeMX-generated main.c
- * should call STM32Kernel_Main() to start the architecture defined here.
+ * This header file defines core declarations used by the system kernel,
+ * including common error handling mechanisms and shared interfaces
+ * required across the application and hardware abstraction layers.
+ *
+ * It provides compatibility with both C and C++ environments and
+ * includes essential HAL dependencies required by the kernel layer.
+ *
+ * @author
+ * Jesus Daniel Britoloaiza
+ *
+ * @copyright
+ * Copyright (c) 2026 Jesus Daniel Britoloaiza
+ *
+ * @license
+ * This source code is provided for educational and research purposes.
  */
-#ifndef KERNEL_H
-#define KERNEL_H
+
+#ifndef __KERNEL_H
+#define __KERNEL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "defs.h"
+
 /**
- * @brief Entry point for the application kernel.
+ * @brief System error handler.
  *
- * This function organizes hardware and application initialization
- * and runs the main control loop.
+ * This function is called when a critical error occurs within the system.
+ * It typically disables interrupts and halts the system execution to
+ * prevent undefined behavior.
  */
-void STM32Kernel_Main(void);
+void Error_Handler(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* KERNEL_H */
+#endif /* __KERNEL_H */
