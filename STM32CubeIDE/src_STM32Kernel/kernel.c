@@ -216,10 +216,10 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 void vKernelInterface_enableInterruptsForAllPeripherals(void)
 {
   /* Enable TIM2 interrupt */
-  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 0, 0);
+  vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
-  HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM3_IRQn);
+  vCORTEX_NVICSetPriority(TIM3_IRQn, 0, 0);
+  vCORTEX_NVICEnableIRQ(TIM3_IRQn);
 }

@@ -30,7 +30,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32g0xx_hal.h"
+#include "defs.h"
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{

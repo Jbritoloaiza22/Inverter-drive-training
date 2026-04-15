@@ -5,19 +5,28 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/Board/HAL/cortex.c \
+../src/Board/HAL/defs.c \
 ../src/Board/HAL/gpio.c \
+../src/Board/HAL/irq.c \
 ../src/Board/HAL/pwm.c \
 ../src/Board/HAL/rcc.c \
 ../src/Board/HAL/tim.c 
 
 OBJS += \
+./src/Board/HAL/cortex.o \
+./src/Board/HAL/defs.o \
 ./src/Board/HAL/gpio.o \
+./src/Board/HAL/irq.o \
 ./src/Board/HAL/pwm.o \
 ./src/Board/HAL/rcc.o \
 ./src/Board/HAL/tim.o 
 
 C_DEPS += \
+./src/Board/HAL/cortex.d \
+./src/Board/HAL/defs.d \
 ./src/Board/HAL/gpio.d \
+./src/Board/HAL/irq.d \
 ./src/Board/HAL/pwm.d \
 ./src/Board/HAL/rcc.d \
 ./src/Board/HAL/tim.d 
@@ -30,7 +39,7 @@ src/Board/HAL/%.o src/Board/HAL/%.su src/Board/HAL/%.cyclo: ../src/Board/HAL/%.c
 clean: clean-src-2f-Board-2f-HAL
 
 clean-src-2f-Board-2f-HAL:
-	-$(RM) ./src/Board/HAL/gpio.cyclo ./src/Board/HAL/gpio.d ./src/Board/HAL/gpio.o ./src/Board/HAL/gpio.su ./src/Board/HAL/pwm.cyclo ./src/Board/HAL/pwm.d ./src/Board/HAL/pwm.o ./src/Board/HAL/pwm.su ./src/Board/HAL/rcc.cyclo ./src/Board/HAL/rcc.d ./src/Board/HAL/rcc.o ./src/Board/HAL/rcc.su ./src/Board/HAL/tim.cyclo ./src/Board/HAL/tim.d ./src/Board/HAL/tim.o ./src/Board/HAL/tim.su
+	-$(RM) ./src/Board/HAL/cortex.cyclo ./src/Board/HAL/cortex.d ./src/Board/HAL/cortex.o ./src/Board/HAL/cortex.su ./src/Board/HAL/defs.cyclo ./src/Board/HAL/defs.d ./src/Board/HAL/defs.o ./src/Board/HAL/defs.su ./src/Board/HAL/gpio.cyclo ./src/Board/HAL/gpio.d ./src/Board/HAL/gpio.o ./src/Board/HAL/gpio.su ./src/Board/HAL/irq.cyclo ./src/Board/HAL/irq.d ./src/Board/HAL/irq.o ./src/Board/HAL/irq.su ./src/Board/HAL/pwm.cyclo ./src/Board/HAL/pwm.d ./src/Board/HAL/pwm.o ./src/Board/HAL/pwm.su ./src/Board/HAL/rcc.cyclo ./src/Board/HAL/rcc.d ./src/Board/HAL/rcc.o ./src/Board/HAL/rcc.su ./src/Board/HAL/tim.cyclo ./src/Board/HAL/tim.d ./src/Board/HAL/tim.o ./src/Board/HAL/tim.su
 
 .PHONY: clean-src-2f-Board-2f-HAL
 

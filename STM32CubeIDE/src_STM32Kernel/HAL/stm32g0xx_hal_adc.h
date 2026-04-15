@@ -1834,7 +1834,6 @@ __LL_ADC_CALC_TEMPERATURE_TYP_PARAMS((__TEMPSENSOR_TYP_AVGSLOPE__),\
 /* Initialization and de-initialization functions  ****************************/
 HAL_StatusTypeDef       HAL_ADC_Init(ADC_HandleTypeDef *hadc);
 HAL_StatusTypeDef       HAL_ADC_DeInit(ADC_HandleTypeDef *hadc);
-void                    HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 void                    HAL_ADC_MspDeInit(ADC_HandleTypeDef *hadc);
 
 #if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
