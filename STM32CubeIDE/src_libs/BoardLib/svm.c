@@ -56,7 +56,6 @@ extern PWM_t pwm;
 /** @brief One float constant */
 #define dSVMONEFLOAT               (1.0f)
 
-/* Math constants (if not already in svm.h) */
 #ifndef dTWOPI
 #define dTWOPI (6.28318530718f)
 #endif
@@ -65,30 +64,100 @@ extern PWM_t pwm;
  *  STATIC FUNCTION PROTOTYPES
  * ========================= */
 static void vSVM_NormalizeAngleRad(float *theta);
-static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
-                                    uint32_t ui32pwmPeriod,
-                                    uint32_t *pwm_u,
-                                    uint32_t *pwm_v,
-                                    uint32_t *pwm_w);
+static void vSVM_ComputeDutyCycles(SVM_t *self,
+                                   float valpha,
+                                   float vbeta,
+                                   float vbus,
+                                   uint32_t period,
+                                   uint32_t *pwm_u,
+                                   uint32_t *pwm_v,
+                                   uint32_t *pwm_w);
 
 static uint8_t u8SVM_GetSector(float alpha, float beta);
+SVM_t svm;
+
 
 /* =========================
  *  INTERNAL FUNCTIONS
  * ========================= */
+
+/**
+ * @brief Initialize SVM object
+ */
+void SVM_Init(SVM_t *self, void *pwmHandle, uint32_t pwmPeriod)
+{
+    self->theta = dSVMZEROFLOAT;
+    self->freq = dSVMZEROFLOAT;
+    self->counter = 0U;
+    self->pwm = pwmHandle;
+    self->pwmPeriod = pwmPeriod;
+}
+
+/**
+ * @brief Run SVM step (call from ISR)
+ */
+void SVM_Run(SVM_t *self)
+{
+    uint32_t ui32dutyA;
+    uint32_t ui32dutyB;
+    uint32_t ui32dutyC;
+
+    float Valpha;
+    float Vbeta;
+
+    if (self->counter < dSVMINITIALCOUNTERLIMIT)
+    {
+        Valpha = dSVMSTARTAMPLITUDE;
+        Vbeta  = dSVMZEROFLOAT;
+    }
+    else
+    {
+        self->freq += dSVMFREQSTEP;
+
+        if (self->freq > dSVMFREQMAXHZ)
+        {
+            self->freq = dSVMFREQMAXHZ;
+        }
+
+        self->theta += dTWOPI * self->freq * dSVMSAMPLETIMESEC;
+        vSVM_NormalizeAngleRad(&self->theta);
+
+        Valpha = dSVMRUNAMPLITUDE * cosf(self->theta);
+        Vbeta  = dSVMRUNAMPLITUDE * sinf(self->theta);
+    }
+
+    self->counter++;
+
+    vSVM_ComputeDutyCycles(self,
+                           Valpha,
+                           Vbeta,
+                           dSVMONEFLOAT,
+                           self->pwmPeriod,
+                           &ui32dutyA,
+                           &ui32dutyB,
+                           &ui32dutyC);
+
+    vPWM_SetPhaseA(self->pwm, ui32dutyA);
+    vPWM_SetPhaseB(self->pwm, ui32dutyB);
+    vPWM_SetPhaseC(self->pwm, ui32dutyC);
+}
+
+/* =========================================================
+ *  INTERNAL IMPLEMENTATION
+ * ========================================================= */
 
  /**
  * @brief Normalize angle into range [0, 2π]
  *
  * @param[in,out] theta Angle in radians
  */
-static inline void vSVM_NormalizeAngleRad(float *theta)
+static void vSVM_NormalizeAngleRad(float *theta)
 {
     if (*theta >= dTWOPI)
     {
         *theta -= dTWOPI;
     }
-    else
+        else
     {
         /* MISRA-friendly structure */
     }
@@ -114,8 +183,11 @@ static inline void vSVM_NormalizeAngleRad(float *theta)
  * @param[out] pwm_v Phase V duty cycle
  * @param[out] pwm_w Phase W duty cycle
  */
-static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
-                                   uint32_t ui32pwmPeriod,
+static void vSVM_ComputeDutyCycles(SVM_t *self,
+                                   float valpha,
+                                   float vbeta,
+                                   float vbus,
+                                   uint32_t period,
                                    uint32_t *pwm_u,
                                    uint32_t *pwm_v,
                                    uint32_t *pwm_w)
@@ -131,79 +203,80 @@ static void vSVM_ComputeDutyCycles(float valpha, float vbeta, float vbus,
     switch (sector)
     {
         case 1U:
-            i32t1 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_u = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)period);
+            *pwm_u = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_v = *pwm_u - (uint32_t)i32t1;
             *pwm_w = *pwm_v - (uint32_t)i32t2;
             break;
 
         case 2U:
-            i32t1 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_v = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_v = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_u = *pwm_v - (uint32_t)i32t2;
             *pwm_w = *pwm_u - (uint32_t)i32t1;
             break;
 
         case 3U:
-            i32t1 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_v = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((dTWO_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_v = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_w = *pwm_v - (uint32_t)i32t1;
             *pwm_u = *pwm_w - (uint32_t)i32t2;
             break;
 
         case 4U:
-            i32t1 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_w = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((-alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)period);
+            *pwm_w = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_v = *pwm_w - (uint32_t)i32t2;
             *pwm_u = *pwm_v - (uint32_t)i32t1;
             break;
 
         case 5U:
-            i32t1 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_w = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((-alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((alpha - dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_w = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_u = *pwm_w - (uint32_t)i32t1;
             *pwm_v = *pwm_u - (uint32_t)i32t2;
             break;
 
         case 6U:
-            i32t1 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            i32t2 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)ui32pwmPeriod);
-            *pwm_u = (ui32pwmPeriod + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
+            i32t1 = (int32_t)((-dTWO_BY_SQRT3 * beta) * (float)period);
+            i32t2 = (int32_t)((alpha + dONE_BY_SQRT3 * beta) * (float)period);
+            *pwm_u = (period + (uint32_t)i32t1 + (uint32_t)i32t2) / 2U;
             *pwm_w = *pwm_u - (uint32_t)i32t2;
             *pwm_v = *pwm_w - (uint32_t)i32t1;
             break;
 
         default:
-            *pwm_u = (ui32pwmPeriod / 2U);
-            *pwm_v = (ui32pwmPeriod / 2U);
-            *pwm_w = (ui32pwmPeriod / 2U);
+            *pwm_u = (period / 2U);
+            *pwm_v = (period / 2U);
+            *pwm_w = (period / 2U);
             break;
     }
 
-    if (*pwm_u > ui32pwmPeriod) 
+    /* saturation */
+    if (*pwm_u > period) 
     {
-        *pwm_u = ui32pwmPeriod;
+        *pwm_u = period;
     }
     else
     {
         /* MISRA-friendly structure */
     }
-    if (*pwm_v > ui32pwmPeriod) 
+    if (*pwm_v > period) 
     {
-        *pwm_v = ui32pwmPeriod;
+        *pwm_v = period;
     }
     else
     {
         /* MISRA-friendly structure */
     }
-    if (*pwm_w > ui32pwmPeriod) 
+    if (*pwm_w > period) 
     {
-        *pwm_w = ui32pwmPeriod;
+        *pwm_w = period;
     }
     else
     {
@@ -248,59 +321,7 @@ static uint8_t u8SVM_GetSector(float alpha, float beta)
     return sector;
 }
 
-/**
- * @brief SVPWM periodic ISR callback
- *
- * This function generates test alpha-beta references and updates PWM outputs.
- * It simulates a frequency ramp and produces rotating voltage vector.
- */
-void vSVM_PeriodElapsedCallback(void)
+void cbSVPWM(void)
 {
-    static float theta = dSVMZEROFLOAT;
-    static float freq  = dSVMZEROFLOAT;
-    static uint32_t ui32counter = 0U;
-
-    uint32_t ui32dutyA;
-    uint32_t ui32dutyB;
-    uint32_t ui32dutyC;
-
-    float Valpha;
-    float Vbeta;
-
-    if (ui32counter < dSVMINITIALCOUNTERLIMIT)
-    {
-        Valpha = dSVMSTARTAMPLITUDE;
-        Vbeta  = dSVMZEROFLOAT;
-    }
-    else
-    {
-        freq += dSVMFREQSTEP;
-
-        if (freq > dSVMFREQMAXHZ)
-        {
-            freq = dSVMFREQMAXHZ;
-        }
-        else
-        {
-            /* MISRA-friendly structure */
-        }
-
-        theta += dTWOPI * freq * dSVMSAMPLETIMESEC;
-        vSVM_NormalizeAngleRad(&theta);
-
-        Valpha = dSVMRUNAMPLITUDE * cosf(theta);
-        Vbeta  = dSVMRUNAMPLITUDE * sinf(theta);
-    }
-
-    ui32counter++;
-
-    vSVM_ComputeDutyCycles(Valpha, Vbeta, dSVMONEFLOAT,
-                           dSVMPWMPERIOD,
-                           &ui32dutyA,
-                           &ui32dutyB,
-                           &ui32dutyC);
-
-    vPWM_SetPhaseA(&pwm, ui32dutyA);
-    vPWM_SetPhaseB(&pwm, ui32dutyB);
-    vPWM_SetPhaseC(&pwm, ui32dutyC);
+	SVM_Init(&svm, &pwm, dSVMPWMPERIOD);
 }

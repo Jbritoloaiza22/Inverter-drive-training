@@ -176,4 +176,4 @@ void cbGPIOS(void);
  *
  * @post Updates PWM duty cycles for phases A, B, and C.
  */
-void vSVM_PeriodElapsedCallback(void);
+void cbSVPWM(void);

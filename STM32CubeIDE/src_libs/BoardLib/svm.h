@@ -25,17 +25,57 @@
 #define SVM_H
 
 #include <stdint.h>
-#include <complex.h>
 
-#define dTWO_BY_SQRT3 1.15470053838f
-#define dONE_BY_SQRT3 0.57735026919f
-#define dSQRT3 1.73205080757f
-#define dTWOPI 6.2831853f
-#define dPI 3.1415926f
+/* =========================================================
+ *  CONSTANTS (shared math definitions)
+ * ========================================================= */
 
+#define dTWO_BY_SQRT3   (1.15470053838f)
+#define dONE_BY_SQRT3   (0.57735026919f)
+#define dSQRT3          (1.73205080757f)
+#define dTWOPI          (6.28318530718f)
+#define dPI             (3.14159265359f)
 
+/* =========================================================
+ *  OBJECT DEFINITION (SVM "CLASS")
+ * ========================================================= */
 
-void vSVM_PeriodElapsedCallback(void);
+/**
+ * @brief SVM object structure (encapsulated state)
+ */
+typedef struct
+{
+    float theta;        /**< Electrical angle [rad] */
+    float freq;         /**< Output frequency [Hz] */
+    uint32_t counter;   /**< Internal startup counter */
+
+    float amplitude;    /**< Modulation amplitude */
+
+    uint32_t pwmPeriod; /**< PWM timer period (ARR) */
+
+    void *pwm;          /**< Pointer to PWM driver (opaque handle) */
+
+} SVM_t;
+
+/* =========================================================
+ *  PUBLIC API
+ * ========================================================= */
+
+/**
+ * @brief Initialize SVM object
+ *
+ * @param self Pointer to SVM instance
+ * @param pwmHandle Pointer to PWM driver object
+ * @param pwmPeriod Timer period (ARR)
+ */
+void SVM_Init(SVM_t *self, void *pwmHandle, uint32_t pwmPeriod);
+
+/**
+ * @brief Execute one SVPWM update step (call in ISR)
+ *
+ * @param self Pointer to SVM instance
+ */
+void SVM_Run(SVM_t *self);
 
 
 #endif /* SVM_H */
