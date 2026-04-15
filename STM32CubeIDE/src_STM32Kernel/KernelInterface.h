@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <tim.h>
 #include "spwm.h"
+#include "svm.h"
 
 /**
  * @brief   Performs system initializations before enabling interrupts.
@@ -147,3 +148,32 @@ void cbTIM(void);
  *       such as PWM outputs or communication interfaces.
  */
 void cbGPIOS(void);
+
+/**
+ * @brief Period elapsed callback for Space Vector PWM (SVPWM) execution.
+ *
+ * This function is intended to be called periodically at a fixed sampling
+ * frequency (e.g., from a timer interrupt). It generates a rotating voltage
+ * vector in the alpha-beta reference frame and computes the corresponding
+ * duty cycles using the SVPWM algorithm.
+ *
+ * The function performs:
+ * - Startup alignment (fixed vector during initial cycles)
+ * - Frequency ramp generation
+ * - Angle integration and normalization
+ * - Sine/cosine computation
+ * - SVPWM duty cycle calculation
+ * - PWM update for three phases
+ *
+ * @note This function must be executed at a constant period (Ts),
+ * typically synchronized with the PWM timer (e.g., 16 kHz).
+ *
+ * @warning This function is designed to run in interrupt context.
+ * Ensure execution time is bounded and optimized.
+ *
+ * @pre PWM module must be initialized before calling this function.
+ * @pre Timer interrupt must be properly configured.
+ *
+ * @post Updates PWM duty cycles for phases A, B, and C.
+ */
+void vSVM_PeriodElapsedCallback(void);
