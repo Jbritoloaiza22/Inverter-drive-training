@@ -1,52 +1,29 @@
-name: Build STM32 Firmware
+name: STM32 Build
 
 on:
   push:
-  pull_request:
+    branches: [ "develop", "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install ARM GCC
-      run: |
-        sudo apt update
-        sudo apt install -y gcc-arm-none-eabi binutils-arm-none-eabi make
+      - name: Build Docker image
+        run: docker build -t stm32-build ./docker
 
-    - name: Build firmware
-      run: |
-        make -C STM32CubeIDE/Debug all
+      - name: Compile firmware
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            stm32-build \
+            bash -c "cd /workspace/STM32CubeIDE/Debug && make"
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: firmware
-        path: |
-          STM32CubeIDE/Debug/*.elf
-          STM32CubeIDE/Debug/*.bin
-          STM32CubeIDE/Debug/*.hex
-          STM32CubeIDE/Debug/*.map
-    
-    - name: Install tools
-      run: |
-        sudo apt update
-        sudo apt install -y cppcheck clang-tidy
-
-    - name: Run Cppcheck
-      run: |
-        cppcheck --enable=all --inconclusive --error-exitcode=0 --verbose \
-        --suppress=missingIncludeSystem \
-        --suppress=unusedFunction \
-        --force .
-
-    #- name: Run clang-tidy
-      #run: |
-        #for file in $(find . -name "*.c"); do
-        #echo "Checking $file"
-        #clang-tidy "$file" --warnings-as-errors=* --quiet || exit 1
-        #done
-    
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: STM32CubeIDE/Debug/*.elf
