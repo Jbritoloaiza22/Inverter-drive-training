@@ -1,8 +1,7 @@
 name: STM32 Build
-
 on:
   push:
-    branches: [ "develop", "main" ]
+  pull_request:
 
 jobs:
   build:
