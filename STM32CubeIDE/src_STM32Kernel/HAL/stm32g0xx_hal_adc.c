@@ -93,7 +93,7 @@
 
     (#) Optionally, in case of usage of ADC with interruptions:
          (++) Configure the NVIC for ADC
-              using function HAL_NVIC_EnableIRQ(ADCx_IRQn)
+              using function vCORTEX_NVICEnableIRQ(ADCx_IRQn)
          (++) Insert the ADC interruption handler function HAL_ADC_IRQHandler()
               into the function of corresponding ADC interruption vector
               ADCx_IRQHandler().
@@ -102,7 +102,7 @@
          (++) Configure the DMA (DMA channel, mode normal or circular, ...)
               using function HAL_DMA_Init().
          (++) Configure the NVIC for DMA
-              using function HAL_NVIC_EnableIRQ(DMAx_Channelx_IRQn)
+              using function vCORTEX_NVICEnableIRQ(DMAx_Channelx_IRQn)
          (++) Insert the ADC interruption handler function HAL_ADC_IRQHandler()
               into the function of corresponding DMA interruption vector
               DMAx_Channelx_IRQHandler().
@@ -197,13 +197,13 @@
 
     (#) Optionally, in case of usage of ADC with interruptions:
          (++) Disable the NVIC for ADC
-              using function HAL_NVIC_EnableIRQ(ADCx_IRQn)
+              using function vCORTEX_NVICEnableIRQ(ADCx_IRQn)
 
     (#) Optionally, in case of usage of DMA:
          (++) Deinitialize the DMA
               using function HAL_DMA_Init().
          (++) Disable the NVIC for DMA
-              using function HAL_NVIC_EnableIRQ(DMAx_Channelx_IRQn)
+              using function vCORTEX_NVICEnableIRQ(DMAx_Channelx_IRQn)
 
     [..]
 

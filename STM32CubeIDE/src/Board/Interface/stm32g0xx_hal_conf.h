@@ -206,7 +206,7 @@ in voltage and temperature.*/
   * @brief Include modules header file
   */
 #ifdef HAL_CORTEX_MODULE_ENABLED
-#include "stm32g0xx_hal_cortex.h"
+#include "cortex.h"
 #endif /* HAL_CORTEX_MODULE_ENABLED */
 
 #ifdef HAL_ADC_MODULE_ENABLED

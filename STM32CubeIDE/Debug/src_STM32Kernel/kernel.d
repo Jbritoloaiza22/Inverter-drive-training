@@ -1,7 +1,6 @@
 src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
  ../src_STM32Kernel/kernel.h ../src/Board/HAL/stm32g0xx_hal.h \
- ../src/Board/Interface/stm32g0xx_hal_conf.h \
- ../src/Board/HAL/stm32g0xx_hal_cortex.h \
+ ../src/Board/Interface/stm32g0xx_hal_conf.h ../src/Board/HAL/cortex.h \
  ../src/Board/HAL/stm32g0xx_hal_def.h ../src_GFLib/uC/PC/stm32g0xx.h \
  ../src_GFLib/uC/PC/stm32g031xx.h ../src_GFLib/uC/PC/CMSIS/core_cm0plus.h \
  ../src_GFLib/uC/PC/CMSIS/cmsis_version.h \
@@ -21,7 +20,7 @@ src_STM32Kernel/kernel.o: ../src_STM32Kernel/kernel.c \
 ../src_STM32Kernel/kernel.h:
 ../src/Board/HAL/stm32g0xx_hal.h:
 ../src/Board/Interface/stm32g0xx_hal_conf.h:
-../src/Board/HAL/stm32g0xx_hal_cortex.h:
+../src/Board/HAL/cortex.h:
 ../src/Board/HAL/stm32g0xx_hal_def.h:
 ../src_GFLib/uC/PC/stm32g0xx.h:
 ../src_GFLib/uC/PC/stm32g031xx.h:
