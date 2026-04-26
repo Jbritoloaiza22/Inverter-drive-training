@@ -22,22 +22,15 @@
  */
 #include "kernel.h"
 #include "KernelInterface.h"
-#include "stm32g0xx_hal_uart.h"
+#include "uart.h"
 
 /* tracking version */
 #define FW_VERSION "v1.0.0"
 
-
-#define dBAUDRATEUART 115200
-
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
 
-/** @brief UART handle structure */
-UART_HandleTypeDef huart1;
-
 /* Private function prototypes */
-static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
@@ -63,20 +56,21 @@ void incCountertopwmDebug(void)
  */
 int main(void)
 {
+    uint8_t msg[] = "hello everybody\r\n";
+
   HAL_Init();
 
   /* Initialize system components before enabling interrupts */
   vKernelInterface_initBeforeInterruptEnable();
 
   /* Initialize peripherals */
-  MX_USART1_UART_Init();
   MX_ADC1_Init();
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
   while (1)
   {
-
+    /* UART transmission handled via callback initialization */
   }
 
 }
@@ -136,41 +130,6 @@ static void MX_ADC1_Init(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
-  *
-  * Configures USART1 for serial communication with the following
-  * parameters:
-  * - Baudrate: 115200
-  * - 8 data bits
-  * - 1 stop bit
-  * - No parity
-  */
-static void MX_USART1_UART_Init(void)
-{
-  huart1.Instance = USART1;
-
-  huart1.Init.BaudRate = dBAUDRATEUART;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    //Error_Handler();
-  }
-  else
-  {
-    /*do nothing*/
-  }
-}
-
-/**
   * @brief Error handler function.
   *
   * This function is executed whenever a HAL error occurs.
@@ -203,6 +162,7 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
+	cbUART();
 	cbSVPWM();
 }
 
@@ -220,10 +180,10 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 void vKernelInterface_enableInterruptsForAllPeripherals(void)
 {
   /* Enable TIM2 interrupt */
-  vCORTEX_NVICSetPriority(TIM2_IRQn, 0, 0);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 4, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
-  vCORTEX_NVICSetPriority(TIM3_IRQn, 0, 0);
+  vCORTEX_NVICSetPriority(TIM3_IRQn, 5, 0);
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
 }
