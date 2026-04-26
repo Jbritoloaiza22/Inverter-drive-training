@@ -1,11 +1,13 @@
 import serial, serial.tools.list_ports
-
-
-class customSerial(object):
+from threading import Thread, Event
+from PyQt5.QtCore import QObject,pyqtSignal,pyqtSlot
+class customSerial(QObject):
+    data_avaliable = pyqtSignal(str)
+    
     def __init__(self):
         super().__init__()
         self.serialPort = serial.Serial()
-
+        self.serialPort.timeout = 0.5
         self.baudratesDIC = {
             '1200': 1200,
             '2400': 2400,
@@ -22,6 +24,10 @@ class customSerial(object):
 
         self.portList = []
 
+        #thread 
+        self.thread = None
+        self.alive = Event()
+
     def update_ports(self):
         self.portList = [port.device for port in serial.tools.list_ports.comports()]
         print("Available ports:", self.portList)
@@ -31,16 +37,33 @@ class customSerial(object):
             self.serialPort.open()
         except serial.SerialException as e:
             print("NO PORT SELECTED OR PORT IS NOT AVAILABLE")
+        if(self.serialPort.is_open):
+            self.start_thread()
 
     def disconnect_serial(self):
+        self.stop_thread()
         self.serialPort.close()
-        print("Disconnected")
     
     def read_serial(self):
-        pass
+        while (self.serialPort.is_open and self.alive.isSet()):
+            data = self.serialPort.readline().decode('utf-8').strip()
+            if(len(data) > 1):
+                self.data_avaliable.emit(data)
 
     def send_data(self, data):
         print("Sending:", data)
+
+    def start_thread(self):
+        self.thread = Thread(target = self.read_serial)
+        self.thread.setDaemon(True)
+        self.alive.set()
+        self.thread.start()
+
+    def stop_thread(self):
+        if(self.thread is not None):
+            self.alive.clear()
+            self.thread.join()
+            self.thread = None
 
     
 

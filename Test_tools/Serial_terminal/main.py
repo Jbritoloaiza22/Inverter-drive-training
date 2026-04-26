@@ -19,6 +19,10 @@ class MyApp(QMainWindow, Ui_MainWindow):
         self.ui.sendBtn.clicked.connect(self.send_data)
         self.ui.updateBtn.clicked.connect(self.update_ports)
         self.ui.clearBtn.clicked.connect(self.clear_terminal)
+        self.serial.data_avaliable.connect(self.update_terminal)
+
+    def update_terminal(self, data):
+        self.ui.Terminal.append(data)
 
     def connect_serial(self): 
         if(self.ui.connectBtn.isChecked()):
@@ -38,8 +42,11 @@ class MyApp(QMainWindow, Ui_MainWindow):
 
 
     def send_data(self):
-        print("Sending")
+        data = self.ui.input.text()
+        self.serial.send_data(data) 
 
+    def read_data(self): 
+        print("Reading")
 
     def update_ports(self):
         self.serial.update_ports()
@@ -47,6 +54,9 @@ class MyApp(QMainWindow, Ui_MainWindow):
 
     def clear_terminal(self):
         print("Clearing terminal")
+
+    def closeEvent(self, e):
+        self.serial.disconnect_serial()
     
 
 if __name__ == "__main__":
