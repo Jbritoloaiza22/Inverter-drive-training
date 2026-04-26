@@ -12,6 +12,7 @@ class MyApp(QMainWindow, Ui_MainWindow):
         self.ui.connectBtn.clicked.connect(self.connect_serial)
         self.ui.sendBtn.clicked.connect(self.send_data)
         self.ui.updateBtn.clicked.connect(self.update_ports)
+        self.ui.clearBtn.clicked.connect(self.clear_terminal)
 
     def connect_serial(self):
         print("Connect button clicked")
@@ -19,11 +20,13 @@ class MyApp(QMainWindow, Ui_MainWindow):
     def send_data(self):
         print("Sending")
 
-    def read_data(self):
-        print("Reading")
 
     def update_ports(self):
         print("Updating ports")
+
+    def clear_terminal(self):
+        print("Clearing terminal")
+    
 
     
 
