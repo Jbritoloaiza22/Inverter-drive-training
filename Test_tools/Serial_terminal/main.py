@@ -8,9 +8,12 @@ class MyApp(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
         #object serial
         self.serial = customSerial()
         self.ui.baudrateList.addItems(self.serial.baudratesDIC.keys())
+        self.ui.baudrateList.setCurrentText('115200')
+
         #Events 
         self.ui.connectBtn.clicked.connect(self.connect_serial)
         self.ui.sendBtn.clicked.connect(self.send_data)
