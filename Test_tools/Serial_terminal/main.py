@@ -8,7 +8,7 @@ class MyApp(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
         #object serial
         self.serial = customSerial()
         self.ui.baudrateList.addItems(self.serial.baudratesDIC.keys())
@@ -21,7 +21,21 @@ class MyApp(QMainWindow, Ui_MainWindow):
         self.ui.clearBtn.clicked.connect(self.clear_terminal)
 
     def connect_serial(self): 
-        print("Connect button clicked")
+        if(self.ui.connectBtn.isChecked()):
+            port = self.ui.portList.currentText()
+            baudrate = self.ui.baudrateList.currentText()
+            self.serial.serialPort.port = port
+            self.serial.serialPort.baudrate = baudrate
+            self.serial.connect_serial()
+            #connected
+            if(self.serial.serialPort.is_open):
+                self.ui.connectBtn.setText("Disconnect")
+            else:
+                self.ui.connectBtn.setChecked(False)
+        else:
+            self.ui.connectBtn.setText("Connect")
+            self.serial.disconnect_serial()
+
 
     def send_data(self):
         print("Sending")
@@ -34,9 +48,6 @@ class MyApp(QMainWindow, Ui_MainWindow):
     def clear_terminal(self):
         print("Clearing terminal")
     
-
-    
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

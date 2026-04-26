@@ -27,10 +27,14 @@ class customSerial(object):
         print("Available ports:", self.portList)
 
     def connect_serial(self):
-        pass
+        try:
+            self.serialPort.open()
+        except serial.SerialException as e:
+            print("NO PORT SELECTED OR PORT IS NOT AVAILABLE")
 
     def disconnect_serial(self):
-        pass
+        self.serialPort.close()
+        print("Disconnected")
     
     def read_serial(self):
         pass
