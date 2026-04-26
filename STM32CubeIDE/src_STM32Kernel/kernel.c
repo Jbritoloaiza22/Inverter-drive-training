@@ -22,6 +22,7 @@
  */
 #include "kernel.h"
 #include "KernelInterface.h"
+#include "uart.h"
 
 /* tracking version */
 #define FW_VERSION "v1.0.0"
@@ -29,11 +30,7 @@
 /** @brief ADC handle structure */
 ADC_HandleTypeDef hadc1;
 
-/** @brief UART handle structure */
-UART_HandleTypeDef huart1;
-
 /* Private function prototypes */
-static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
@@ -67,14 +64,13 @@ int main(void)
   vKernelInterface_initBeforeInterruptEnable();
 
   /* Initialize peripherals */
-  MX_USART1_UART_Init();
   MX_ADC1_Init();
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
   while (1)
   {
-    HAL_UART_Transmit(&huart1, msg, sizeof(msg) - 1, HAL_MAX_DELAY);
+    /* UART transmission handled via callback initialization */
   }
 
 }
@@ -134,29 +130,6 @@ static void MX_ADC1_Init(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
-  *
-  * Configures USART1 for serial communication with the following
-  * parameters:
-  * - Baudrate: 115200
-  * - 8 data bits
-  * - 1 stop bit
-  * - No parity
-  */
-static void MX_USART1_UART_Init(void)
-{
-  huart1.Instance = USART1;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  else
-  {
-    /*do nothing*/
-  }
-}
-
-/**
   * @brief Error handler function.
   *
   * This function is executed whenever a HAL error occurs.
@@ -189,6 +162,7 @@ void vKernelInterface_initBeforeInterruptEnable(void)
 	cbGPIOS();
 	cbPWM();
 	cbTIM();
+	cbUART();
 	cbSVPWM();
 }
 

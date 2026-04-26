@@ -1,9 +1,10 @@
 /**
  * @file uart.h
- * @brief UART interface definitions for STM32G0.
+ * @brief UART driver interface for STM32G0.
  *
- * This header provides a simplified UART handle structure and basic
- * function prototypes for initialization, transmission, and reception.
+ * This module provides a low-level UART driver following OOP patterns
+ * for initialization, transmission, and reception using direct register
+ * access .
  *
  * @author
  * Jesus Daniel Britoloaiza
@@ -12,68 +13,145 @@
  * Copyright (c) 2026 Jesus Daniel Britoloaiza
  *
  * @note
- * This is a abstraction layer intended for learning and low-level
- * control. It does not include full HAL features such as interrupts,
- * DMA, or advanced error handling.
+ * This is a abstraction layer intended for learning and
+ * low-level control. It does not include full HAL features such as
+ * interrupts, DMA, or advanced error handling.
  */
 
-#ifndef UART_H
-#define UART_H
+#ifndef __UART_H
+#define __UART_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "stm32g0xx_hal_def.h"
+#include "stm32g031xx.h"
+#include <stdint.h>
+
+/* =========================================================
+ * CONFIGURATION MACROS
+ * ========================================================= */
 
 /**
- * @brief UART handle structure.
- *
- * This structure contains the base address of the USART peripheral.
+ * @brief UART baud rate setting for 115200 bps @ 64 MHz clock.
  */
-typedef struct __UART_HandleTypeDef
+#define dUART_BRR_115200_64MHZ  0x22B
+
+/**
+ * @brief Logical ON value.
+ */
+#define dOn  1U
+
+/**
+ * @brief Logical OFF value.
+ */
+#define dOff 0U
+
+/* =========================================================
+ * UART OBJECT
+ * ========================================================= */
+
+/**
+ * @brief UART object structure.
+ *
+ * Encapsulates UART peripheral configuration and runtime state.
+ *
+ * @note This is a lightweight abstraction over STM32 USART peripherals.
+ */
+typedef struct
 {
-  USART_TypeDef *Instance;  /*!< UART registers base address */
-} UART_HandleTypeDef;
+    /**
+     * @brief Pointer to hardware UART instance.
+     *
+     * Example:
+     * - USART1
+     * - USART2
+     * - LPUART1
+     */
+    USART_TypeDef *Instance;
+
+    /**
+     * @brief Baud rate configuration value (BRR register).
+     *
+     * Depends on system clock frequency.
+     */
+    uint32_t BaudRate;
+
+    /**
+     * @brief Runtime enable flag.
+     *
+     * - 0: UART disabled
+     * - 1: UART enabled
+     */
+    uint8_t enabled;
+
+} UART_t;
+
+/* =========================================================
+ * PUBLIC API
+ * ========================================================= */
 
 /**
- * @brief Initialize the UART peripheral.
+ * @brief Global UART object instance.
  *
- * @param huart Pointer to a UART handle structure.
- * @return HAL status.
+ * This instance represents the UART "object" used by the system.
+ * Initialized via cbUART() callback.
+ *
+ * @note Declared as extern for access from other modules.
  */
-HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart);
+extern UART_t uart1;
 
 /**
- * @brief Transmit data over UART in blocking mode.
+ * @brief Initialize UART peripheral.
  *
- * @param huart Pointer to a UART handle structure.
- * @param pData Pointer to data buffer.
- * @param Size Number of bytes to transmit.
- * @param Timeout Timeout duration.
- * @return HAL status.
+ * Configures the UART with:
+ * - 8 bits data, no parity, 1 stop bit
+ * - TX and RX enabled
+ * - Specified baud rate
+ * - Polling-based operation (no interrupts)
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[in] Instance UART peripheral base (USART1, USART2, etc.)
+ * @param[in] BaudRate Baud rate configuration (BRR value)
  */
-HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
-                                    const uint8_t *pData,
-                                    uint16_t Size,
-                                    uint32_t Timeout);
+void vUART_Init(UART_t *self,
+                USART_TypeDef *Instance,
+                uint32_t BaudRate);
 
 /**
- * @brief Receive data over UART in blocking mode.
+ * @brief Transmit data in blocking mode using polling.
  *
- * @param huart Pointer to a UART handle structure.
- * @param pData Pointer to data buffer.
- * @param Size Number of bytes to receive.
- * @param Timeout Timeout duration.
- * @return HAL status.
+ * Waits until each byte is transmitted before sending the next.
+ * This is a synchronous, blocking operation.
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[in] pData Pointer to data buffer to transmit
+ * @param[in] Size Number of bytes to transmit
+ *
+ * @return Number of bytes successfully transmitted
  */
-HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
-                                   uint8_t *pData,
-                                   uint16_t Size,
-                                   uint32_t Timeout);
+uint16_t vUART_Transmit(UART_t *self,
+                        const uint8_t *pData,
+                        uint16_t Size);
+
+/**
+ * @brief Receive data in blocking mode using polling.
+ *
+ * Waits until each byte is received before reading the next.
+ * This is a synchronous, blocking operation.
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[out] pData Pointer to buffer for received data
+ * @param[in] Size Maximum number of bytes to receive
+ *
+ * @return Number of bytes successfully received
+ */
+uint16_t vUART_Receive(UART_t *self,
+                       uint8_t *pData,
+                       uint16_t Size);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* UART_H */
+#endif /* __UART_H */

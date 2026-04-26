@@ -177,3 +177,11 @@ void cbGPIOS(void);
  * @post Updates PWM duty cycles for phases A, B, and C.
  */
 void cbSVPWM(void);
+
+/**
+ * @brief UART initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes the UART peripheral for system communication.
+ */
+void cbUART(void);

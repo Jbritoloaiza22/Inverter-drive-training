@@ -1,9 +1,13 @@
 /**
  * @file uart.c
- * @brief UART driver implementation for STM32G0.
+ * @brief UART driver implementation for STM32G0 (OOP style).
  *
- * This file provides basic UART initialization, transmission,
- * and reception using direct register access (bare-metal style).
+ * This module provides low-level UART configuration and communication
+ * using direct register access (bare-metal style) following object-oriented
+ * patterns in C.
+ *
+ * Supports basic polling-based transmission and reception. Does not include
+ * interrupts, DMA, or advanced error handling.
  *
  * @author
  * Jesus Daniel Britoloaiza
@@ -11,103 +15,184 @@
  * @copyright
  * Copyright (c) 2026 Jesus Daniel Britoloaiza
  *
- * @note
- * This implementation is simplified and intended for learning purposes.
- * It does not include full error handling, interrupts, or DMA support.
+ * @license
+ * This source code is provided for educational and research purposes.
  */
 
-#include "defs.h"
+#include "uart.h"
+#include "KernelInterface.h"
 
-#define UART_BRR_115200_64MHZ 0x22B
+/* =========================================================
+ * GLOBAL STATE
+ * ========================================================= */
+
+/**
+ * @brief Global UART object instance.
+ *
+ * This instance represents the UART "object" used by the system.
+ * Declared as global to be accessible via extern declaration.
+ */
+UART_t uart1;
+
+/* =========================================================
+ * INIT
+ * ========================================================= */
+
 /**
  * @brief Initialize UART peripheral with basic configuration.
  *
- * @param huart Pointer to UART handle.
- * @return HAL status.
+ * Configures the UART with:
+ * - 8 bits data
+ * - No parity
+ * - 1 stop bit
+ * - TX and RX enabled
+ * - Specified baud rate
+ * - Polling-based operation
+ *
+ * Disables advanced modes such as:
+ * - LIN mode
+ * - Clock output
+ * - Smartcard mode
+ * - Half-duplex mode
+ * - IrDA mode
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[in] Instance UART peripheral base address (USART1, USART2, etc.)
+ * @param[in] BaudRate Baud rate configuration (BRR register value)
  */
-HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
+void vUART_Init(UART_t *self,
+                USART_TypeDef *Instance,
+                uint32_t BaudRate)
 {
-  /* Reset configuration */
-  huart->Instance->CR1 = 0;
-  huart->Instance->CR2 = 0;
-  huart->Instance->CR3 = 0;
+    self->Instance = Instance;
+    self->BaudRate = BaudRate;
+    self->enabled = 0U;
 
-  /* Configure: 8 bits, no parity, TX + RX enabled */
-  huart->Instance->CR1 =
-      USART_CR1_TE |   /* Transmitter enable */
-      USART_CR1_RE;    /* Receiver enable */
- 
-  /* Configure baudrate (ejemplo: 115200 @ 64MHz → BRR ≈ 0x22B) */
-  huart->Instance->BRR = UART_BRR_115200_64MHZ;
+    /* Reset configuration */
+    Instance->CR1 = 0U;
+    Instance->CR2 = 0U;
+    Instance->CR3 = 0U;
 
-   /* No prescaler / guard time */
-  huart->Instance->GTPR = 0;
+    /* Configure: 8 bits, no parity, TX + RX enabled */
+    Instance->CR1 = USART_CR1_TE |   /* Transmitter enable */
+                    USART_CR1_RE;    /* Receiver enable */
 
-  /* Disable advanced modes */
-  huart->Instance->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
-  huart->Instance->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+    /* Configure baudrate */
+    Instance->BRR = BaudRate;
 
-  /* Enable USART */
-  huart->Instance->CR1 |= USART_CR1_UE;
+    /* No prescaler / guard time */
+    Instance->GTPR = 0U;
 
-  return HAL_OK;
+    /* Disable advanced modes */
+    Instance->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
+    Instance->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+
+    /* Enable USART */
+    Instance->CR1 |= USART_CR1_UE;
+    self->enabled = 1U;
 }
+
+/* =========================================================
+ * TRANSMIT / RECEIVE
+ * ========================================================= */
 
 /**
  * @brief Transmit data in blocking mode using polling.
  *
- * @param huart Pointer to UART handle.
- * @param pData Pointer to data buffer.
- * @param Size Number of bytes to transmit.
- * @param Timeout Unused (kept for compatibility).
- * @return HAL status.
+ * Polls the TXE (Transmit Data Register Empty) flag to ensure each
+ * byte can be safely written before transmission. After all bytes
+ * are written, waits for TC (Transmission Complete) flag.
+ *
+ * This is a synchronous, blocking operation.
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[in] pData Pointer to data buffer to transmit
+ * @param[in] Size Number of bytes to transmit
+ *
+ * @return Number of bytes successfully transmitted (equals Size on success)
  */
-HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
-                                    const uint8_t *pData,
-                                    uint16_t Size,
-                                    uint32_t Timeout)
+uint16_t vUART_Transmit(UART_t *self,
+                        const uint8_t *pData,
+                        uint16_t Size)
 {
-  (void)Timeout; /* Unused */
+    uint16_t ui16Transmitted = 0U;
 
-  for (uint16_t i = 0; i < Size; i++)
-  {
-    /* Wait until transmit data register is empty */
-    while (!(huart->Instance->ISR & USART_ISR_TXE_TXFNF));
+    for (uint16_t i = 0U; i < Size; i++)
+    {
+        /* Wait until transmit data register is empty */
+        while (!(self->Instance->ISR & USART_ISR_TXE_TXFNF))
+        {
+            /* Polling */
+        }
 
-    /* Write data */
-    huart->Instance->TDR = pData[i];
-  }
+        /* Write data */
+        self->Instance->TDR = pData[i];
+        ui16Transmitted++;
+    }
 
-  /* Wait until transmission complete */
-  while (!(huart->Instance->ISR & USART_ISR_TC));
+    /* Wait until transmission complete */
+    while (!(self->Instance->ISR & USART_ISR_TC))
+    {
+        /* Polling */
+    }
 
-  return HAL_OK;
+    return ui16Transmitted;
 }
 
 /**
  * @brief Receive data in blocking mode using polling.
  *
- * @param huart Pointer to UART handle.
- * @param pData Pointer to data buffer.
- * @param Size Number of bytes to receive.
- * @param Timeout Unused (kept for compatibility).
- * @return HAL status.
+ * Polls the RXNE (Receive Data Register Not Empty) flag to wait for
+ * incoming data. Once data is available, reads it from the RDR register.
+ *
+ * This is a synchronous, blocking operation.
+ *
+ * @param[in,out] self Pointer to UART object instance
+ * @param[out] pData Pointer to buffer for received data
+ * @param[in] Size Maximum number of bytes to receive
+ *
+ * @return Number of bytes successfully received
  */
-HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
-                                   uint8_t *pData,
-                                   uint16_t Size,
-                                   uint32_t Timeout)
+uint16_t vUART_Receive(UART_t *self,
+                       uint8_t *pData,
+                       uint16_t Size)
 {
-  (void)Timeout; /* Unused */
+    uint16_t ui16Received = 0U;
 
-  for (uint16_t i = 0; i < Size; i++)
-  {
-    /* Wait until data is received */
-    while (!(huart->Instance->ISR & USART_ISR_RXNE_RXFNE));
+    for (uint16_t i = 0U; i < Size; i++)
+    {
+        /* Wait until data is received */
+        while (!(self->Instance->ISR & USART_ISR_RXNE_RXFNE))
+        {
+            /* Polling */
+        }
 
-    /* Read data */
-    pData[i] = (uint8_t)(huart->Instance->RDR & 0xFF);
-  }
+        /* Read data */
+        pData[i] = (uint8_t)(self->Instance->RDR & 0xFFU);
+        ui16Received++;
+    }
 
-  return HAL_OK;
+    return ui16Received;
+}
+
+/* =========================================================
+ * CALLBACK (KERNEL LAYER)
+ * ========================================================= */
+
+/**
+ * @brief UART initialization callback.
+ *
+ * This function is intended to be used by the KernelInterface
+ * as part of the system initialization sequence.
+ *
+ * It initializes the UART object with default parameters suitable
+ * for system communication (115200 bps @ 64 MHz clock).
+ */
+void cbUART(void)
+{
+    vUART_Init(&uart1, USART1, dUART_BRR_115200_64MHZ);
+    
+    /* Test transmission to verify UART is working */
+    uint8_t test_msg[] = "UART initialized successfully\r\n";
+    vUART_Transmit(&uart1, test_msg, sizeof(test_msg) - 1);
 }
