@@ -51,7 +51,7 @@ extern "C" {
 /**
  * @brief HAL UART driver header.
  */
-#include "stm32g0xx_hal_uart.h"
+#include "uart.h"
 
 /**
  * @brief Cortex abstraction layer.
