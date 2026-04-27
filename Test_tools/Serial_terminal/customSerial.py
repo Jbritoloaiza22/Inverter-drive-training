@@ -21,7 +21,11 @@ class customSerial(QObject):
             '460800': 460800,
             '921600': 921600
         }
-
+        self.serialPort.timeout = 0.5
+        self.typeDIC= {
+            'ascii': 1,
+            'hex': 2
+        }
         self.portList = []
 
         #thread 
@@ -51,7 +55,8 @@ class customSerial(QObject):
                 self.data_avaliable.emit(data)
 
     def send_data(self, data):
-        print("Sending:", data)
+        if(self.serialPort.is_open):
+            self.serialPort.write(data.encode('utf-8'))
 
     def start_thread(self):
         self.thread = Thread(target = self.read_serial)

@@ -13,6 +13,8 @@ class MyApp(QMainWindow, Ui_MainWindow):
         self.serial = customSerial()
         self.ui.baudrateList.addItems(self.serial.baudratesDIC.keys())
         self.ui.baudrateList.setCurrentText('115200')
+        self.ui.typeList.addItems(self.serial.typeDIC.keys())
+        self.ui.typeList.setCurrentText('ascii')
 
         #Events 
         self.ui.connectBtn.clicked.connect(self.connect_serial)
@@ -45,15 +47,13 @@ class MyApp(QMainWindow, Ui_MainWindow):
         data = self.ui.input.text()
         self.serial.send_data(data) 
 
-    def read_data(self): 
-        print("Reading")
 
     def update_ports(self):
         self.serial.update_ports()
         self.ui.portList.addItems(self.serial.portList)
 
     def clear_terminal(self):
-        print("Clearing terminal")
+        self.ui.Terminal.clear()
 
     def closeEvent(self, e):
         self.serial.disconnect_serial()

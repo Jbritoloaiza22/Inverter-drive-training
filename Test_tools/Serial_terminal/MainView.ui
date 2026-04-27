@@ -112,7 +112,17 @@
          </layout>
         </item>
         <item>
+         <widget class="QComboBox" name="typeList"/>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="updateBtn">
+            <property name="text">
+             <string>Update</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QPushButton" name="connectBtn">
             <property name="text">
@@ -120,13 +130,6 @@
             </property>
             <property name="checkable">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="updateBtn">
-            <property name="text">
-             <string>Update</string>
             </property>
            </widget>
           </item>
