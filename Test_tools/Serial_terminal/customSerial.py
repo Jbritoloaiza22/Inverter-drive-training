@@ -27,6 +27,7 @@ class customSerial(QObject):
             'hex': 2
         }
         self.portList = []
+        self.mode = 'ascii'  # Default mode
 
         #thread 
         self.thread = None
@@ -48,15 +49,52 @@ class customSerial(QObject):
         self.stop_thread()
         self.serialPort.close()
     
+    @pyqtSlot(str)
+    def set_mode(self, mode):
+        """Set communication mode: 'ascii' or 'hex'"""
+        if mode in self.typeDIC.keys():
+            self.mode = mode
+            print(f"Mode changed to: {self.mode}")
+        else:
+            print(f"Invalid mode: {mode}")
+    
     def read_serial(self):
         while (self.serialPort.is_open and self.alive.isSet()):
-            data = self.serialPort.readline().decode('utf-8').strip()
-            if(len(data) > 1):
+            raw_data = self.serialPort.readline()
+            if not raw_data:
+                continue
+            
+            if self.mode == 'hex':
+                # Convert to hexadecimal representation
+                data = raw_data.hex().upper()
+            else:
+                # Convert to ASCII (UTF-8)
+                try:
+                    data = raw_data.decode('utf-8').strip()
+                except UnicodeDecodeError:
+                    data = raw_data.hex().upper()
+            
+            if len(data) > 0:
                 self.data_avaliable.emit(data)
 
     def send_data(self, data):
-        if(self.serialPort.is_open):
+        if not self.serialPort.is_open:
+            print("Serial port is not open")
+            return
+        
+        if self.mode == 'hex':
+            # Convert hex string to bytes
+            try:
+                hex_data = data.strip().replace(' ', '')
+                byte_data = bytes.fromhex(hex_data)
+                self.serialPort.write(byte_data)
+                print(f"Sent (hex): {hex_data}")
+            except ValueError as e:
+                print(f"Invalid hex format: {e}")
+        else:
+            # Send as ASCII
             self.serialPort.write(data.encode('utf-8'))
+            print(f"Sent (ascii): {data}")
 
     def start_thread(self):
         self.thread = Thread(target = self.read_serial)

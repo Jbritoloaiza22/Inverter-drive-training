@@ -21,10 +21,15 @@ class MyApp(QMainWindow, Ui_MainWindow):
         self.ui.sendBtn.clicked.connect(self.send_data)
         self.ui.updateBtn.clicked.connect(self.update_ports)
         self.ui.clearBtn.clicked.connect(self.clear_terminal)
+        self.ui.typeList.currentTextChanged.connect(self.on_mode_changed)
         self.serial.data_avaliable.connect(self.update_terminal)
 
     def update_terminal(self, data):
         self.ui.Terminal.append(data)
+
+    def on_mode_changed(self, mode):
+        """Handle serial mode change from combo box"""
+        self.serial.set_mode(mode)
 
     def connect_serial(self): 
         if(self.ui.connectBtn.isChecked()):
