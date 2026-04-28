@@ -32,6 +32,7 @@
 #include <tim.h>
 #include "spwm.h"
 #include "svm.h"
+#include "uart.h"
 
 /**
  * @brief   Performs system initializations before enabling interrupts.
@@ -90,6 +91,26 @@ void vKernelInterface_TIM2IRQHandler(void);
  *       (e.g., TIM3_IRQHandler).
  */
 void vKernelInterface_TIM3IRQHandler(void);
+
+/**
+ * @brief USART1 interrupt handler interface.
+ *
+ * This function is invoked when a USART1 interrupt is triggered.
+ * It provides an abstraction layer between the hardware ISR and
+ * the application/kernel logic.
+ *
+ * Responsibilities:
+ * - Handle incoming UART data and store in receive buffer
+ * - Process RX data (RXNE flag)
+ * - Handle TX data transmission (TXE flag)
+ * - Manage error conditions (overrun, framing errors)
+ * - Clear appropriate interrupt flags after processing
+ *
+ * @note This function must be called from the USART1 ISR
+ *       (e.g., USART1_IRQHandler).
+ */
+void vKernelInterface_USART1IRQHandler(void);
+
 
 /**
  * @brief RCC initialization callback.
