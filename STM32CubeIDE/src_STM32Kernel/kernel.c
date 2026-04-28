@@ -186,4 +186,8 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void)
   /* Enable TIM3 interrupt */
   vCORTEX_NVICSetPriority(TIM3_IRQn, 5, 0);
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
+
+  /* Enable UART1 interrupt */
+  vCORTEX_NVICSetPriority(USART1_IRQn, 5, 0);
+  vCORTEX_NVICEnableIRQ(USART1_IRQn);
 }
