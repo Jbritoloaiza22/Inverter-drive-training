@@ -75,10 +75,22 @@ void vKernelInterface_USART1IRQHandler(void)
 	{
 		ui8BufferRecepcion[ui8IndexDataRX++] = uart1.Instance->RDR;
 	}
-	else 
+	else if(uart1.Instance->ISR & USART_ISR_TXE_TXFNF)
 	{
-		/*do nothing*/
+		/*send data */
 	}
+  else if(uart1.Instance->ISR & USART_ISR_ORE)
+	{
+		/*Overrun error*/
+	}
+  else if(uart1.Instance->ISR & USART_ISR_FE)
+	{
+		/*Framing error*/
+	}
+  else
+  {
+    /*do nothing */
+  }
 
 }
 
