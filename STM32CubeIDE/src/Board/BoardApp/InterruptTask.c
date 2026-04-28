@@ -41,7 +41,6 @@
  * @license
  * This source code is provided for educational and research purposes.
  */
-
 #include "KernelInterface.h"
 #include "stm32g031xx.h"
 
@@ -49,6 +48,9 @@ extern SPWM_t spwm;
 extern Timer_t tim2;
 extern Timer_t tim3;
 extern SVM_t svm;
+extern UART_t uart1;
+uint8_t ui8BufferRecepcion[50];
+uint8_t ui8IndexDataRX = 0;
 /**
   * @brief This function handles TIM2 global interrupt.
   */
@@ -64,6 +66,31 @@ void vKernelInterface_TIM3IRQHandler(void)
 {
 
   vTimer_ClearIRQ(&tim3);
-  //vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode
+  /*vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode*/
+}
+
+void vKernelInterface_USART1IRQHandler(void)
+{
+	if(uart1.Instance->ISR & USART_ISR_RXNE_RXFNE)
+	{
+		ui8BufferRecepcion[ui8IndexDataRX++] = uart1.Instance->RDR;
+	}
+	else if(uart1.Instance->ISR & USART_ISR_TXE_TXFNF)
+	{
+		/*send data */
+	}
+  else if(uart1.Instance->ISR & USART_ISR_ORE)
+	{
+		/*Overrun error*/
+	}
+  else if(uart1.Instance->ISR & USART_ISR_FE)
+	{
+		/*Framing error*/
+	}
+  else
+  {
+    /*do nothing */
+  }
+
 }
 

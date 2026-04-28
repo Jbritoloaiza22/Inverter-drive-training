@@ -73,9 +73,9 @@ void vUART_Init(UART_t *self,
     Instance->CR2 = 0U;
     Instance->CR3 = 0U;
 
-    /* Configure: 8 bits, no parity, TX + RX enabled */
+    /* Configure: 8 bits, no parity, TX + RX enabled, NO INTERRUPTS YET */
     Instance->CR1 = USART_CR1_TE |   /* Transmitter enable */
-                    USART_CR1_RE;    /* Receiver enable */
+                    USART_CR1_RE;     /* Receiver enable */
 
     /* Configure baudrate */
     Instance->BRR = BaudRate;
@@ -88,7 +88,7 @@ void vUART_Init(UART_t *self,
     Instance->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
 
     /* Enable USART */
-    Instance->CR1 |= USART_CR1_UE;
+    Instance->CR1 |= USART_CR1_UE | USART_CR1_RXNEIE_RXFNEIE;
     self->enabled = 1U;
 }
 
