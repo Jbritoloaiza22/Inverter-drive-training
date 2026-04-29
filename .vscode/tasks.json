@@ -1,0 +1,79 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Format code with clang-format",
+            "type": "shell",
+            "command": "clang-format",
+            "args": [
+                "-i",
+                "--style=file",
+                "${file}"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Format all C/H files",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "Get-ChildItem -Recurse -Include '*.c','*.h' | ForEach-Object { clang-format -i --style=file $_.FullName }; Write-Host 'Formatting complete!'"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Format all C/H files (Linux/Mac)",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "find . -type f \\( -name '*.c' -o -name '*.h' \\) -exec clang-format -i --style=file {} \\; && echo 'Formatting complete!'"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Check formatting (no changes)",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "$files = Get-ChildItem -Recurse -Include '*.c','*.h'; $hasIssues = $false; foreach ($f in $files) { $formatted = clang-format --style=file $f.FullName; $original = Get-Content -Raw $f.FullName; if ($formatted -ne $original) { Write-Host \"❌ Needs formatting: $($f.FullName)\"; $hasIssues = $true } }; if (-not $hasIssues) { Write-Host '✅ All files are properly formatted!' }"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
