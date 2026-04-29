@@ -65,15 +65,15 @@
             "args": [
                 "-NoProfile",
                 "-Command",
-                "Get-ChildItem -Recurse -Include '*.c','*.h' | ForEach-Object { clang-format --dry-run --Werror --style=file $_.FullName }; if ($LASTEXITCODE -eq 0) { Write-Host '✅ All files are properly formatted!' } else { Write-Host '❌ Formatting issues found!'; exit 1 }"
+                "$hasIssues = $false; Get-ChildItem -Recurse -Include '*.c','*.h' | ForEach-Object { clang-format --dry-run --Werror --style=file $_.FullName; if ($LASTEXITCODE -ne 0) { $hasIssues = $true } }; if ($hasIssues) { Write-Host '❌ Formatting issues found!'; exit 1 } else { Write-Host '✅ All files are properly formatted!' }"
             ],
             "presentation": {
-            "echo": true,
-            "reveal": "always",
+                "echo": true,
+                "reveal": "always",
                 "focus": true,
                 "panel": "new"
             },
             "problemMatcher": []
-         }
+        }
     ]
 }
