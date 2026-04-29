@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
     gnupg \
     lsb-release \
+    software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://apt.llvm.org/llvm.sh && \
