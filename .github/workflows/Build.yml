@@ -20,32 +20,35 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             stm32-build \
-            bash -c "
-              cd /workspace &&
-              clang-format --version &&
-              set -e;
-              has_issues=0;
+            bash -c '
+              cd /workspace
+
+              clang-format --version
+
+              has_issues=0
+
               while IFS= read -r file; do
-                clang-format --dry-run --Werror --style=file \"$file\" || has_issues=1;
-              done < <(find . -type f \( -name '*.c' -o -name '*.h' \));
+                clang-format --dry-run --Werror --style=file "$file" || has_issues=1
+              done < <(find . -type f \( -name "*.c" -o -name "*.h" \))
+
               if [ $has_issues -ne 0 ]; then
-                echo '❌ Formatting issues found!';
-                exit 1;
+                echo "❌ Formatting issues found!"
+                exit 1
               else
-                echo '✅ All files are properly formatted!';
+                echo "✅ All files are properly formatted!"
               fi
-            "
+            '
 
       - name: Compile firmware inside container
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             stm32-build \
-            bash -c "
-              cd /workspace/STM32CubeIDE/Debug &&
-              make clean &&
+            bash -c '
+              cd /workspace/STM32CubeIDE/Debug
+              make clean
               make all
-            "
+            '
 
       - name: Verify build outputs
         run: |
