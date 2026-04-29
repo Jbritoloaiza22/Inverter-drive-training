@@ -18,8 +18,9 @@
  * - Future support for Field Oriented Control (FOC)
  * - ADC-based feedback processing (currents, voltage, temperature)
  *
- * The implementation is designed for STM32 microcontrollers (e.g. STM32G0 series)
- * and is intended to run inside high-priority interrupt service routines (ISRs).
+ * The implementation is designed for STM32 microcontrollers (e.g. STM32G0
+ * series) and is intended to run inside high-priority interrupt service
+ * routines (ISRs).
  *
  * Key characteristics:
  * - Deterministic execution time
@@ -52,45 +53,31 @@ extern UART_t uart1;
 uint8_t ui8BufferRecepcion[50];
 uint8_t ui8IndexDataRX = 0;
 /**
-  * @brief This function handles TIM2 global interrupt.
-  */
-void vKernelInterface_TIM2IRQHandler(void)
-{
+ * @brief This function handles TIM2 global interrupt.
+ */
+void vKernelInterface_TIM2IRQHandler(void) {
   vTimer_ClearIRQ(&tim2);
   SVM_Run(&svm);
 }
 /**
-  * @brief This function handles TIM2 global interrupt.
-  */
-void vKernelInterface_TIM3IRQHandler(void)
-{
+ * @brief This function handles TIM2 global interrupt.
+ */
+void vKernelInterface_TIM3IRQHandler(void) {
 
   vTimer_ClearIRQ(&tim3);
   /*vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode*/
 }
 
-void vKernelInterface_USART1IRQHandler(void)
-{
-	if(uart1.Instance->ISR & USART_ISR_RXNE_RXFNE)
-	{
-		ui8BufferRecepcion[ui8IndexDataRX++] = uart1.Instance->RDR;
-	}
-	else if(uart1.Instance->ISR & USART_ISR_TXE_TXFNF)
-	{
-		/*send data */
-	}
-  else if(uart1.Instance->ISR & USART_ISR_ORE)
-	{
-		/*Overrun error*/
-	}
-  else if(uart1.Instance->ISR & USART_ISR_FE)
-	{
-		/*Framing error*/
-	}
-  else
-  {
+void vKernelInterface_USART1IRQHandler(void) {
+  if (uart1.Instance->ISR & USART_ISR_RXNE_RXFNE) {
+    ui8BufferRecepcion[ui8IndexDataRX++] = uart1.Instance->RDR;
+  } else if (uart1.Instance->ISR & USART_ISR_TXE_TXFNF) {
+    /*send data */
+  } else if (uart1.Instance->ISR & USART_ISR_ORE) {
+    /*Overrun error*/
+  } else if (uart1.Instance->ISR & USART_ISR_FE) {
+    /*Framing error*/
+  } else {
     /*do nothing */
   }
-
 }
-

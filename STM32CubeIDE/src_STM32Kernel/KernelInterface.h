@@ -28,11 +28,11 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
-#include <stdint.h>
-#include <tim.h>
 #include "spwm.h"
 #include "svm.h"
 #include "uart.h"
+#include <stdint.h>
+#include <tim.h>
 
 /**
  * @brief   Performs system initializations before enabling interrupts.
@@ -110,7 +110,6 @@ void vKernelInterface_TIM3IRQHandler(void);
  *       (e.g., USART1_IRQHandler).
  */
 void vKernelInterface_USART1IRQHandler(void);
-
 
 /**
  * @brief RCC initialization callback.

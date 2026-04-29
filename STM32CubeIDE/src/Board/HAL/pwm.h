@@ -23,34 +23,33 @@
 extern "C" {
 #endif
 /** @brief PWM frequency setting for 8 kHz */
-#define dPWM_FREQ_8KHZ      3999U
+#define dPWM_FREQ_8KHZ 3999U
 
 /** @brief PWM frequency setting for 16 kHz */
-#define dPWM_FREQ_16KHZ     1999U
+#define dPWM_FREQ_16KHZ 1999U
 
 /** @brief PWM frequency setting for 32 kHz */
-#define dPWM_FREQ_32KHZ     999U
+#define dPWM_FREQ_32KHZ 999U
 
 /** @brief PWM frequency setting for 64 kHz */
-#define dPWM_FREQ_64KHZ     499U
+#define dPWM_FREQ_64KHZ 499U
 
 /** @brief PWM frequency setting for 128 kHz */
-#define dPWM_FREQ_128KHZ    249U
+#define dPWM_FREQ_128KHZ 249U
 
 /** @brief PWM frequency setting for 256 kHz */
-#define dPWM_FREQ_256KHZ    124U
+#define dPWM_FREQ_256KHZ 124U
 
 /** @brief PWM frequency setting for 512 kHz */
-#define dPWM_FREQ_512KHZ    61U
+#define dPWM_FREQ_512KHZ 61U
 /* =========================================================
  * PWM OBJECT
  * ========================================================= */
-typedef struct
-{
-    uint32_t arr;
+typedef struct {
+  uint32_t arr;
 
-    /* internal state (optional future use) */
-    uint8_t enabled;
+  /* internal state (optional future use) */
+  uint8_t enabled;
 } PWM_t;
 
 /* =========================================================
@@ -66,10 +65,7 @@ void vPWM_SetPhaseA(PWM_t *self, uint32_t duty);
 void vPWM_SetPhaseB(PWM_t *self, uint32_t duty);
 void vPWM_SetPhaseC(PWM_t *self, uint32_t duty);
 
-void vPWM_SetPhases(PWM_t *self,
-                   uint32_t a,
-                   uint32_t b,
-                   uint32_t c);
+void vPWM_SetPhases(PWM_t *self, uint32_t a, uint32_t b, uint32_t c);
 
 /* =========================================================
  * PHASE CONTROL (ON/OFF)

@@ -104,11 +104,10 @@ void assert_failed(uint8_t *file, uint32_t line);
  *
  * Defines the frequency of the system tick used by HAL.
  */
-typedef enum
-{
-  HAL_TICK_FREQ_10HZ    = 100U, /**< Tick every 100 ms */
-  HAL_TICK_FREQ_100HZ   = 10U,  /**< Tick every 10 ms */
-  HAL_TICK_FREQ_1KHZ    = 1U,   /**< Tick every 1 ms */
+typedef enum {
+  HAL_TICK_FREQ_10HZ = 100U,                 /**< Tick every 100 ms */
+  HAL_TICK_FREQ_100HZ = 10U,                 /**< Tick every 10 ms */
+  HAL_TICK_FREQ_1KHZ = 1U,                   /**< Tick every 1 ms */
   HAL_TICK_FREQ_DEFAULT = HAL_TICK_FREQ_1KHZ /**< Default: 1 ms */
 } HAL_TickFreqTypeDef;
 

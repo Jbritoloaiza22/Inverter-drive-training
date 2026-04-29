@@ -47,12 +47,12 @@ extern "C" {
 /**
  * @brief SysTick clock source: HCLK divided by 8.
  */
-#define SYSTICK_CLKSOURCE_HCLK_DIV8       0x00000000U
+#define SYSTICK_CLKSOURCE_HCLK_DIV8 0x00000000U
 
 /**
  * @brief SysTick clock source: HCLK.
  */
-#define SYSTICK_CLKSOURCE_HCLK            0x00000004U
+#define SYSTICK_CLKSOURCE_HCLK 0x00000004U
 
 /* =========================================================
  * PUBLIC API
@@ -71,9 +71,8 @@ extern "C" {
  * Cortex-M0+ only supports preemption priority.
  * SubPriority parameter is ignored.
  */
-void vCORTEX_NVICSetPriority(IRQn_Type IRQn,
-                            uint32_t PreemptPriority,
-                            uint32_t SubPriority);
+void vCORTEX_NVICSetPriority(IRQn_Type IRQn, uint32_t PreemptPriority,
+                             uint32_t SubPriority);
 
 /**
  * @brief Enable interrupt.

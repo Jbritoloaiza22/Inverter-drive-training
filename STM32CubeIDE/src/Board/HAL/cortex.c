@@ -53,12 +53,10 @@
  * On Cortex-M0+, only preemption priority is supported.
  * SubPriority parameter is ignored.
  */
-void vCORTEX_NVICSetPriority(IRQn_Type IRQn,
-                            uint32_t PreemptPriority,
-                            uint32_t SubPriority)
-{
-    (void)SubPriority; /* Not used in Cortex-M0+ */
-    NVIC_SetPriority(IRQn, PreemptPriority);
+void vCORTEX_NVICSetPriority(IRQn_Type IRQn, uint32_t PreemptPriority,
+                             uint32_t SubPriority) {
+  (void)SubPriority; /* Not used in Cortex-M0+ */
+  NVIC_SetPriority(IRQn, PreemptPriority);
 }
 
 /**
@@ -68,10 +66,7 @@ void vCORTEX_NVICSetPriority(IRQn_Type IRQn,
  *
  * @param[in] IRQn Interrupt number
  */
-void vCORTEX_NVICEnableIRQ(IRQn_Type IRQn)
-{
-    NVIC_EnableIRQ(IRQn);
-}
+void vCORTEX_NVICEnableIRQ(IRQn_Type IRQn) { NVIC_EnableIRQ(IRQn); }
 
 /**
  * @brief Disable interrupt in NVIC.
@@ -80,10 +75,7 @@ void vCORTEX_NVICEnableIRQ(IRQn_Type IRQn)
  *
  * @param[in] IRQn Interrupt number
  */
-void vCORTEX_NVICDisableIRQ(IRQn_Type IRQn)
-{
-    NVIC_DisableIRQ(IRQn);
-}
+void vCORTEX_NVICDisableIRQ(IRQn_Type IRQn) { NVIC_DisableIRQ(IRQn); }
 
 /* =========================================================
  * SYSTEM CONTROL
@@ -97,10 +89,7 @@ void vCORTEX_NVICDisableIRQ(IRQn_Type IRQn)
  * @note
  * This function does not return.
  */
-void vCORTEX_NVICSystemReset(void)
-{
-    NVIC_SystemReset();
-}
+void vCORTEX_NVICSystemReset(void) { NVIC_SystemReset(); }
 
 /* =========================================================
  * SYSTICK CONFIGURATION
@@ -123,7 +112,6 @@ void vCORTEX_NVICSystemReset(void)
  * vCORTEX_SYSTICKConfig(SystemCoreClock / 1000U);
  * @endcode
  */
-uint32_t vCORTEX_SYSTICKConfig(uint32_t TicksNumb)
-{
-    return SysTick_Config(TicksNumb);
+uint32_t vCORTEX_SYSTICKConfig(uint32_t TicksNumb) {
+  return SysTick_Config(TicksNumb);
 }
