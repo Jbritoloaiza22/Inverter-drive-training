@@ -9,9 +9,14 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     python3 \
     xz-utils \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# ARM GCC 12 (más cercano a CubeIDE)
+RUN wget https://apt.llvm.org/llvm.sh && \
+    chmod +x llvm.sh && \
+    ./llvm.sh 22 && \
+    ln -s /usr/bin/clang-format-22 /usr/bin/clang-format
+
 RUN wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz \
     && tar -xf arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz -C /opt \
     && mv /opt/arm-gnu-toolchain-* /opt/arm-toolchain \
