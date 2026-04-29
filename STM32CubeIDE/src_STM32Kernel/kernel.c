@@ -41,10 +41,7 @@ uint32_t ui32counter = 0;
  * This function increments a global counter that may be used
  * for waveform indexing or periodic PWM related operations.
  */
-void incCountertopwmDebug(void)
-{
-	ui32counter++;
-}
+void incCountertopwmDebug(void) { ui32counter++; }
 
 /**
  * @brief Main program entry point.
@@ -54,9 +51,8 @@ void incCountertopwmDebug(void)
  *
  * @retval int Program return status (never returns in embedded systems)
  */
-int main(void)
-{
-    uint8_t msg[] = "hello everybody\r\n";
+int main(void) {
+  uint8_t msg[] = "hello everybody\r\n";
 
   HAL_Init();
 
@@ -68,22 +64,19 @@ int main(void)
 
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
-  while (1)
-  {
+  while (1) {
     /* UART transmission handled via callback initialization */
   }
-
 }
 
 /**
-  * @brief ADC1 Initialization Function
-  *
-  * Configures the ADC peripheral with a single conversion channel
-  * and 12-bit resolution. The ADC is configured for software-triggered
-  * conversions without DMA.
-  */
-static void MX_ADC1_Init(void)
-{
+ * @brief ADC1 Initialization Function
+ *
+ * Configures the ADC peripheral with a single conversion channel
+ * and 12-bit resolution. The ADC is configured for software-triggered
+ * conversions without DMA.
+ */
+static void MX_ADC1_Init(void) {
   ADC_ChannelConfTypeDef sConfig = {0};
 
   hadc1.Instance = ADC1;
@@ -106,12 +99,9 @@ static void MX_ADC1_Init(void)
   hadc1.Init.OversamplingMode = DISABLE;
   hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
 
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
+  if (HAL_ADC_Init(&hadc1) != HAL_OK) {
     Error_Handler();
-  }
-  else
-  {
+  } else {
     /*do nothing*/
   }
   /** Configure ADC Regular Channel */
@@ -119,27 +109,22 @@ static void MX_ADC1_Init(void)
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
 
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
     Error_Handler();
-  }
-  else
-  {
+  } else {
     /*do nothing*/
   }
 }
 
 /**
-  * @brief Error handler function.
-  *
-  * This function is executed whenever a HAL error occurs.
-  * The system disables interrupts and enters an infinite loop.
-  */
-void Error_Handler(void)
-{
+ * @brief Error handler function.
+ *
+ * This function is executed whenever a HAL error occurs.
+ * The system disables interrupts and enters an infinite loop.
+ */
+void Error_Handler(void) {
   __disable_irq();
-  while (1)
-  {
+  while (1) {
   }
 }
 
@@ -156,14 +141,13 @@ void Error_Handler(void)
  * The callbacks are defined in the kernel interface layer to allow
  * hardware abstraction and modular configuration.
  */
-void vKernelInterface_initBeforeInterruptEnable(void)
-{
-	cbRCC();
-	cbGPIOS();
-	cbPWM();
-	cbTIM();
-	cbUART();
-	cbSVPWM();
+void vKernelInterface_initBeforeInterruptEnable(void) {
+  cbRCC();
+  cbGPIOS();
+  cbPWM();
+  cbTIM();
+  cbUART();
+  cbSVPWM();
 }
 
 /**
@@ -177,8 +161,7 @@ void vKernelInterface_initBeforeInterruptEnable(void)
  * - TIM2 update interrupt
  * - TIM3 update interrupt
  */
-void vKernelInterface_enableInterruptsForAllPeripherals(void)
-{
+void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable TIM2 interrupt */
   vCORTEX_NVICSetPriority(TIM2_IRQn, 4, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);

@@ -35,12 +35,12 @@ extern "C" {
 /**
  * @brief UART baud rate setting for 115200 bps @ 64 MHz clock.
  */
-#define dUART_BRR_115200_64MHZ  0x22B
+#define dUART_BRR_115200_64MHZ 0x22B
 
 /**
  * @brief Logical ON value.
  */
-#define dOn  1U
+#define dOn 1U
 
 /**
  * @brief Logical OFF value.
@@ -58,32 +58,31 @@ extern "C" {
  *
  * @note This is a lightweight abstraction over STM32 USART peripherals.
  */
-typedef struct
-{
-    /**
-     * @brief Pointer to hardware UART instance.
-     *
-     * Example:
-     * - USART1
-     * - USART2
-     * - LPUART1
-     */
-    USART_TypeDef *Instance;
+typedef struct {
+  /**
+   * @brief Pointer to hardware UART instance.
+   *
+   * Example:
+   * - USART1
+   * - USART2
+   * - LPUART1
+   */
+  USART_TypeDef *Instance;
 
-    /**
-     * @brief Baud rate configuration value (BRR register).
-     *
-     * Depends on system clock frequency.
-     */
-    uint32_t BaudRate;
+  /**
+   * @brief Baud rate configuration value (BRR register).
+   *
+   * Depends on system clock frequency.
+   */
+  uint32_t BaudRate;
 
-    /**
-     * @brief Runtime enable flag.
-     *
-     * - 0: UART disabled
-     * - 1: UART enabled
-     */
-    uint8_t enabled;
+  /**
+   * @brief Runtime enable flag.
+   *
+   * - 0: UART disabled
+   * - 1: UART enabled
+   */
+  uint8_t enabled;
 
 } UART_t;
 
@@ -114,9 +113,7 @@ extern UART_t uart1;
  * @param[in] Instance UART peripheral base (USART1, USART2, etc.)
  * @param[in] BaudRate Baud rate configuration (BRR value)
  */
-void vUART_Init(UART_t *self,
-                USART_TypeDef *Instance,
-                uint32_t BaudRate);
+void vUART_Init(UART_t *self, USART_TypeDef *Instance, uint32_t BaudRate);
 
 /**
  * @brief Transmit data in blocking mode using polling.
@@ -130,9 +127,7 @@ void vUART_Init(UART_t *self,
  *
  * @return Number of bytes successfully transmitted
  */
-uint16_t vUART_Transmit(UART_t *self,
-                        const uint8_t *pData,
-                        uint16_t Size);
+uint16_t vUART_Transmit(UART_t *self, const uint8_t *pData, uint16_t Size);
 
 /**
  * @brief Receive data in blocking mode using polling.
@@ -146,9 +141,7 @@ uint16_t vUART_Transmit(UART_t *self,
  *
  * @return Number of bytes successfully received
  */
-uint16_t vUART_Receive(UART_t *self,
-                       uint8_t *pData,
-                       uint16_t Size);
+uint16_t vUART_Receive(UART_t *self, uint8_t *pData, uint16_t Size);
 
 #ifdef __cplusplus
 }

@@ -30,11 +30,11 @@
  *  CONSTANTS (shared math definitions)
  * ========================================================= */
 
-#define dTWO_BY_SQRT3   (1.15470053838f)
-#define dONE_BY_SQRT3   (0.57735026919f)
-#define dSQRT3          (1.73205080757f)
-#define dTWOPI          (6.28318530718f)
-#define dPI             (3.14159265359f)
+#define dTWO_BY_SQRT3 (1.15470053838f)
+#define dONE_BY_SQRT3 (0.57735026919f)
+#define dSQRT3 (1.73205080757f)
+#define dTWOPI (6.28318530718f)
+#define dPI (3.14159265359f)
 
 /* =========================================================
  *  OBJECT DEFINITION (SVM "CLASS")
@@ -43,17 +43,16 @@
 /**
  * @brief SVM object structure (encapsulated state)
  */
-typedef struct
-{
-    float theta;        /**< Electrical angle [rad] */
-    float freq;         /**< Output frequency [Hz] */
-    uint32_t counter;   /**< Internal startup counter */
+typedef struct {
+  float theta;      /**< Electrical angle [rad] */
+  float freq;       /**< Output frequency [Hz] */
+  uint32_t counter; /**< Internal startup counter */
 
-    float amplitude;    /**< Modulation amplitude */
+  float amplitude; /**< Modulation amplitude */
 
-    uint32_t pwmPeriod; /**< PWM timer period (ARR) */
+  uint32_t pwmPeriod; /**< PWM timer period (ARR) */
 
-    void *pwm;          /**< Pointer to PWM driver (opaque handle) */
+  void *pwm; /**< Pointer to PWM driver (opaque handle) */
 
 } SVM_t;
 
@@ -76,6 +75,5 @@ void SVM_Init(SVM_t *self, void *pwmHandle, uint32_t pwmPeriod);
  * @param self Pointer to SVM instance
  */
 void SVM_Run(SVM_t *self);
-
 
 #endif /* SVM_H */
