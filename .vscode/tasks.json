@@ -59,21 +59,21 @@
             "problemMatcher": []
         },
         {
-            "label": "Check formatting (no changes)",
+            "label": "Check formatting (clang-format)",
             "type": "shell",
             "command": "powershell",
             "args": [
                 "-NoProfile",
                 "-Command",
-                "$files = Get-ChildItem -Recurse -Include '*.c','*.h'; $hasIssues = $false; foreach ($f in $files) { $formatted = clang-format --style=file $f.FullName; $original = Get-Content -Raw $f.FullName; if ($formatted -ne $original) { Write-Host \"❌ Needs formatting: $($f.FullName)\"; $hasIssues = $true } }; if (-not $hasIssues) { Write-Host '✅ All files are properly formatted!' }"
+                "Get-ChildItem -Recurse -Include '*.c','*.h' | ForEach-Object { clang-format --dry-run --Werror --style=file $_.FullName }; if ($LASTEXITCODE -eq 0) { Write-Host '✅ All files are properly formatted!' } else { Write-Host '❌ Formatting issues found!'; exit 1 }"
             ],
             "presentation": {
-                "echo": true,
-                "reveal": "always",
+            "echo": true,
+            "reveal": "always",
                 "focus": true,
                 "panel": "new"
             },
             "problemMatcher": []
-        }
+         }
     ]
 }
