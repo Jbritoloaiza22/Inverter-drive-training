@@ -28,18 +28,27 @@ jobs:
           echo "Checking code formatting..."
           ISSUES=0
           
-          for file in $(find . -type f \( -name "*.c" -o -name "*.h" \) -not -path "./.git/*" -not -path "./docker/*");
-do
-  FORMATTED = $(clang - format-- style = file "$file") ORIGINAL = $(cat "$file")
-
-      if["$FORMATTED" != "$ORIGINAL"];
-then echo "❌ Needs formatting: $file" echo "--- Diff ---" diff - u <
-        (echo "$ORIGINAL") < (echo "$FORMATTED") ||
-    true ISSUES = $((ISSUES + 1)) fi done
-
-    if[$ISSUES - gt 0];
-then echo "" echo "❌ Found $ISSUES file(s) with formatting issues" echo "" echo
-          "Fix locally with:" echo
-          "  - VS Code: Tasks > Format all C/H files" echo
-          "  - Or: clang-format -i --style=file <filename>" exit 1 else echo
-    "✅ All files properly formatted!" exit 0 fi
+          for file in $(find . -type f \( -name "*.c" -o -name "*.h" \) -not -path "./.git/*" -not -path "./docker/*"); do
+            FORMATTED=$(clang-format --style=file "$file")
+            ORIGINAL=$(cat "$file")
+            
+            if [ "$FORMATTED" != "$ORIGINAL" ]; then
+              echo "❌ Needs formatting: $file"
+              echo "--- Diff ---"
+              diff -u <(echo "$ORIGINAL") <(echo "$FORMATTED") || true
+              ISSUES=$((ISSUES + 1))
+            fi
+          done
+          
+          if [ $ISSUES -gt 0 ]; then
+            echo ""
+            echo "❌ Found $ISSUES file(s) with formatting issues"
+            echo ""
+            echo "Fix locally with:"
+            echo "  - VS Code: Tasks > Format all C/H files"
+            echo "  - Or: clang-format -i --style=file <filename>"
+            exit 1
+          else
+            echo "✅ All files properly formatted!"
+            exit 0
+          fi
