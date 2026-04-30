@@ -23,7 +23,6 @@ extern "C" {
 #endif
 #include <stdint.h>
 
-
 typedef union kFlags_t {
   uint8_t ui8EveryFlag; /* Flag set every time the timer reaches the auto-reload
                            value */

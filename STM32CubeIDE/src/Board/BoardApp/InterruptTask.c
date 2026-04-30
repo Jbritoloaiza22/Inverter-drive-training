@@ -63,8 +63,6 @@ typedef struct {
 
 TIMTask oTimTaskFlags;
 
-
-
 static void InterruptTask_GenerateAsyncTasks(void) {
   /* This function can be used to generate asynchronous tasks that need to be
      executed in the main loop, based on flags set by the timer ISRs. For
@@ -110,9 +108,7 @@ static void InterruptTask_GenerateAsyncTasks(void) {
 /**
  * @brief This function handles TIM2 global interrupt.
  */
-void vKernelInterface_TIM2IRQHandler250us(void) {
-	vTimer_ClearIRQ(&tim2);
-}
+void vKernelInterface_TIM2IRQHandler250us(void) { vTimer_ClearIRQ(&tim2); }
 /**
  * @brief This function handles TIM3 global interrupt.
  */
