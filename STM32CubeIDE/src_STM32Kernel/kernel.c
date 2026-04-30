@@ -22,8 +22,9 @@
  */
 #include "kernel.h"
 #include "KernelInterface.h"
-#include "uart.h"
-
+#include "TimeBase.h"
+#include "gpio.h"
+extern TimeBase_t oTimeBase;
 /* tracking version */
 #define FW_VERSION "v1.0.0"
 
@@ -43,6 +44,38 @@ uint32_t ui32counter = 0;
  */
 void incCountertopwmDebug(void) { ui32counter++; }
 
+void RunScheduler(void) {
+  /* Scheduler implementation goes here */
+  if (TimeBase_10msFlagGet()) /*10ms*/
+  {
+    /*do something every 10ms*/
+    TimeBase_10msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+  if (TimeBase_20msFlagGet()) /*20ms*/
+  {
+    /*do something every 20ms*/
+    TimeBase_20msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+  if (TimeBase_100msFlagGet()) /*100ms*/
+  {
+    /*do something every 100ms*/
+    TimeBase_100msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+  if (TimeBase_1secFlagGet()) /*1s*/
+  {
+    /*do something every 1s*/
+    TimeBase_1secFlagClear();
+  } else {
+    /*do nothing*/
+  }
+}
+
 /**
  * @brief Main program entry point.
  *
@@ -52,8 +85,6 @@ void incCountertopwmDebug(void) { ui32counter++; }
  * @retval int Program return status (never returns in embedded systems)
  */
 int main(void) {
-  uint8_t msg[] = "hello everybody\r\n";
-
   HAL_Init();
 
   /* Initialize system components before enabling interrupts */
@@ -65,7 +96,7 @@ int main(void) {
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
   while (1) {
-    /* UART transmission handled via callback initialization */
+    RunScheduler();
   }
 }
 
@@ -163,14 +194,14 @@ void vKernelInterface_initBeforeInterruptEnable(void) {
  */
 void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable TIM2 interrupt */
-  vCORTEX_NVICSetPriority(TIM2_IRQn, 4, 0);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 5, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
-  vCORTEX_NVICSetPriority(TIM3_IRQn, 5, 0);
+  vCORTEX_NVICSetPriority(TIM3_IRQn, 4, 0);
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
 
   /* Enable UART1 interrupt */
-  vCORTEX_NVICSetPriority(USART1_IRQn, 5, 0);
+  vCORTEX_NVICSetPriority(USART1_IRQn, 6, 0);
   vCORTEX_NVICEnableIRQ(USART1_IRQn);
 }
