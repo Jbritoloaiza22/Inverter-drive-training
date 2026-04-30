@@ -44,32 +44,59 @@ uint32_t ui32counter = 0;
  */
 void incCountertopwmDebug(void) { ui32counter++; }
 
+/**
+ * @brief Execute periodic tasks based on time base flags.
+ *
+ * This function implements the cooperative scheduler loop that executes
+ * application tasks at different intervals. Each task is triggered by
+ * its corresponding time base flag set by the interrupt handler.
+ *
+ * The scheduler operates on a non-blocking, cooperative model where:
+ * - Each task checks its flag and executes if the time interval has elapsed
+ * - The flag is cleared after task execution to prevent re-execution
+ * - No task blocks or waits, allowing rapid loop cycling
+ *
+ * Supported task intervals:
+ * - 10 milliseconds: General periodic tasks
+ * - 20 milliseconds: Slower periodic operations
+ * - 100 milliseconds: Background maintenance tasks
+ * - 1 second: Status monitoring and diagnostics
+ *
+ * @note This function should be called continuously in the main loop
+ * after system initialization and interrupt enablement.
+ *
+ * @see TimeBase_10msFlagGet()
+ * @see TimeBase_20msFlagGet()
+ * @see TimeBase_100msFlagGet()
+ * @see TimeBase_1secFlagGet()
+ */
 void RunScheduler(void) {
-  /* Scheduler implementation goes here */
-  if (TimeBase_10msFlagGet()) /*10ms*/
-  {
-    /*do something every 10ms*/
+  /* 10ms periodic task */
+  if (TimeBase_10msFlagGet()) {
+    /* Insert 10ms task implementation here */
     TimeBase_10msFlagClear();
   } else {
     /*do nothing*/
   }
-  if (TimeBase_20msFlagGet()) /*20ms*/
-  {
-    /*do something every 20ms*/
+  /* 20ms periodic task */
+  if (TimeBase_20msFlagGet()) {
+    /* Insert 20ms task implementation here */
     TimeBase_20msFlagClear();
   } else {
     /*do nothing*/
   }
-  if (TimeBase_100msFlagGet()) /*100ms*/
-  {
-    /*do something every 100ms*/
+
+  /* 100ms periodic task */
+  if (TimeBase_100msFlagGet()) {
+    /* Insert 100ms task implementation here */
     TimeBase_100msFlagClear();
   } else {
     /*do nothing*/
   }
-  if (TimeBase_1secFlagGet()) /*1s*/
-  {
-    /*do something every 1s*/
+
+  /* 1 second periodic task */
+  if (TimeBase_1secFlagGet()) {
+    /* Insert 1s task implementation here */
     TimeBase_1secFlagClear();
   } else {
     /*do nothing*/

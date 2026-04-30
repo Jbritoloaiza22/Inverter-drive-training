@@ -63,6 +63,43 @@ typedef struct {
 
 TIMTask oTimTaskFlags;
 
+/**
+ * @brief Generate asynchronous task flags based on timer tick counters.
+ *
+ * This function is called from the 1ms timer interrupt (TIM3) and maintains
+ * internal counters for generating periodic task flags at different intervals.
+ * It implements a software-based time base divider that converts the 1ms
+ * interrupt into multiple time-slotted execution windows.
+ *
+ * The function maintains individual counters for each time interval:
+ * - 10ms: General control loop tasks
+ * - 20ms: Secondary control or slower feedback processing
+ * - 100ms: Slow diagnostic or monitoring tasks
+ * - 1000ms (1s): Status reporting or periodic maintenance
+ *
+ * When a counter reaches its target interval, the corresponding TimeBase flag
+ * is set via the TimeBase module, signaling the main scheduler that a task
+ * should execute at that interval. The counter then resets or is adjusted to
+ * maintain phase alignment.
+ *
+ * Execution characteristics:
+ * - Called from TIM3 ISR at 1ms intervals
+ * - Non-blocking execution (completes within ISR time budget)
+ * - Uses modular arithmetic to maintain accurate timing
+ * - Generates software events for the cooperative scheduler
+ *
+ * @note This function MUST be called from a 1ms timer interrupt for correct
+ * timing behavior. Missing calls or timing variations will degrade the
+ * accuracy of generated task intervals.
+ *
+ * @note This is a private static function not intended for external use.
+ *
+ * @see TimeBase_10msFlagSet()
+ * @see TimeBase_20msFlagSet()
+ * @see TimeBase_100msFlagSet()
+ * @see TimeBase_1secFlagSet()
+ * @see vKernelInterface_TIM3IRQHandler1ms()
+ */
 static void InterruptTask_GenerateAsyncTasks(void) {
   /* This function can be used to generate asynchronous tasks that need to be
      executed in the main loop, based on flags set by the timer ISRs. For
