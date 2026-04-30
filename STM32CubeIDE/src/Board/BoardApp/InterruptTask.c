@@ -110,7 +110,9 @@ static void InterruptTask_GenerateAsyncTasks(void) {
 /**
  * @brief This function handles TIM2 global interrupt.
  */
-void vKernelInterface_TIM2IRQHandler250us(void) {}
+void vKernelInterface_TIM2IRQHandler250us(void) {
+	vTimer_ClearIRQ(&tim2);
+}
 /**
  * @brief This function handles TIM3 global interrupt.
  */
