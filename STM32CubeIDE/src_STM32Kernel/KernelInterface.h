@@ -73,7 +73,7 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void);
  * @note This function should be linked to the actual ISR
  *       (e.g., TIM2_IRQHandler) in the interrupt vector table.
  */
-void vKernelInterface_TIM2IRQHandler(void);
+void vKernelInterface_TIM2IRQHandler250us(void);
 
 /**
  * @brief TIM3 interrupt handler interface.
@@ -90,7 +90,7 @@ void vKernelInterface_TIM2IRQHandler(void);
  * @note This function must be called from the TIM3 ISR
  *       (e.g., TIM3_IRQHandler).
  */
-void vKernelInterface_TIM3IRQHandler(void);
+void vKernelInterface_TIM3IRQHandler1ms(void);
 
 /**
  * @brief USART1 interrupt handler interface.

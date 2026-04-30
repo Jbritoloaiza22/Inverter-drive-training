@@ -17,9 +17,7 @@
 #define GPIO_PIN_15 ((uint16_t)0x8000) /* Pin 15 selected   */
 void vGPIO_Init(void);
 
-static inline void vGPIO_ToggleDebugPin(void) {
-  GPIO_TogglePin(GPIOB, GPIO_PIN_9);
-}
+void vGPIO_ToggleDebugPin(void);
 
 static inline void vGPIO_EnableDrivePinForMotorControl(void) {
   GPIO_WritePin(GPIOA, GPIO_PIN_11, 1);

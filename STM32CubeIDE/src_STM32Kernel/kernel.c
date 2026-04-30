@@ -22,8 +22,9 @@
  */
 #include "kernel.h"
 #include "KernelInterface.h"
-#include "uart.h"
-
+#include "TimeBase.h"
+#include "gpio.h"
+extern TimeBase_t oTimeBase;
 /* tracking version */
 #define FW_VERSION "v1.0.0"
 
@@ -44,6 +45,65 @@ uint32_t ui32counter = 0;
 void incCountertopwmDebug(void) { ui32counter++; }
 
 /**
+ * @brief Execute periodic tasks based on time base flags.
+ *
+ * This function implements the cooperative scheduler loop that executes
+ * application tasks at different intervals. Each task is triggered by
+ * its corresponding time base flag set by the interrupt handler.
+ *
+ * The scheduler operates on a non-blocking, cooperative model where:
+ * - Each task checks its flag and executes if the time interval has elapsed
+ * - The flag is cleared after task execution to prevent re-execution
+ * - No task blocks or waits, allowing rapid loop cycling
+ *
+ * Supported task intervals:
+ * - 10 milliseconds: General periodic tasks
+ * - 20 milliseconds: Slower periodic operations
+ * - 100 milliseconds: Background maintenance tasks
+ * - 1 second: Status monitoring and diagnostics
+ *
+ * @note This function should be called continuously in the main loop
+ * after system initialization and interrupt enablement.
+ *
+ * @see TimeBase_10msFlagGet()
+ * @see TimeBase_20msFlagGet()
+ * @see TimeBase_100msFlagGet()
+ * @see TimeBase_1secFlagGet()
+ */
+void RunScheduler(void) {
+  /* 10ms periodic task */
+  if (TimeBase_10msFlagGet()) {
+    /* Insert 10ms task implementation here */
+    TimeBase_10msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+  /* 20ms periodic task */
+  if (TimeBase_20msFlagGet()) {
+    /* Insert 20ms task implementation here */
+    TimeBase_20msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+
+  /* 100ms periodic task */
+  if (TimeBase_100msFlagGet()) {
+    /* Insert 100ms task implementation here */
+    TimeBase_100msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+
+  /* 1 second periodic task */
+  if (TimeBase_1secFlagGet()) {
+    /* Insert 1s task implementation here */
+    TimeBase_1secFlagClear();
+  } else {
+    /*do nothing*/
+  }
+}
+
+/**
  * @brief Main program entry point.
  *
  * Initializes the HAL library, configures system peripherals,
@@ -52,8 +112,6 @@ void incCountertopwmDebug(void) { ui32counter++; }
  * @retval int Program return status (never returns in embedded systems)
  */
 int main(void) {
-  uint8_t msg[] = "hello everybody\r\n";
-
   HAL_Init();
 
   /* Initialize system components before enabling interrupts */
@@ -65,7 +123,7 @@ int main(void) {
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
   while (1) {
-    /* UART transmission handled via callback initialization */
+    RunScheduler();
   }
 }
 
@@ -163,14 +221,14 @@ void vKernelInterface_initBeforeInterruptEnable(void) {
  */
 void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable TIM2 interrupt */
-  vCORTEX_NVICSetPriority(TIM2_IRQn, 4, 0);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 5, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
-  vCORTEX_NVICSetPriority(TIM3_IRQn, 5, 0);
+  vCORTEX_NVICSetPriority(TIM3_IRQn, 4, 0);
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
 
   /* Enable UART1 interrupt */
-  vCORTEX_NVICSetPriority(USART1_IRQn, 5, 0);
+  vCORTEX_NVICSetPriority(USART1_IRQn, 6, 0);
   vCORTEX_NVICEnableIRQ(USART1_IRQn);
 }
