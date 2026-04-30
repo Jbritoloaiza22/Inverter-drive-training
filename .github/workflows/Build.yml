@@ -1,4 +1,4 @@
-name: STM32 Build
+name: build
 
 on:
   push:
