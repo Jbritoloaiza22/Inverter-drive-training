@@ -43,6 +43,7 @@
  * This source code is provided for educational and research purposes.
  */
 #include "KernelInterface.h"
+#include "TimeBase.h"
 #include "stm32g031xx.h"
 
 extern SPWM_t spwm;
@@ -52,19 +53,71 @@ extern SVM_t svm;
 extern UART_t uart1;
 uint8_t ui8BufferRecepcion[50];
 uint8_t ui8IndexDataRX = 0;
-/**
- * @brief This function handles TIM2 global interrupt.
- */
-void vKernelInterface_TIM2IRQHandler(void) {
-  vTimer_ClearIRQ(&tim2);
-  SVM_Run(&svm);
+
+typedef struct {
+  uint16_t ui16Timer1ms;
+  uint16_t ui16Timer20ms;
+  uint16_t ui16Timer100ms;
+  uint16_t ui16Timer1000ms;
+} TIMTask;
+
+TIMTask oTimTaskFlags;
+
+
+
+static void InterruptTask_GenerateAsyncTasks(void) {
+  /* This function can be used to generate asynchronous tasks that need to be
+     executed in the main loop, based on flags set by the timer ISRs. For
+     example, it can set flags for tasks that need to run every 10ms, 20ms,
+     100ms, or 1s. */
+  oTimTaskFlags.ui16Timer1ms++;
+
+  /* every 10ms */
+  if (oTimTaskFlags.ui16Timer1ms >= 10) {
+    TimeBase_10msFlagSet();
+    oTimTaskFlags.ui16Timer1ms -= 10;
+  } else {
+    /*do nothing*/
+  }
+
+  /* every 20ms */
+  oTimTaskFlags.ui16Timer20ms++;
+  if (oTimTaskFlags.ui16Timer20ms >= 20) {
+    TimeBase_20msFlagSet();
+    oTimTaskFlags.ui16Timer20ms = 0;
+  } else {
+    /*do nothing*/
+  }
+
+  /* every 100ms */
+  oTimTaskFlags.ui16Timer100ms++;
+  if (oTimTaskFlags.ui16Timer100ms >= 100) {
+    TimeBase_100msFlagSet();
+    oTimTaskFlags.ui16Timer100ms = 0;
+  } else {
+    /*do nothing*/
+  }
+
+  /* every 1000ms (1s) */
+  oTimTaskFlags.ui16Timer1000ms++;
+  if (oTimTaskFlags.ui16Timer1000ms >= 1000) {
+    TimeBase_1secFlagSet();
+    oTimTaskFlags.ui16Timer1000ms = 0;
+  } else {
+    /*do nothing*/
+  }
 }
 /**
  * @brief This function handles TIM2 global interrupt.
  */
-void vKernelInterface_TIM3IRQHandler(void) {
+void vKernelInterface_TIM2IRQHandler250us(void) {}
+/**
+ * @brief This function handles TIM3 global interrupt.
+ */
+void vKernelInterface_TIM3IRQHandler1ms(void) {
 
   vTimer_ClearIRQ(&tim3);
+  InterruptTask_GenerateAsyncTasks();
   /*vSPWM_Update(&spwm); onlyt for SPWM, not used in SVM mode*/
 }
 
