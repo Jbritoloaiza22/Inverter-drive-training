@@ -60,3 +60,30 @@
  * leading to inaccurate current reconstruction in single-shunt topologies.
  */
 void vADC_StartPWMTrigger(void);
+
+
+
+void vADC_Init(void)
+{
+    /* 1. Enable ADC clock */
+
+    /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) */
+
+    /* 3. Disable ADC before configuration */
+
+    /* 4. Configure ADC clock (asynchronous or synchronous) */
+
+    /* 5. Resolution (12-bit) */
+
+    /* 6. Data alignment (right) */
+
+    /* 7. External trigger */
+
+    /* 8. Sampling time  */
+
+    /* 9. Select channel */
+
+    /* 10. Single conversion mode (no continuous) */
+
+    /* 11. Clear ADRDY flag */
+}
