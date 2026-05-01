@@ -98,6 +98,7 @@ void vADC_Init(ADC_t *self)
     ADC1->SMPR |= (1U << self->channel);
 
     /* 9. Select channel */
+    ADC1->CHSELR = ADC_CHSELR_CHSEL6;
 
     /* 10. Single conversion mode (no continuous) */
 
