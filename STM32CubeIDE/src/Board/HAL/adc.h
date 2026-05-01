@@ -45,12 +45,35 @@ extern "C" {
 #include "stm32g031xx.h"
 
 /**
+ * @brief ADC object structure.
+ *
+ * This structure represents the ADC module instance.
+ * It stores the internal state of the ADC driver.
+ *
+ * @note This is a lightweight abstraction since hardware
+ *       registers are globally accessible.
+ */
+typedef struct {
+  /**
+   * @brief Initialization flag.
+   *
+   * Indicates whether the ADC has been successfully initialized.
+   * - 0: Not initialized
+   * - 1: Initialized
+   */
+  uint8_t initialized;
+
+  
+
+} ADC_t;
+
+/**
  * @brief Initializes the ADC peripheral.
  *
  * Configures ADC clock, resolution, alignment, and basic operating mode.
  * This function must be called before any other ADC operation.
  */
-void vADC_Init(void);
+void vADC_Init(ADC_t *self);
 
 /**
  * @brief Performs ADC self-calibration.

@@ -37,6 +37,7 @@
  * This source code is provided for educational and research purposes.
  */
 
+#include "adc.h"
 
  /**
  * @brief Starts ADC conversion synchronized with PWM timer.
@@ -63,14 +64,18 @@ void vADC_StartPWMTrigger(void);
 
 
 
-void vADC_Init(void)
+void vADC_Init(ADC_t *self)
 {
     /* 1. Enable ADC clock - this is in rcc.c file*/
 
     /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) - this is in gpio module */
 
     /* 3. Disable ADC before configuration */
-
+    if(ADC1->CR & ADC_CR_ADEN) {
+        ADC1->CR |= ADC_CR_ADDIS; // Disable ADC
+        while (ADC1->CR & ADC_CR_ADEN); // Wait until disabled
+    }
+    
     /* 4. Configure ADC clock (asynchronous or synchronous) */
 
     /* 5. Resolution (12-bit) */
@@ -86,4 +91,5 @@ void vADC_Init(void)
     /* 10. Single conversion mode (no continuous) */
 
     /* 11. Clear ADRDY flag */
+    self->initialized = 1;
 }
