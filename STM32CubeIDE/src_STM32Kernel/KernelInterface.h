@@ -206,3 +206,5 @@ void cbSVPWM(void);
  * Initializes the UART peripheral for system communication.
  */
 void cbUART(void);
+
+void cbADC(void);

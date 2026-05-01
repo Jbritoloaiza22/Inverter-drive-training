@@ -38,6 +38,7 @@
  */
 
 #include "adc.h"
+static ADC_t adc;
 
 
 void vADC_Init(ADC_t *self)
@@ -120,4 +121,23 @@ void vADC_Disable(void){
         ADC1->CR |= ADC_CR_ADDIS;
         while (ADC1->CR & ADC_CR_ADEN);
     }
+}
+
+/* =========================================================
+ * CALLBACK (KERNEL)
+ * ========================================================= */
+
+/**
+ * @brief ADC initialization callback.
+ *
+ * This function is intended to be registered within the kernel
+ * initialization sequence. It initializes the global ADC object
+ * and configures the necessary settings.
+ *
+ * Acts as the entry point for ADC setup during system startup.
+ */
+void cbADC(void) { 
+    adc.channel = 6; /* PA6: Curr_fdbk */
+    adc.initialized = 0;
+    vADC_Init(&adc); 
 }

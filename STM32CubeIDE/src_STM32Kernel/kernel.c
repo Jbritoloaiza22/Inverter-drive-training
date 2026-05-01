@@ -163,10 +163,12 @@ void Error_Handler(void) {
 void vKernelInterface_initBeforeInterruptEnable(void) {
   cbRCC();
   cbGPIOS();
+  cbADC();
   cbPWM();
   cbTIM();
   cbUART();
   cbSVPWM();
+
 }
 
 /**
