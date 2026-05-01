@@ -62,6 +62,7 @@ typedef struct {
    * - 1: Initialized
    */
   uint8_t initialized;
+  uint8_t channel;
 
   
 

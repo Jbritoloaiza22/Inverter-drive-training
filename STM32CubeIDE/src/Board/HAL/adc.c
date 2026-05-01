@@ -92,6 +92,10 @@ void vADC_Init(ADC_t *self)
     ADC1->CFGR1 |= ADC_CFGR1_EXTEN_0; /* rising edge */
 
     /* 8. Sampling time  */
+    ADC1->SMPR =
+    (2U << 0) |   // SMP1
+    (4U << 4);    // SMP2
+    ADC1->SMPR |= (1U << self->channel);
 
     /* 9. Select channel */
 
