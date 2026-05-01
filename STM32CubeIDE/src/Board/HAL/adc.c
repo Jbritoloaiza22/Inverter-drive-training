@@ -67,7 +67,7 @@ void vADC_Init(void)
 {
     /* 1. Enable ADC clock - this is in rcc.c file*/
 
-    /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) */
+    /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) - this is in gpio module */
 
     /* 3. Disable ADC before configuration */
 
