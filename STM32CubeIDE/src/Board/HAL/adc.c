@@ -80,6 +80,15 @@ void vADC_Init(ADC_t *self)
     /* 11. Clear ADRDY flag */
     ADC1->ISR = ADC_ISR_ADRDY;
     self->initialized = 1;
+
+    /*calibrate call */
+    vADC_Calibrate();
+
+    /*enable adc*/
+    vADC_Enable();
+
+    /* enable interrupt for adc conversion completed */
+    ADC1->IER |= ADC_IER_EOCIE;  // End Of Conversion interrupt enable
 }
 
 
@@ -103,7 +112,6 @@ void vADC_Enable(void){
         ADC1->ISR = ADC_ISR_ADRDY;
     }
 }
-
 
 
 void vADC_Disable(void){
