@@ -83,6 +83,7 @@ void vADC_Init(ADC_t *self)
     ADC1->CFGR1 &= ~ADC_CFGR1_RES;
 
     /* 6. Data alignment (right) */
+    ADC1->CFGR1 &= ~ADC_CFGR1_ALIGN;
 
     /* 7. External trigger */
  
