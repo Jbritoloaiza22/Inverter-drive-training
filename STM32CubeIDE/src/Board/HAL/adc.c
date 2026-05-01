@@ -48,11 +48,19 @@ void vADC_Init(ADC_t *self)
     /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) - this is in gpio module */
 
     /* 3. Disable ADC before configuration */
-    if(ADC1->CR & ADC_CR_ADEN) {
+    if (ADC1->CR & ADC_CR_ADEN)
+    {
         ADC1->CR |= ADC_CR_ADDIS; // Disable ADC
         while (ADC1->CR & ADC_CR_ADEN); // Wait until disabled
     }
-    
+
+    /* 3.1 Asegurar que no hay conversión en curso */
+    if (ADC1->CR & ADC_CR_ADSTART)
+    {
+        ADC1->CR |= ADC_CR_ADSTP;
+        while (ADC1->CR & ADC_CR_ADSTP);
+    }
+
     /* 4. Configure ADC clock (asynchronous) */
     ADC1->CFGR2 &= ~ADC_CFGR2_CKMODE;
 
@@ -64,7 +72,7 @@ void vADC_Init(ADC_t *self)
 
     /* 7. External trigger */
     ADC1->CFGR1 &= ~ADC_CFGR1_EXTSEL;
-    ADC1->CFGR1 |= (1 << ADC_CFGR1_EXTSEL_Pos); /* TIM1_CC4*/
+    ADC1->CFGR1 |= (1U << ADC_CFGR1_EXTSEL_Pos); /* TIM1_CC4*/
     ADC1->CFGR1 &= ~ADC_CFGR1_EXTEN;
     ADC1->CFGR1 |= ADC_CFGR1_EXTEN_0; /* rising edge */
 
@@ -75,21 +83,23 @@ void vADC_Init(ADC_t *self)
     /* 9. Select channel */
     ADC1->CHSELR = (1U << self->channel);
 
-    /* 10. Single conversion mode (no continuous) */
+    /* 10. Single conversion mode */
     ADC1->CFGR1 &= ~ADC_CFGR1_CONT;
 
-    /* 11. Clear ADRDY flag */
-    ADC1->ISR = ADC_ISR_ADRDY;
-    self->initialized = 1;
+    /* 11. Clear ALL flags */
+    ADC1->ISR = 0xFFFFFFFF;
 
-    /*calibrate call */
+    /*calibrate ADC */
     vADC_Calibrate();
 
     /*enable adc*/
     vADC_Enable();
 
-    /* enable interrupt for adc conversion completed */
-    ADC1->IER |= ADC_IER_EOCIE;  // End Of Conversion interrupt enable
+    /* 14. Enable End Of Conversion interrupt */
+    ADC1->IER |= ADC_IER_EOCIE;
+
+    /* 15. Mark as initialized */
+    self->initialized = 1;
 }
 
 
