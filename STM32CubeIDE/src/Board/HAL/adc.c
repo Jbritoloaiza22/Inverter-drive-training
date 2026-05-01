@@ -101,6 +101,7 @@ void vADC_Init(ADC_t *self)
     ADC1->CHSELR = ADC_CHSELR_CHSEL6;
 
     /* 10. Single conversion mode (no continuous) */
+    ADC1->CFGR1 &= ~ADC_CFGR1_CONT;
 
     /* 11. Clear ADRDY flag */
     self->initialized = 1;
