@@ -65,7 +65,7 @@ void vADC_StartPWMTrigger(void);
 
 void vADC_Init(void)
 {
-    /* 1. Enable ADC clock */
+    /* 1. Enable ADC clock - this is in rcc.c file*/
 
     /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) */
 
