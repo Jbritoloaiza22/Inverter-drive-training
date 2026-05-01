@@ -76,7 +76,8 @@ void vADC_Init(ADC_t *self)
         while (ADC1->CR & ADC_CR_ADEN); // Wait until disabled
     }
     
-    /* 4. Configure ADC clock (asynchronous or synchronous) */
+    /* 4. Configure ADC clock (asynchronous) */
+    ADC1->CFGR2 &= ~ADC_CFGR2_CKMODE;
 
     /* 5. Resolution (12-bit) */
 
