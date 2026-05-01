@@ -96,7 +96,12 @@ void vADC_Calibrate(void){
 
 
 void vADC_Enable(void){
-
+    if (!(ADC1->CR & ADC_CR_ADEN))
+    {
+        ADC1->CR |= ADC_CR_ADEN;
+        while (!(ADC1->ISR & ADC_ISR_ADRDY));
+        ADC1->ISR = ADC_ISR_ADRDY;
+    }
 }
 
 
