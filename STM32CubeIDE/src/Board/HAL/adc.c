@@ -80,11 +80,12 @@ void vADC_Init(ADC_t *self)
     ADC1->CFGR2 &= ~ADC_CFGR2_CKMODE;
 
     /* 5. Resolution (12-bit) */
+    ADC1->CFGR1 &= ~ADC_CFGR1_RES;
 
     /* 6. Data alignment (right) */
 
     /* 7. External trigger */
-
+ 
     /* 8. Sampling time  */
 
     /* 9. Select channel */
