@@ -42,6 +42,40 @@
 extern "C" {
 #endif
 
+#include "stm32g031xx.h"
+
+/**
+ * @brief Initializes the ADC peripheral.
+ *
+ * Configures ADC clock, resolution, alignment, and basic operating mode.
+ * This function must be called before any other ADC operation.
+ */
+void vADC_Init(void);
+
+/**
+ * @brief Performs ADC self-calibration.
+ *
+ * Runs the internal calibration routine to improve conversion accuracy.
+ * This should be executed once after initialization and before enabling the ADC.
+ */
+void vADC_Calibrate(void);
+
+/**
+ * @brief Enables the ADC peripheral.
+ *
+ * Powers up the ADC and prepares it for conversions.
+ * The ADC must be calibrated before calling this function.
+ */
+void vADC_Enable(void);
+
+
+/**
+ * @brief Disables the ADC peripheral.
+ *
+ * Safely stops the ADC and powers it down.
+ */
+void vADC_Disable(void);
+
 #ifdef __cplusplus
 }
 #endif
