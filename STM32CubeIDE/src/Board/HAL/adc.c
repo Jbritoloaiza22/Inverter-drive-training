@@ -86,7 +86,11 @@ void vADC_Init(ADC_t *self)
     ADC1->CFGR1 &= ~ADC_CFGR1_ALIGN;
 
     /* 7. External trigger */
- 
+    ADC1->CFGR1 &= ~ADC_CFGR1_EXTSEL;
+    ADC1->CFGR1 |= (1 << ADC_CFGR1_EXTSEL_Pos); /* TIM1_CC4*/
+    ADC1->CFGR1 &= ~ADC_CFGR1_EXTEN;
+    ADC1->CFGR1 |= ADC_CFGR1_EXTEN_0; /* rising edge */
+
     /* 8. Sampling time  */
 
     /* 9. Select channel */
