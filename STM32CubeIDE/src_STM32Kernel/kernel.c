@@ -192,4 +192,8 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable UART1 interrupt */
   vCORTEX_NVICSetPriority(USART1_IRQn, 6, 0);
   vCORTEX_NVICEnableIRQ(USART1_IRQn);
+
+  /* Enable ADC interrupt */
+  vCORTEX_NVICSetPriority(ADC1_IRQn, 2, 0);
+  vCORTEX_NVICEnableIRQ(ADC1_IRQn);
 }
