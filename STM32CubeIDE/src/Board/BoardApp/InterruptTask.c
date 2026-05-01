@@ -169,3 +169,12 @@ void vKernelInterface_USART1IRQHandler(void) {
     /*do nothing */
   }
 }
+
+void vKernelInterface_ADCIRQHandler(void){
+    if (ADC1->ISR & ADC_ISR_EOC)
+    {
+        uint16_t value = ADC1->DR;
+
+    }
+}
+

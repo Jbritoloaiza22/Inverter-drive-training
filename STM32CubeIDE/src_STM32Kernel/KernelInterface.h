@@ -111,6 +111,7 @@ void vKernelInterface_TIM3IRQHandler1ms(void);
  */
 void vKernelInterface_USART1IRQHandler(void);
 
+void vKernelInterface_ADCIRQHandler(void);
 /**
  * @brief RCC initialization callback.
  *
