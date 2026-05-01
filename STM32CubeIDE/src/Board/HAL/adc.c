@@ -107,5 +107,9 @@ void vADC_Enable(void){
 
 
 void vADC_Disable(void){
-
+    if (ADC1->CR & ADC_CR_ADEN)
+    {
+        ADC1->CR |= ADC_CR_ADDIS;
+        while (ADC1->CR & ADC_CR_ADEN);
+    }
 }
