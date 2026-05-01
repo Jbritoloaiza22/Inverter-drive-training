@@ -104,5 +104,6 @@ void vADC_Init(ADC_t *self)
     ADC1->CFGR1 &= ~ADC_CFGR1_CONT;
 
     /* 11. Clear ADRDY flag */
+    ADC1->ISR |= ADC_ISR_ADRDY;
     self->initialized = 1;
 }
