@@ -37,11 +37,6 @@
 #include "kernel.h"
 #include "tim.h"
 
-/**
- * @brief External ADC handle (HAL driver).
- */
-extern ADC_HandleTypeDef hadc1;
-
 /* =========================================================
  * CORE EXCEPTION HANDLERS
  * ========================================================= */
@@ -107,18 +102,3 @@ void vIRQ_SysTickHandler(void) {
   incCountertopwmDebug(); /**< Custom debug counter */
   HAL_IncTick();          /**< HAL time base increment */
 }
-
-/* =========================================================
- * PERIPHERAL INTERRUPT HANDLERS
- * ========================================================= */
-
-/**
- * @brief ADC1 interrupt handler.
- *
- * Handles ADC conversion complete and error interrupts.
- *
- * Delegates processing to the HAL ADC driver.
- *
- * @note Must be linked to ADC1 IRQ in vector table.
- */
-void vIRQ_ADC1IRQHandler(void) { HAL_ADC_IRQHandler(&hadc1); }
