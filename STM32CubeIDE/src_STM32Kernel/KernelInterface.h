@@ -207,4 +207,11 @@ void cbSVPWM(void);
  */
 void cbUART(void);
 
+/**
+ * @brief ADC initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes the ADC peripheral and configures synchronization
+ * with the PWM for deterministic sampling.
+ */
 void cbADC(void);
