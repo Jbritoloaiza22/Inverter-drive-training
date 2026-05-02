@@ -2,16 +2,19 @@
  * @file adc.h
  * @brief Analog-to-Digital Converter (ADC) driver interface.
  *
- * This header defines the public interface for the ADC driver used in the system.
- * It provides initialization, configuration, and data acquisition functions
- * to interact with the ADC peripheral in a hardware-abstracted manner.
+ * This header defines the public interface for the ADC driver used in the
+ * system. It provides initialization, configuration, and data acquisition
+ * functions to interact with the ADC peripheral in a hardware-abstracted
+ * manner.
  *
  * The driver is designed to support different sampling strategies such as
- * single conversion, continuous mode, and trigger-based acquisition (e.g., timer-triggered).
- * It can be used in polling, interrupt, or DMA modes depending on system requirements.
+ * single conversion, continuous mode, and trigger-based acquisition (e.g.,
+ * timer-triggered). It can be used in polling, interrupt, or DMA modes
+ * depending on system requirements.
  *
  * Responsibilities:
- * - Initialize and configure ADC peripheral parameters (resolution, channels, sampling time)
+ * - Initialize and configure ADC peripheral parameters (resolution, channels,
+ * sampling time)
  * - Start and stop ADC conversions
  * - Retrieve conversion results
  * - Interface with low-level hardware or HAL drivers
@@ -19,7 +22,8 @@
  *
  * @note
  * ADC sampling time and trigger configuration must be carefully selected
- * to ensure accurate signal acquisition, especially in high-speed control applications.
+ * to ensure accurate signal acquisition, especially in high-speed control
+ * applications.
  *
  * @warning
  * Misconfiguration of ADC parameters (e.g., sampling time, trigger source)
@@ -64,8 +68,6 @@ typedef struct {
   uint8_t initialized;
   uint8_t channel;
 
-  
-
 } ADC_t;
 
 /**
@@ -80,7 +82,8 @@ void vADC_Init(ADC_t *self);
  * @brief Performs ADC self-calibration.
  *
  * Runs the internal calibration routine to improve conversion accuracy.
- * This should be executed once after initialization and before enabling the ADC.
+ * This should be executed once after initialization and before enabling the
+ * ADC.
  */
 void vADC_Calibrate(void);
 
@@ -91,7 +94,6 @@ void vADC_Calibrate(void);
  * The ADC must be calibrated before calling this function.
  */
 void vADC_Enable(void);
-
 
 /**
  * @brief Disables the ADC peripheral.

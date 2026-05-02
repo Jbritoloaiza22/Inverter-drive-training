@@ -61,6 +61,5 @@ void Error_Handler(void);
  */
 void RunScheduler(void);
 
-
 void incCountertopwmDebug(void);
 #endif /* __KERNEL_H */

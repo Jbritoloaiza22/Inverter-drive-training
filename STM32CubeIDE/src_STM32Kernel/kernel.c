@@ -28,7 +28,6 @@ extern TimeBase_t oTimeBase;
 /* tracking version */
 #define FW_VERSION "v1.0.0"
 
-
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
 
@@ -120,7 +119,6 @@ int main(void) {
   }
 }
 
-
 /**
  * @brief Error handler function.
  *
@@ -154,7 +152,6 @@ void vKernelInterface_initBeforeInterruptEnable(void) {
   cbTIM();
   cbUART();
   cbSVPWM();
-
 }
 
 /**
