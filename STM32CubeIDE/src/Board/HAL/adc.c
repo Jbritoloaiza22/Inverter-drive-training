@@ -40,97 +40,132 @@
 #include "adc.h"
 static ADC_t adc;
 
+void vADC_Init(ADC_t *self) {
+  /* 1. Enable ADC clock - this is in rcc.c file*/
 
-void vADC_Init(ADC_t *self)
-{
-    /* 1. Enable ADC clock - this is in rcc.c file*/
+  /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) - this is in gpio
+   * module */
 
-    /* 2. Enable GPIO analog pins (ejemplo: PA0 = ADC_IN0) - this is in gpio module */
+  /* 3. Disable ADC before configuration */
+  if (ADC1->CR & ADC_CR_ADEN) {
+    ADC1->CR |= ADC_CR_ADDIS; /* Disable ADC */
+    while (ADC1->CR & ADC_CR_ADEN)
+      ; /* Wait until disabled*/
+  }
 
-    /* 3. Disable ADC before configuration */
-    if (ADC1->CR & ADC_CR_ADEN)
-    {
-        ADC1->CR |= ADC_CR_ADDIS; // Disable ADC
-        while (ADC1->CR & ADC_CR_ADEN); // Wait until disabled
-    }
+  /* 3.1 make sure that there isnt conversion in progress */
+  if (ADC1->CR & ADC_CR_ADSTART) {
+    ADC1->CR |= ADC_CR_ADSTP;
+    while (ADC1->CR & ADC_CR_ADSTP)
+      ;
+  }
 
-    /* 3.1 Asegurar que no hay conversión en curso */
-    if (ADC1->CR & ADC_CR_ADSTART)
-    {
-        ADC1->CR |= ADC_CR_ADSTP;
-        while (ADC1->CR & ADC_CR_ADSTP);
-    }
+  /* 4. Configure ADC clock (asynchronous) */
+  ADC1->CFGR2 &= ~ADC_CFGR2_CKMODE;
+  /* 5. Data alignment (right), 5. Resolution (12-bit) */
+  ADC1->CFGR1 &= ~(ADC_CFGR1_RES | ADC_CFGR1_ALIGN);
 
-    /* 4. Configure ADC clock (asynchronous) */
-    ADC1->CFGR2 &= ~ADC_CFGR2_CKMODE;
+  /* 6. External trigger */
+  ADC1->CFGR1 &= ~ADC_CFGR1_EXTSEL;
+  ADC1->CFGR1 |= (0b000 << ADC_CFGR1_EXTSEL_Pos); /* TIM1_TRGO2*/
+  ADC1->CFGR1 &= ~ADC_CFGR1_EXTEN;
+  ADC1->CFGR1 |= ADC_CFGR1_EXTEN_0; /* rising edge */
 
-    /* 5. Resolution (12-bit) */
-    ADC1->CFGR1 &= ~ADC_CFGR1_RES;
+  /* 7. Select channel */
+  ADC1->CHSELR = (1U << self->channel);
 
-    /* 6. Data alignment (right) */
-    ADC1->CFGR1 &= ~ADC_CFGR1_ALIGN;
+  /* 8. Single conversion mode */
+  ADC1->CFGR1 &= ~ADC_CFGR1_CONT;
 
-    /* 7. External trigger */
-    ADC1->CFGR1 &= ~ADC_CFGR1_EXTSEL;
-    ADC1->CFGR1 |= (1U << ADC_CFGR1_EXTSEL_Pos); /* TIM1_CC4*/
-    ADC1->CFGR1 &= ~ADC_CFGR1_EXTEN;
-    ADC1->CFGR1 |= ADC_CFGR1_EXTEN_0; /* rising edge */
+  /* 9. sampling */
+  ADC1->SMPR = (0U << 0) | (0U << 4);
+  ADC1->SMPR |= (1U << self->channel);
 
-    /* 8. Sampling time  */
-    ADC1->SMPR = (2U << 0) | (4U << 4);
-    ADC1->SMPR |= (1U << self->channel);
+  /* 10. Clear ALL flags */
+  ADC1->ISR = 0xFFFFFFFF;
 
-    /* 9. Select channel */
-    ADC1->CHSELR = (1U << self->channel);
+  /* 11. enable regulator */
+  ADC1->CR |= ADC_CR_ADVREGEN;
+  for (volatile int i = 0; i < 1000; i++)
+    ;
 
-    /* 10. Single conversion mode */
-    ADC1->CFGR1 &= ~ADC_CFGR1_CONT;
+  /*12. calibrate ADC */
+  vADC_Calibrate();
 
-    /* 11. Clear ALL flags */
-    ADC1->ISR = 0xFFFFFFFF;
+  /*13. enable adc*/
+  vADC_Enable();
 
-    /*calibrate ADC */
-    vADC_Calibrate();
+  /* 14. Enable End Of Conversion interrupt */
+  ADC1->IER |= ADC_IER_EOCIE;
 
-    /*enable adc*/
-    vADC_Enable();
+  /* 15. Mark as initialized */
+  self->initialized = 1;
 
-    /* 14. Enable End Of Conversion interrupt */
-    ADC1->IER |= ADC_IER_EOCIE;
-
-    /* 15. Mark as initialized */
-    self->initialized = 1;
+  /* 16. only to trigger for first time */
+  ADC1->CR |= ADC_CR_ADSTART;
 }
 
+void vADC_Calibrate(void) {
+  /* 1. make sure ADC off */
+  if (ADC1->CR & ADC_CR_ADEN) {
+    ADC1->CR |= ADC_CR_ADDIS;
+    while (ADC1->CR & ADC_CR_ADEN)
+      ;
+  }
 
-void vADC_Calibrate(void){
-    if (ADC1->CR & ADC_CR_ADEN)
-    {
-        ADC1->CR |= ADC_CR_ADDIS;
-        while (ADC1->CR & ADC_CR_ADEN);
-    }
+  /* 2. stop any conversion in progress */
+  if (ADC1->CR & ADC_CR_ADSTART) {
+    ADC1->CR |= ADC_CR_ADSTP;
+    while (ADC1->CR & ADC_CR_ADSTP)
+      ;
+  }
 
-    ADC1->CR |= ADC_CR_ADCAL;
-    while (ADC1->CR & ADC_CR_ADCAL);
+  /* 3. make sure ADCAL is in 0 */
+  if (ADC1->CR & ADC_CR_ADCAL) {
+    return;
+  }
+
+  /* 4. calibration init */
+  ADC1->CR |= ADC_CR_ADCAL;
+
+  /* 5. delay to ensure calibration */
+  uint32_t timeout = 1000000;
+  while ((ADC1->CR & ADC_CR_ADCAL) && timeout--)
+    ;
+
+  if (timeout == 0) {
+    while (1)
+      ; /*breakpoint*/
+  }
 }
 
+void vADC_Enable(void) {
+  if (!(ADC1->CR & ADC_CR_ADEN)) {
+    /* 1. Enable regulator */
+    ADC1->CR &= ~ADC_CR_ADVREGEN;
+    ADC1->CR |= ADC_CR_ADVREGEN;
 
-void vADC_Enable(void){
-    if (!(ADC1->CR & ADC_CR_ADEN))
-    {
-        ADC1->CR |= ADC_CR_ADEN;
-        while (!(ADC1->ISR & ADC_ISR_ADRDY));
-        ADC1->ISR = ADC_ISR_ADRDY;
-    }
+    for (volatile uint32_t i = 0; i < 1000; i++)
+      ;
+
+    /* 2. Enable ADC */
+    ADC1->CR |= ADC_CR_ADEN;
+
+    /* 3. Wait ready */
+    while (!(ADC1->ISR & ADC_ISR_ADRDY))
+      ;
+
+    /* 4. Clear flag */
+    ADC1->ISR = ADC_ISR_ADRDY;
+  }
 }
 
-
-void vADC_Disable(void){
-    if (ADC1->CR & ADC_CR_ADEN)
-    {
-        ADC1->CR |= ADC_CR_ADDIS;
-        while (ADC1->CR & ADC_CR_ADEN);
-    }
+void vADC_Disable(void) {
+  if (ADC1->CR & ADC_CR_ADEN) {
+    ADC1->CR |= ADC_CR_ADDIS;
+    while (ADC1->CR & ADC_CR_ADEN)
+      ;
+  }
 }
 
 /* =========================================================
@@ -146,8 +181,8 @@ void vADC_Disable(void){
  *
  * Acts as the entry point for ADC setup during system startup.
  */
-void cbADC(void) { 
-    adc.channel = 6; /* PA6: Curr_fdbk */
-    adc.initialized = 0;
-    vADC_Init(&adc); 
+void cbADC(void) {
+  adc.channel = 6; /* PA6: Curr_fdbk */
+  adc.initialized = 0;
+  vADC_Init(&adc);
 }
