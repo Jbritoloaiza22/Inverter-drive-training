@@ -29,8 +29,6 @@ extern TimeBase_t oTimeBase;
 #define FW_VERSION "v1.0.0"
 
 
-/* Private function prototypes */
-static void MX_ADC1_Init(void);
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
 
@@ -115,9 +113,6 @@ int main(void) {
   /* Initialize system components before enabling interrupts */
   vKernelInterface_initBeforeInterruptEnable();
 
-  /* Initialize peripherals */
-  MX_ADC1_Init();
-
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
   while (1) {
@@ -125,15 +120,6 @@ int main(void) {
   }
 }
 
-/**
- * @brief ADC1 Initialization Function
- *
- * Configures the ADC peripheral with a single conversion channel
- * and 12-bit resolution. The ADC is configured for software-triggered
- * conversions without DMA.
- */
-static void MX_ADC1_Init(void) {
-}
 
 /**
  * @brief Error handler function.
@@ -184,7 +170,7 @@ void vKernelInterface_initBeforeInterruptEnable(void) {
  */
 void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable TIM2 interrupt */
-  vCORTEX_NVICSetPriority(TIM2_IRQn, 5, 0);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 2, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
@@ -192,10 +178,10 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
 
   /* Enable UART1 interrupt */
-  vCORTEX_NVICSetPriority(USART1_IRQn, 6, 0);
+  vCORTEX_NVICSetPriority(USART1_IRQn, 3, 0);
   vCORTEX_NVICEnableIRQ(USART1_IRQn);
 
   /* Enable ADC interrupt */
-  vCORTEX_NVICSetPriority(ADC1_IRQn, 2, 0);
+  vCORTEX_NVICSetPriority(ADC1_IRQn, 5, 0);
   vCORTEX_NVICEnableIRQ(ADC1_IRQn);
 }
