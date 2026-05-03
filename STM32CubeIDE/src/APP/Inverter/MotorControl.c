@@ -104,3 +104,20 @@ void vMotorControl_Process(void) {
   }
   */
 }
+
+bool vMotorControl_IsControlReady(void) {
+  if (MotorControl_State.ui8RunControlLoop) {
+    MotorControl_State.ui8RunControlLoop = 0;
+    return true;
+  }
+
+  return false;
+}
+
+void vMotorControl_SetSampleReady(bool bReady) {
+  MotorControl_State.ui8SampleReady = (uint8_t)bReady;
+
+  if (bReady) {
+    MotorControl_State.ui8RunControlLoop = 1;
+  }
+}

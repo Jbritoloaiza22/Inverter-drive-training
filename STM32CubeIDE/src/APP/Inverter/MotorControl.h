@@ -131,6 +131,7 @@ void vMotorControl_Process(void);
  */
 void vMotorControl_SetSampleReady(bool bReady);
 
+bool vMotorControl_IsControlReady(void);
 #ifdef __cplusplus
 }
 #endif
