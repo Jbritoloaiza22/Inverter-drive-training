@@ -145,7 +145,10 @@ static void InterruptTask_GenerateAsyncTasks(void) {
 /**
  * @brief This function handles TIM2 global interrupt.
  */
-void vKernelInterface_TIM2IRQHandler250us(void) { vTimer_ClearIRQ(&tim2); }
+void vKernelInterface_TIM2IRQHandler250us(void) {
+  vTimer_ClearIRQ(&tim2);
+  SVM_Run(&svm);
+}
 /**
  * @brief This function handles TIM3 global interrupt.
  */
@@ -167,5 +170,12 @@ void vKernelInterface_USART1IRQHandler(void) {
     /*Framing error*/
   } else {
     /*do nothing */
+  }
+}
+
+void vKernelInterface_ADCIRQHandler(void) {
+  vGPIO_ToggleDebugPin();
+  if (ADC1->ISR & ADC_ISR_EOC) {
+    uint16_t value = ADC1->DR;
   }
 }

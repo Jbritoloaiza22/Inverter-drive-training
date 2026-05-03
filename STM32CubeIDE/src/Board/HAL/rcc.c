@@ -216,7 +216,7 @@ void vRCC_EnablePeripherals(RCC_t *self) {
   /* Enable APB2 peripherals */
   RCC->APBENR2 = (1U << 11) | /* TIM1 */
                  (1U << 14) | /* USART1 */
-                 (1U << 20);  /* ADC */
+                 (1U << 20);  /* ADC - Curr_fdbk signal*/
 }
 
 /* =========================================================

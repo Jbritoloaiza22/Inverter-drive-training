@@ -111,6 +111,7 @@ void vKernelInterface_TIM3IRQHandler1ms(void);
  */
 void vKernelInterface_USART1IRQHandler(void);
 
+void vKernelInterface_ADCIRQHandler(void);
 /**
  * @brief RCC initialization callback.
  *
@@ -205,3 +206,12 @@ void cbSVPWM(void);
  * Initializes the UART peripheral for system communication.
  */
 void cbUART(void);
+
+/**
+ * @brief ADC initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes the ADC peripheral and configures synchronization
+ * with the PWM for deterministic sampling.
+ */
+void cbADC(void);

@@ -43,12 +43,6 @@ extern "C" {
  * ========================================================= */
 
 /**
- * @brief HAL ADC driver headers.
- */
-#include "stm32g0xx_hal_adc.h"
-#include "stm32g0xx_hal_adc_ex.h"
-
-/**
  * @brief HAL UART driver header.
  */
 #include "uart.h"

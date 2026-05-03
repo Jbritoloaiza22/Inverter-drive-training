@@ -60,4 +60,6 @@ void Error_Handler(void);
  * @see InterruptTask_GenerateAsyncTasks()
  */
 void RunScheduler(void);
+
+void incCountertopwmDebug(void);
 #endif /* __KERNEL_H */

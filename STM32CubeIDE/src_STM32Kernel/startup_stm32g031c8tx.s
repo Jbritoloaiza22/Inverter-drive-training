@@ -157,7 +157,7 @@ g_pfnVectors:
   .word DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
   .word DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler /* DMA1 Channel 4 to Channel 5, DMAMUX1 overrun */
-  .word vIRQ_ADC1IRQHandler               /* ADC1                        */
+  .word vKernelInterface_ADCIRQHandler               /* ADC1                        */
   .word TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
   .word vKernelInterface_TIM2IRQHandler250us   /* TIM2                         */
@@ -235,8 +235,8 @@ g_pfnVectors:
   .weak      DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler
   .thumb_set DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler,Default_Handler
 
-  .weak      vIRQ_ADC1IRQHandler
-  .thumb_set vIRQ_ADC1IRQHandler,Default_Handler
+  .weak      vKernelInterface_ADCIRQHandler
+  .thumb_set vKernelInterface_ADCIRQHandler,Default_Handler
 
   .weak      TIM1_BRK_UP_TRG_COM_IRQHandler
   .thumb_set TIM1_BRK_UP_TRG_COM_IRQHandler,Default_Handler
