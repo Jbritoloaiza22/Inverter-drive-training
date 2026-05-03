@@ -23,21 +23,21 @@ extern "C" {
 typedef struct {
 
   /* ===== Sampling / Sync ===== */
-  volatile uint8_t u8SampleReady;
-  volatile uint8_t u8SamplesPerPwm;
-  volatile uint8_t u8SampleCount;
+  volatile uint8_t ui8SampleReady;
+  volatile uint8_t ui8SamplesPerPwm;
+  volatile uint8_t ui8SampleCount;
 
   /* ===== ADC data (raw domain) ===== */
   volatile int16_t i16BusCurrentRaw;
-  volatile uint8_t u8AdcValid;
+  volatile uint8_t ui8AdcValid;
 
   /* ===== PWM / timing context ===== */
-  volatile uint16_t u16PwmCounter;
-  volatile uint8_t u8Sector;
+  volatile uint16_t ui16PwmCounter;
+  volatile uint8_t ui8Sector;
 
   /* ===== Control flags ===== */
-  volatile uint8_t u8RunControlLoop;
-  volatile uint8_t u8Fault;
+  volatile uint8_t ui8RunControlLoop;
+  volatile uint8_t ui8Fault;
 
 } tMotorControl_State;
 

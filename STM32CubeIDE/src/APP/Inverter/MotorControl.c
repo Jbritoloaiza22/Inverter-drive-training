@@ -24,14 +24,14 @@ void vMotorControl_OnAdcSample(int16_t iBusRaw) {
   vMotorControl_SetSampleReady(true);
 
   /* 3. Optional: update cycle bookkeeping */
-  MotorControl_State.u8SampleCount++;
+  MotorControl_State.ui8SampleCount++;
 }
 
 void vMotorControl_SetSampleReady(bool bReady) {
-  MotorControl_State.u8SampleReady = (uint8_t)bReady;
+  MotorControl_State.ui8SampleReady = (uint8_t)bReady;
 
   if (bReady) {
-    MotorControl_State.u8RunControlLoop = 1;
+    MotorControl_State.ui8RunControlLoop = 1;
   }
 }
 

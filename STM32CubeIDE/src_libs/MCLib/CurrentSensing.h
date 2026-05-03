@@ -26,14 +26,14 @@ typedef struct {
 
   int16_t i16Offset;
 
-  uint8_t u8Valid;
+  uint8_t ui8Valid;
 } tCurrentSensing_State;
 
-#define VREF 3.3f
-#define ADC_RES 4095.0f
-#define R_SHUNT 0.005f // 5 mOhm
-#define AMP_GAIN 20.0f
-#define CURRENT_SCALE_GAIN (VREF / (ADC_RES * R_SHUNT))
+#define dVREF 3.3f
+#define dADC_RES 4095.0f
+#define dRSHUNT 0.005f // 5 mOhm
+#define dAMPGAIN 20.0f
+#define dCURRENTSCALEGAIN (dVREF / (dADC_RES * dRSHUNT))
 
 void vCurrentSensing_Init(void);
 void vCurrentSensing_UpdateRaw(int16_t i16AdcRaw);

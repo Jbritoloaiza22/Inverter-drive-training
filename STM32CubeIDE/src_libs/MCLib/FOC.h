@@ -18,27 +18,27 @@ extern "C" {
 #endif
 #include <stdint.h>
 typedef struct {
-  float i_bus;
-  float i_alpha;
-  float i_beta;
+  float ibus;
+  float ialpha;
+  float ibeta;
 
-  float i_d;
-  float i_q;
+  float id;
+  float iq;
 
-  float v_d;
-  float v_q;
+  float vd;
+  float vq;
 
   uint8_t sector;
 
   struct {
-    int16_t adc_raw;
+    int16_t i16adcraw;
   } adc;
 } tFOC_State;
 
 void vFOC_Init(void);
 void vFOC_Execute(void);
-void vFOC_OnAdcSample(int16_t iBus, uint8_t sector);
-void vFOC_SetReference(float id_ref, float iq_ref);
+void vFOC_OnAdcSample(int16_t i16Bus, uint8_t ui8sector);
+void vFOC_SetReference(float idref, float iqref);
 void vFOC_UpdatePWM(void);
 bool vFOC_IsReady(void);
 tFOC_State *vFOC_GetState(void);

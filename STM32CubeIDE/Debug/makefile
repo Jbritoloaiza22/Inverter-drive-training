@@ -37,6 +37,7 @@ LDFLAGS = -mcpu=$(MCU) -mthumb \
 INCLUDES = \
 -I../src \
 -I../src/APP \
+-I../src/APP/Inverter \
 -I../src/Board \
 -I../src/Board/BoardApp \
 -I../src/Board/HAL \
@@ -47,6 +48,7 @@ INCLUDES = \
 -I../src_STM32Kernel/CMSIS/Core/Include \
 -I../src_libs \
 -I../src_libs/BoardLib \
+-I../src_libs/MCLib \
 -I../src_GFLib \
 -I../src_GFLib/Math \
 -I../src_GFLib/uC/PC \
