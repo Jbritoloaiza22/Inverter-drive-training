@@ -28,10 +28,10 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
+#include "adc.h"
 #include "spwm.h"
 #include "svm.h"
 #include "uart.h"
-#include "adc.h"
 #include <stdint.h>
 #include <tim.h>
 
