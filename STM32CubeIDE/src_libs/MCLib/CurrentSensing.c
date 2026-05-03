@@ -77,3 +77,12 @@ void vCurrentSensing_UpdateRaw(int16_t i16AdcRaw) {
 bool vCurrentSensing_IsReady(void) {
   return (CurrentSensing_State.ui8Valid != 0);
 }
+
+void vCurrentSensing_ReconstructABC(float *ia, float *ib, float *ic)
+{
+    float ibus = CurrentSensing_State.fCurrent_A;
+
+    *ia = ibus;
+    *ib = -0.5f * ibus;
+    *ic = -0.5f * ibus;
+}

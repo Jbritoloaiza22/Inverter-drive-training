@@ -113,4 +113,6 @@ void vCurrentSensing_SetOffset(int16_t offset);
  */
 bool vCurrentSensing_IsReady(void);
 
+void vCurrentSensing_ReconstructABC(float *ia, float *ib, float *ic);
+
 #endif /* CURRENT_SENSING_H_ */
