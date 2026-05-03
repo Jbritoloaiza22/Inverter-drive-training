@@ -42,14 +42,24 @@ static tMotorControl_State MotorControl_State;
  * @note This function is typically called from an ADC ISR context.
  */
 void vMotorControl_OnAdcSample(int16_t i16BusRaw) {
-  /* 1. Forward raw data to sensing layer */
+  /* 1. Sensing */
   vCurrentSensing_UpdateRaw(i16BusRaw);
 
-  /* 2. Mark sample as available */
-  vMotorControl_SetSampleReady(true);
+  /* 2. (Opcional) validar muestra */
+  if (!vCurrentSensing_IsReady())
+    return;
 
-  /* 3. Update sampling counter (per PWM cycle) */
+  /* 3. Contar muestra */
   MotorControl_State.ui8SampleCount++;
+
+  /* 4. Gating configurable */
+  if (MotorControl_State.ui8SampleCount >=
+      MotorControl_State.ui8SamplesPerPwm) {
+    MotorControl_State.ui8SampleCount = 0;
+
+    /* listo para ejecutar control */
+    vMotorControl_SetSampleReady(true);
+  }
 }
 
 /**

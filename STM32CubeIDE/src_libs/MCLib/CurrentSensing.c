@@ -53,3 +53,7 @@ void vCurrentSensing_UpdateRaw(int16_t i16AdcRaw) {
   /* Mark sample as valid */
   CurrentSensing_State.ui8Valid = 1;
 }
+
+bool vCurrentSensing_IsReady(void) {
+  return (CurrentSensing_State.ui8Valid != 0);
+}

@@ -28,6 +28,7 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
+#include "adc.h"
 #include "spwm.h"
 #include "svm.h"
 #include "uart.h"

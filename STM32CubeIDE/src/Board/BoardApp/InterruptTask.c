@@ -184,6 +184,7 @@ void vKernelInterface_ADCIRQHandler(void) {
     vMotorControl_OnAdcSample(i16VoltageBus);
 
     /* 3. Check if enough samples are available (typically 2 per PWM cycle) */
+    /*this step is inside vMotorControl_OnAdcSample function*/
 
     /* 4. Detect active SVPWM sector (1..6) */
 
