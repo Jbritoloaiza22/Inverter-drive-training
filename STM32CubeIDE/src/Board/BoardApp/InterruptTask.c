@@ -43,6 +43,7 @@
  * This source code is provided for educational and research purposes.
  */
 #include "KernelInterface.h"
+#include "MotorControl.h"
 #include "TimeBase.h"
 #include "stm32g031xx.h"
 
@@ -177,9 +178,10 @@ void vKernelInterface_ADCIRQHandler(void) {
   if (ADC1->ISR & ADC_ISR_EOC) {
 
     /* 1. Acquire DC-link current sample (Ibus) */
-    int16_t i16VoltageBus = (int16_t)ADC1->DR;
+    int16_t i16VoltageBus = vADC_i16ReadRaw();
 
     /* 2. Store samples for current reconstruction */
+    vMotorControl_OnAdcSample(i16VoltageBus);
 
     /* 3. Check if enough samples are available (typically 2 per PWM cycle) */
 
