@@ -175,7 +175,7 @@ void vKernelInterface_USART1IRQHandler(void) {
 }
 
 void vKernelInterface_ADCIRQHandler(void) {
-  if (ADC1->ISR & ADC_ISR_EOC) {
+  if (vADC_GetEOCInterruptFlag()) {
 
     /* 1. Acquire DC-link current sample (Ibus) */
     int16_t i16VoltageBus = vADC_i16ReadRaw();
@@ -191,4 +191,6 @@ void vKernelInterface_ADCIRQHandler(void) {
       vMotorControl_RunControl();
     }
   }
+  /* Clear EOC flag (if not handled in driver) */
+  vADC_ClearEOCflag();
 }

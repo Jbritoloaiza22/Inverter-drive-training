@@ -214,3 +214,7 @@ void cbADC(void) {
   adc.ui8initialized = 0;
   vADC_Init(&adc);
 }
+
+bool vADC_GetEOCInterruptFlag(void) { return (bool)(ADC1->ISR & ADC_ISR_EOC); }
+
+void vADC_ClearEOCflag(void) { ADC1->ISR |= ADC_ISR_EOC; }
