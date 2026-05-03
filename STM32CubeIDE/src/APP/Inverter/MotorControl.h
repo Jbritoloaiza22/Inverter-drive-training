@@ -130,7 +130,7 @@ void vMotorControl_Process(void);
  * @param bReady true if sample is ready, false otherwise
  */
 void vMotorControl_SetSampleReady(bool bReady);
-
+void vMotorControl_RunControl(void);
 bool vMotorControl_IsControlReady(void);
 #ifdef __cplusplus
 }

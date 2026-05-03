@@ -188,24 +188,7 @@ void vKernelInterface_ADCIRQHandler(void) {
 
     /* Check if control loop should run (based on sample gating) */
     if (vMotorControl_IsControlReady()) {
-      /* 4. Detect active SVPWM sector (1..6) */
-
-      /* 5. Reconstruct phase currents from DC-link current */
-
-      /* 6. Clarke transform (abc -> alpha-beta) */
-
-      /* 7. Park transform (alpha-beta -> dq) */
-
-      /* 8. Current control (PI controllers) */
-
-      /* 9. Inverse Park transform (dq -> alpha-beta) */
-
-      /* 10. SVPWM computation */
-      /* Convert alpha-beta voltages to duty cycles */
-
-      /* 11. Update PWM registers (CCR1, CCR2, CCR3) */
-
-      /* 12. Prepare next cycle */
+      vMotorControl_RunControl();
     }
   }
 }
