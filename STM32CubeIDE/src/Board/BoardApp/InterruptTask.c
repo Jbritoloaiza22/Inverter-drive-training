@@ -189,6 +189,8 @@ void vKernelInterface_ADCIRQHandler(void) {
     /* Check if control loop should run (based on sample gating) */
     if (vMotorControl_IsControlReady()) {
       vMotorControl_RunControl();
+    } else {
+      /* do nothing*/
     }
     /* Clear EOC flag (if not handled in driver) */
     vADC_ClearEOCflag();
