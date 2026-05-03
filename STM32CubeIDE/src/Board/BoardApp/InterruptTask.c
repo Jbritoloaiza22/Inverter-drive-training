@@ -175,7 +175,7 @@ void vKernelInterface_USART1IRQHandler(void) {
 }
 
 void vKernelInterface_ADCIRQHandler(void) {
-  if (ADC1->ISR & ADC_ISR_EOC) {
+  if (vADC_GetEOCInterruptFlag()) {
 
     /* 1. Acquire DC-link current sample (Ibus) */
     int16_t i16VoltageBus = vADC_i16ReadRaw();
@@ -186,23 +186,13 @@ void vKernelInterface_ADCIRQHandler(void) {
     /* 3. Check if enough samples are available (typically 2 per PWM cycle) */
     /*this step is inside vMotorControl_OnAdcSample function*/
 
-    /* 4. Detect active SVPWM sector (1..6) */
-
-    /* 5. Reconstruct phase currents from DC-link current */
-
-    /* 6. Clarke transform (abc -> alpha-beta) */
-
-    /* 7. Park transform (alpha-beta -> dq) */
-
-    /* 8. Current control (PI controllers) */
-
-    /* 9. Inverse Park transform (dq -> alpha-beta) */
-
-    /* 10. SVPWM computation */
-    /* Convert alpha-beta voltages to duty cycles */
-
-    /* 11. Update PWM registers (CCR1, CCR2, CCR3) */
-
-    /* 12. Prepare next cycle */
+    /* Check if control loop should run (based on sample gating) */
+    if (vMotorControl_IsControlReady()) {
+      vMotorControl_RunControl();
+    } else {
+      /* do nothing*/
+    }
+    /* Clear EOC flag (if not handled in driver) */
+    vADC_ClearEOCflag();
   }
 }

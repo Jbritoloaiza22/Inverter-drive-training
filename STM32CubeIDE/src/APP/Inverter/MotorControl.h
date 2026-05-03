@@ -131,6 +131,47 @@ void vMotorControl_Process(void);
  */
 void vMotorControl_SetSampleReady(bool bReady);
 
+/**
+ * @brief Execute motor control pipeline (FOC + SVPWM)
+ *
+ * Runs the full motor control algorithm when triggered by the sampling
+ * and synchronization logic.
+ *
+ * Control pipeline:
+ *  - Phase current reconstruction (DC-link → phase currents)
+ *  - Clarke transform (abc → αβ)
+ *  - Park transform (αβ → dq)
+ *  - Current control (PI in dq frame)
+ *  - Inverse Park transform (dq → αβ)
+ *  - SVPWM computation (includes sector detection internally)
+ *  - PWM duty cycle update
+ *
+ * This function is typically executed in ISR context after ADC sampling
+ * and gating conditions are met.
+ *
+ * @note SVPWM sector detection is handled internally by the SVM module.
+ *
+ * @warning Execution time must be shorter than PWM period.
+ */
+void vMotorControl_RunControl(void);
+
+/**
+ * @brief Check if control loop execution is ready
+ *
+ * Determines whether the motor control loop should be executed.
+ * Implements a consume-on-read mechanism:
+ *
+ * - Returns true if control loop is ready and clears the internal flag
+ * - Returns false if no execution is pending
+ *
+ * This guarantees that the control loop runs exactly once per trigger event.
+ *
+ * Typically used in ISR after ADC sample processing.
+ *
+ * @return true  Control loop should execute
+ * @return false Control loop not ready
+ */
+bool vMotorControl_IsControlReady(void);
 #ifdef __cplusplus
 }
 #endif

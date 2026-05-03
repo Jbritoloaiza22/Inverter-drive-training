@@ -104,3 +104,82 @@ void vMotorControl_Process(void) {
   }
   */
 }
+
+/**
+ * @brief Check if motor control loop is ready to execute
+ *
+ * This function evaluates whether the control loop should be executed.
+ * It implements a "consume-on-read" mechanism:
+ *
+ * - If the control loop flag is set, it clears the flag and returns true
+ * - Otherwise, it returns false
+ *
+ * This ensures the control loop runs exactly once per valid trigger event
+ * (e.g., after sufficient ADC samples have been collected).
+ *
+ * @note Typically called from ISR context after ADC sampling.
+ *
+ * @return true  Control loop is ready and should execute
+ * @return false Control loop is not ready
+ */
+bool vMotorControl_IsControlReady(void) {
+  bool bReady = false;
+  if (MotorControl_State.ui8RunControlLoop) {
+    MotorControl_State.ui8RunControlLoop = 0;
+    bReady = true;
+  } else {
+    /*do nothing*/
+  }
+  return bReady;
+}
+
+/**
+ * @brief Execute motor control pipeline (FOC + SVPWM)
+ *
+ * This function runs the complete motor control algorithm when triggered.
+ * It is typically executed inside the ADC interrupt context once enough
+ * samples have been collected (sample gating).
+ *
+ * Control pipeline:
+ *
+ *  5. Reconstruct phase currents from DC-link current (single-shunt)
+ *  6. Clarke transform (abc → αβ)
+ *  7. Park transform (αβ → dq)
+ *  8. Current control (PI regulators in dq frame)
+ *  9. Inverse Park transform (dq → αβ)
+ *  4. SVPWM sector detection (handled internally by SVM module)
+ * 10. SVPWM computation (duty cycle generation)
+ * 11. PWM update (CCR registers)
+ * 12. Prepare next cycle (state reset, synchronization)
+ *
+ * @note
+ * - SVPWM sector detection is not explicitly performed here; it is handled
+ *   internally by the SVM module during duty cycle computation.
+ * - This function is designed to run in ISR context, so execution time
+ *   must be bounded and deterministic.
+ *
+ * @warning
+ * Ensure that total execution time is less than PWM period to avoid
+ * control instability.
+ */
+void vMotorControl_RunControl(void) {
+  /* 5. Reconstruct phase currents from DC-link current */
+
+  /* 6. Clarke transform (abc -> alpha-beta) */
+
+  /* 7. Park transform (alpha-beta -> dq) */
+
+  /* 8. Current control (PI controllers) */
+
+  /* 9. Inverse Park transform (dq -> alpha-beta) */
+
+  /* 4. Detect active SVPWM sector (1..6) */
+  /* NOTE: Sector detection is handled internally by SVM */
+
+  /* 10. SVPWM computation */
+  /* Convert alpha-beta voltages to duty cycles */
+
+  /* 11. Update PWM registers (CCR1, CCR2, CCR3) */
+
+  /* 12. Prepare next cycle */
+}

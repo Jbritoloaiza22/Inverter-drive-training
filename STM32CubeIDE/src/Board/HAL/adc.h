@@ -45,8 +45,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #include "stm32g031xx.h"
+#include <stdbool.h>
 
 /**
  * @brief ADC object structure.
@@ -104,6 +104,8 @@ void vADC_Disable(void);
 
 int16_t vADC_i16ReadRaw(void);
 
+bool vADC_GetEOCInterruptFlag(void);
+void vADC_ClearEOCflag(void);
 #ifdef __cplusplus
 }
 #endif
