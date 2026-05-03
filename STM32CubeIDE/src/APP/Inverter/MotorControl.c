@@ -163,7 +163,10 @@ bool vMotorControl_IsControlReady(void) {
  * control instability.
  */
 void vMotorControl_RunControl(void) {
+  float ia, ib, ic;
+
   /* 5. Reconstruct phase currents from DC-link current */
+  vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
 
   /* 6. Clarke transform (abc -> alpha-beta) */
 
