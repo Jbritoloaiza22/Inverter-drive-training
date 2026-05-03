@@ -177,7 +177,7 @@ void vKernelInterface_ADCIRQHandler(void) {
   if (ADC1->ISR & ADC_ISR_EOC) {
 
     /* 1. Acquire DC-link current sample (Ibus) */
-    int16_t i16VoltageBus = (int16_t)ADC1->DR;
+    int16_t i16VoltageBus = vADC_i16Read();
 
     /* 2. Store samples for current reconstruction */
 

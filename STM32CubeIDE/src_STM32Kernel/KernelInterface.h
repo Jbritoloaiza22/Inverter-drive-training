@@ -31,6 +31,7 @@
 #include "spwm.h"
 #include "svm.h"
 #include "uart.h"
+#include "adc.h"
 #include <stdint.h>
 #include <tim.h>
 
