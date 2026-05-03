@@ -102,7 +102,7 @@ void vADC_Enable(void);
  */
 void vADC_Disable(void);
 
-int16_t vADC_i16Read(void);
+int16_t vADC_i16ReadRaw(void);
 
 #ifdef __cplusplus
 }
