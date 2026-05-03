@@ -190,7 +190,7 @@ void vKernelInterface_ADCIRQHandler(void) {
     if (vMotorControl_IsControlReady()) {
       vMotorControl_RunControl();
     }
+    /* Clear EOC flag (if not handled in driver) */
+    vADC_ClearEOCflag();
   }
-  /* Clear EOC flag (if not handled in driver) */
-  vADC_ClearEOCflag();
 }

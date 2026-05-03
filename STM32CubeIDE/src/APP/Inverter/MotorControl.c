@@ -123,8 +123,6 @@ void vMotorControl_SetSampleReady(bool bReady) {
 }
 
 void vMotorControl_RunControl(void) {
-  /* 4. Detect active SVPWM sector (1..6) */
-
   /* 5. Reconstruct phase currents from DC-link current */
 
   /* 6. Clarke transform (abc -> alpha-beta) */
@@ -135,6 +133,9 @@ void vMotorControl_RunControl(void) {
 
   /* 9. Inverse Park transform (dq -> alpha-beta) */
 
+  /* 4. Detect active SVPWM sector (1..6) */
+  /* NOTE: Sector detection is handled internally by SVM */
+  
   /* 10. SVPWM computation */
   /* Convert alpha-beta voltages to duty cycles */
 
