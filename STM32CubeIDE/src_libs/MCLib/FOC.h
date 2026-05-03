@@ -123,4 +123,26 @@ bool vFOC_IsReady(void);
  */
 tFOC_State *vFOC_GetState(void);
 
+/**
+ * @brief Perform Clarke transformation (abc → αβ)
+ *
+ * Converts three-phase currents (ia, ib, ic) into the stationary
+ * two-axis reference frame (alpha-beta).
+ *
+ * Uses the reduced Clarke transform assuming a balanced system:
+ * ia + ib + ic = 0
+ *
+ * Equations:
+ *  - i_alpha = ia
+ *  - i_beta  = (ia + 2 * ib) / sqrt(3)
+ *
+ * @param[in]  ia     Phase A current
+ * @param[in]  ib     Phase B current
+ * @param[in]  ic     Phase C current (unused in reduced form)
+ * @param[out] ialpha Alpha-axis component
+ * @param[out] ibeta  Beta-axis component
+ *
+ * @note Common in FOC implementations
+ */
+void vFOC_Clarke(float ia, float ib, float ic, float *ialpha, float *ibeta);
 #endif /* __FOC_H */

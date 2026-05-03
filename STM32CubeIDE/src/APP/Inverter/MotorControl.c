@@ -164,11 +164,13 @@ bool vMotorControl_IsControlReady(void) {
  */
 void vMotorControl_RunControl(void) {
   float ia, ib, ic;
+  float ialpha, ibeta;
 
   /* 5. Reconstruct phase currents from DC-link current */
   vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
 
   /* 6. Clarke transform (abc -> alpha-beta) */
+  vFOC_Clarke(ia, ib, ic, &ialpha, &ibeta);
 
   /* 7. Park transform (alpha-beta -> dq) */
 
