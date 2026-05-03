@@ -19,8 +19,8 @@
  */
 
 #include "tim.h"
-#include "stm32g031xx.h"
 #include "KernelInterface.h"
+#include "stm32g031xx.h"
 
 /* =========================================================
  * GLOBAL TIMER OBJECTS
@@ -57,38 +57,37 @@ Timer_t tim3;
  * @param[in] psc Prescaler value
  * @param[in] arr Auto-reload value (period)
  */
-void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
-                uint32_t psc, uint32_t arr)
-{
-    self->instance = instance;
-    self->psc = psc;
-    self->arr = arr;
-    self->enabled = 0U;
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance, uint32_t psc,
+                 uint32_t arr) {
+  self->instance = instance;
+  self->psc = psc;
+  self->arr = arr;
+  self->enabled = 0U;
 
-    /* Reset timer configuration */
-    instance->CR1  = 0U;
-    instance->CR2  = 0U;
-    instance->SMCR = 0U;
-    instance->DIER = 0U;
+  /* Reset timer configuration */
+  instance->CR1 = 0U;
+  instance->CR2 = 0U;
+  instance->SMCR = 0U;
+  instance->DIER = 0U;
 
-    /* Set timing parameters */
-    instance->PSC = psc;
-    instance->ARR = arr;
+  /* Set timing parameters */
+  instance->PSC = psc;
+  instance->ARR = arr;
 
-    /* Configure counter mode: up-counting */
-    instance->CR1 &= ~TIM_CR1_DIR;
+  /* Configure counter mode: up-counting */
+  instance->CR1 &= ~TIM_CR1_DIR;
 
-    /* No clock division */
-    instance->CR1 &= ~TIM_CR1_CKD;
+  /* No clock division */
+  instance->CR1 &= ~TIM_CR1_CKD;
 
-    /* Enable update interrupt */
-    instance->DIER |= TIM_DIER_UIE;
+  /* Enable update interrupt */
+  instance->DIER |= TIM_DIER_UIE;
 
-    /* Reset counter */
-    instance->CNT = 0U;
+  /* Reset counter */
+  instance->CNT = 0U;
 
-    /* Generate update event to apply configuration */
-    instance->EGR = TIM_EGR_UG;
+  /* Generate update event to apply configuration */
+  instance->EGR = TIM_EGR_UG;
 }
 
 /* =========================================================
@@ -102,10 +101,9 @@ void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
  *
  * @param[in,out] self Pointer to Timer object
  */
-void vTimer_Start(Timer_t *self)
-{
-    self->instance->CR1 |= TIM_CR1_CEN;
-    self->enabled = 1U;
+void vTimer_Start(Timer_t *self) {
+  self->instance->CR1 |= TIM_CR1_CEN;
+  self->enabled = 1U;
 }
 
 /**
@@ -115,10 +113,9 @@ void vTimer_Start(Timer_t *self)
  *
  * @param[in,out] self Pointer to Timer object
  */
-void vTimer_Stop(Timer_t *self)
-{
-    self->instance->CR1 &= ~TIM_CR1_CEN;
-    self->enabled = 0U;
+void vTimer_Stop(Timer_t *self) {
+  self->instance->CR1 &= ~TIM_CR1_CEN;
+  self->enabled = 0U;
 }
 
 /* =========================================================
@@ -134,12 +131,10 @@ void vTimer_Stop(Timer_t *self)
  *
  * @param[in,out] self Pointer to Timer object
  */
-void vTimer_ClearIRQ(Timer_t *self)
-{
-    if (self->instance->SR & TIM_SR_UIF)
-    {
-        self->instance->SR &= ~TIM_SR_UIF;
-    }
+void vTimer_ClearIRQ(Timer_t *self) {
+  if (self->instance->SR & TIM_SR_UIF) {
+    self->instance->SR &= ~TIM_SR_UIF;
+  }
 }
 
 /* =========================================================
@@ -160,11 +155,10 @@ void vTimer_ClearIRQ(Timer_t *self)
  * - TIM2: PSC = 63, ARR = 249
  * - TIM3: PSC = 63, ARR = 999
  */
-void cbTIM(void)
-{
-    vTimer_Init(&tim2, TIM2, 63U, 249U);
-    vTimer_Init(&tim3, TIM3, 63U, 999U);
+void cbTIM(void) {
+  vTimer_Init(&tim2, TIM2, 63U, 249U);
+  vTimer_Init(&tim3, TIM3, 63U, 999U);
 
-    vTimer_Start(&tim2);
-    vTimer_Start(&tim3);
+  vTimer_Start(&tim2);
+  vTimer_Start(&tim3);
 }

@@ -22,23 +22,12 @@
  */
 #include "kernel.h"
 #include "KernelInterface.h"
-#include "stm32g0xx_hal_uart.h"
-
+#include "TimeBase.h"
+#include "gpio.h"
+extern TimeBase_t oTimeBase;
 /* tracking version */
 #define FW_VERSION "v1.0.0"
 
-
-#define dBAUDRATEUART 115200
-
-/** @brief ADC handle structure */
-ADC_HandleTypeDef hadc1;
-
-/** @brief UART handle structure */
-UART_HandleTypeDef huart1;
-
-/* Private function prototypes */
-static void MX_USART1_UART_Init(void);
-static void MX_ADC1_Init(void);
 /** @brief Example counter used for PWM related tasks */
 uint32_t ui32counter = 0;
 
@@ -48,9 +37,65 @@ uint32_t ui32counter = 0;
  * This function increments a global counter that may be used
  * for waveform indexing or periodic PWM related operations.
  */
-void incCountertopwmDebug(void)
-{
-	ui32counter++;
+void incCountertopwmDebug(void) { ui32counter++; }
+
+/**
+ * @brief Execute periodic tasks based on time base flags.
+ *
+ * This function implements the cooperative scheduler loop that executes
+ * application tasks at different intervals. Each task is triggered by
+ * its corresponding time base flag set by the interrupt handler.
+ *
+ * The scheduler operates on a non-blocking, cooperative model where:
+ * - Each task checks its flag and executes if the time interval has elapsed
+ * - The flag is cleared after task execution to prevent re-execution
+ * - No task blocks or waits, allowing rapid loop cycling
+ *
+ * Supported task intervals:
+ * - 10 milliseconds: General periodic tasks
+ * - 20 milliseconds: Slower periodic operations
+ * - 100 milliseconds: Background maintenance tasks
+ * - 1 second: Status monitoring and diagnostics
+ *
+ * @note This function should be called continuously in the main loop
+ * after system initialization and interrupt enablement.
+ *
+ * @see TimeBase_10msFlagGet()
+ * @see TimeBase_20msFlagGet()
+ * @see TimeBase_100msFlagGet()
+ * @see TimeBase_1secFlagGet()
+ */
+void RunScheduler(void) {
+  /* 10ms periodic task */
+  if (TimeBase_10msFlagGet()) {
+    /* Insert 10ms task implementation here */
+    TimeBase_10msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+  /* 20ms periodic task */
+  if (TimeBase_20msFlagGet()) {
+    /* Insert 20ms task implementation here */
+    TimeBase_20msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+
+  /* 100ms periodic task */
+  if (TimeBase_100msFlagGet()) {
+    /* Insert 100ms task implementation here */
+    TimeBase_100msFlagClear();
+  } else {
+    /*do nothing*/
+  }
+
+  /* 1 second periodic task */
+  if (TimeBase_1secFlagGet()) {
+    /* Insert 1s task implementation here */
+    TimeBase_1secFlagClear();
+  } else {
+    /*do nothing*/
+  }
 }
 
 /**
@@ -61,126 +106,28 @@ void incCountertopwmDebug(void)
  *
  * @retval int Program return status (never returns in embedded systems)
  */
-int main(void)
-{
+int main(void) {
   HAL_Init();
 
   /* Initialize system components before enabling interrupts */
   vKernelInterface_initBeforeInterruptEnable();
 
-  /* Initialize peripherals */
-  MX_USART1_UART_Init();
-  MX_ADC1_Init();
-
   /*enable user interrupts */
   vKernelInterface_enableInterruptsForAllPeripherals();
-  while (1)
-  {
-
-  }
-
-}
-
-/**
-  * @brief ADC1 Initialization Function
-  *
-  * Configures the ADC peripheral with a single conversion channel
-  * and 12-bit resolution. The ADC is configured for software-triggered
-  * conversions without DMA.
-  */
-static void MX_ADC1_Init(void)
-{
-  ADC_ChannelConfTypeDef sConfig = {0};
-
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.OversamplingMode = DISABLE;
-  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
-
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  else
-  {
-    /*do nothing*/
-  }
-  /** Configure ADC Regular Channel */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
-
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  else
-  {
-    /*do nothing*/
+  while (1) {
+    RunScheduler();
   }
 }
 
 /**
-  * @brief USART1 Initialization Function
-  *
-  * Configures USART1 for serial communication with the following
-  * parameters:
-  * - Baudrate: 115200
-  * - 8 data bits
-  * - 1 stop bit
-  * - No parity
-  */
-static void MX_USART1_UART_Init(void)
-{
-  huart1.Instance = USART1;
-
-  huart1.Init.BaudRate = dBAUDRATEUART;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    //Error_Handler();
-  }
-  else
-  {
-    /*do nothing*/
-  }
-}
-
-/**
-  * @brief Error handler function.
-  *
-  * This function is executed whenever a HAL error occurs.
-  * The system disables interrupts and enters an infinite loop.
-  */
-void Error_Handler(void)
-{
+ * @brief Error handler function.
+ *
+ * This function is executed whenever a HAL error occurs.
+ * The system disables interrupts and enters an infinite loop.
+ */
+void Error_Handler(void) {
   __disable_irq();
-  while (1)
-  {
+  while (1) {
   }
 }
 
@@ -197,13 +144,14 @@ void Error_Handler(void)
  * The callbacks are defined in the kernel interface layer to allow
  * hardware abstraction and modular configuration.
  */
-void vKernelInterface_initBeforeInterruptEnable(void)
-{
-	cbRCC();
-	cbGPIOS();
-	cbPWM();
-	cbTIM();
-	cbSVPWM();
+void vKernelInterface_initBeforeInterruptEnable(void) {
+  cbRCC();
+  cbGPIOS();
+  cbADC();
+  cbPWM();
+  cbTIM();
+  cbUART();
+  cbSVPWM();
 }
 
 /**
@@ -217,13 +165,20 @@ void vKernelInterface_initBeforeInterruptEnable(void)
  * - TIM2 update interrupt
  * - TIM3 update interrupt
  */
-void vKernelInterface_enableInterruptsForAllPeripherals(void)
-{
+void vKernelInterface_enableInterruptsForAllPeripherals(void) {
   /* Enable TIM2 interrupt */
-  vCORTEX_NVICSetPriority(TIM2_IRQn, 0, 0);
+  vCORTEX_NVICSetPriority(TIM2_IRQn, 2, 0);
   vCORTEX_NVICEnableIRQ(TIM2_IRQn);
 
   /* Enable TIM3 interrupt */
-  vCORTEX_NVICSetPriority(TIM3_IRQn, 0, 0);
+  vCORTEX_NVICSetPriority(TIM3_IRQn, 4, 0);
   vCORTEX_NVICEnableIRQ(TIM3_IRQn);
+
+  /* Enable UART1 interrupt */
+  vCORTEX_NVICSetPriority(USART1_IRQn, 3, 0);
+  vCORTEX_NVICEnableIRQ(USART1_IRQn);
+
+  /* Enable ADC interrupt */
+  vCORTEX_NVICSetPriority(ADC1_IRQn, 5, 0);
+  vCORTEX_NVICEnableIRQ(ADC1_IRQn);
 }

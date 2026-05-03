@@ -28,10 +28,11 @@
  *
  * @note Must be called before enabling any interrupts that rely on GPIOs.
  */
-#include <stdint.h>
-#include <tim.h>
 #include "spwm.h"
 #include "svm.h"
+#include "uart.h"
+#include <stdint.h>
+#include <tim.h>
 
 /**
  * @brief   Performs system initializations before enabling interrupts.
@@ -72,7 +73,7 @@ void vKernelInterface_enableInterruptsForAllPeripherals(void);
  * @note This function should be linked to the actual ISR
  *       (e.g., TIM2_IRQHandler) in the interrupt vector table.
  */
-void vKernelInterface_TIM2IRQHandler(void);
+void vKernelInterface_TIM2IRQHandler250us(void);
 
 /**
  * @brief TIM3 interrupt handler interface.
@@ -89,8 +90,28 @@ void vKernelInterface_TIM2IRQHandler(void);
  * @note This function must be called from the TIM3 ISR
  *       (e.g., TIM3_IRQHandler).
  */
-void vKernelInterface_TIM3IRQHandler(void);
+void vKernelInterface_TIM3IRQHandler1ms(void);
 
+/**
+ * @brief USART1 interrupt handler interface.
+ *
+ * This function is invoked when a USART1 interrupt is triggered.
+ * It provides an abstraction layer between the hardware ISR and
+ * the application/kernel logic.
+ *
+ * Responsibilities:
+ * - Handle incoming UART data and store in receive buffer
+ * - Process RX data (RXNE flag)
+ * - Handle TX data transmission (TXE flag)
+ * - Manage error conditions (overrun, framing errors)
+ * - Clear appropriate interrupt flags after processing
+ *
+ * @note This function must be called from the USART1 ISR
+ *       (e.g., USART1_IRQHandler).
+ */
+void vKernelInterface_USART1IRQHandler(void);
+
+void vKernelInterface_ADCIRQHandler(void);
 /**
  * @brief RCC initialization callback.
  *
@@ -177,3 +198,20 @@ void cbGPIOS(void);
  * @post Updates PWM duty cycles for phases A, B, and C.
  */
 void cbSVPWM(void);
+
+/**
+ * @brief UART initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes the UART peripheral for system communication.
+ */
+void cbUART(void);
+
+/**
+ * @brief ADC initialization callback.
+ *
+ * Intended for integration with the KernelInterface layer.
+ * Initializes the ADC peripheral and configures synchronization
+ * with the PWM for deterministic sampling.
+ */
+void cbADC(void);

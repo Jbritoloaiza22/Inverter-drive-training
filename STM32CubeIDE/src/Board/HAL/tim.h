@@ -36,38 +36,37 @@
  *
  * @note This is a lightweight abstraction over STM32 TIM peripherals.
  */
-typedef struct
-{
-    /**
-     * @brief Pointer to hardware timer instance.
-     *
-     * Example:
-     * - TIM2
-     * - TIM3
-     */
-    TIM_TypeDef *instance;
+typedef struct {
+  /**
+   * @brief Pointer to hardware timer instance.
+   *
+   * Example:
+   * - TIM2
+   * - TIM3
+   */
+  TIM_TypeDef *instance;
 
-    /**
-     * @brief Prescaler value.
-     *
-     * Divides the input clock frequency.
-     */
-    uint32_t psc;
+  /**
+   * @brief Prescaler value.
+   *
+   * Divides the input clock frequency.
+   */
+  uint32_t psc;
 
-    /**
-     * @brief Auto-reload value.
-     *
-     * Defines the timer period.
-     */
-    uint32_t arr;
+  /**
+   * @brief Auto-reload value.
+   *
+   * Defines the timer period.
+   */
+  uint32_t arr;
 
-    /**
-     * @brief Runtime enable flag.
-     *
-     * - 0: Timer stopped
-     * - 1: Timer running
-     */
-    uint8_t enabled;
+  /**
+   * @brief Runtime enable flag.
+   *
+   * - 0: Timer stopped
+   * - 1: Timer running
+   */
+  uint8_t enabled;
 
 } Timer_t;
 
@@ -86,8 +85,8 @@ typedef struct
  * @param[in] psc Prescaler value
  * @param[in] arr Auto-reload value (period)
  */
-void vTimer_Init(Timer_t *self, TIM_TypeDef *instance,
-                uint32_t psc, uint32_t arr);
+void vTimer_Init(Timer_t *self, TIM_TypeDef *instance, uint32_t psc,
+                 uint32_t arr);
 
 /**
  * @brief Start timer.

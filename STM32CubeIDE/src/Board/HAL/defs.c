@@ -70,20 +70,16 @@ HAL_TickFreqTypeDef uwTickFreq = HAL_TICK_FREQ_DEFAULT;
  * @retval HAL_OK Initialization successful
  * @retval HAL_ERROR Initialization failed
  */
-HAL_StatusTypeDef HAL_Init(void)
-{
-    HAL_StatusTypeDef status = HAL_OK;
+HAL_StatusTypeDef HAL_Init(void) {
+  HAL_StatusTypeDef status = HAL_OK;
 
-    if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
-    {
-        status = HAL_ERROR;
-    }
-    else
-    {
-        /* Additional initialization can be added here */
-    }
+  if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK) {
+    status = HAL_ERROR;
+  } else {
+    /* Additional initialization can be added here */
+  }
 
-    return status;
+  return status;
 }
 
 /**
@@ -100,35 +96,26 @@ HAL_StatusTypeDef HAL_Init(void)
  * @note
  * This function is declared as __weak and can be overridden by the user.
  */
-__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-{
-    HAL_StatusTypeDef status = HAL_OK;
+__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
+  HAL_StatusTypeDef status = HAL_OK;
 
-    if ((uint32_t)uwTickFreq != 0U)
-    {
-        if (vCORTEX_SYSTICKConfig(SystemCoreClock / (1000U / (uint32_t)uwTickFreq)) == 0U)
-        {
-            if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-            {
-                vCORTEX_NVICSetPriority(SysTick_IRQn, TickPriority, 0U);
-                uwTickPrio = TickPriority;
-            }
-            else
-            {
-                status = HAL_ERROR;
-            }
-        }
-        else
-        {
-            status = HAL_ERROR;
-        }
-    }
-    else
-    {
+  if ((uint32_t)uwTickFreq != 0U) {
+    if (vCORTEX_SYSTICKConfig(SystemCoreClock /
+                              (1000U / (uint32_t)uwTickFreq)) == 0U) {
+      if (TickPriority < (1UL << __NVIC_PRIO_BITS)) {
+        vCORTEX_NVICSetPriority(SysTick_IRQn, TickPriority, 0U);
+        uwTickPrio = TickPriority;
+      } else {
         status = HAL_ERROR;
+      }
+    } else {
+      status = HAL_ERROR;
     }
+  } else {
+    status = HAL_ERROR;
+  }
 
-    return status;
+  return status;
 }
 
 /**
@@ -139,10 +126,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
  * @note
  * Declared as __weak to allow user customization.
  */
-__weak void HAL_IncTick(void)
-{
-    uwTick += (uint32_t)uwTickFreq;
-}
+__weak void HAL_IncTick(void) { uwTick += (uint32_t)uwTickFreq; }
 
 /**
  * @brief Get current HAL tick value.
@@ -152,7 +136,4 @@ __weak void HAL_IncTick(void)
  * @note
  * Declared as __weak to allow user customization.
  */
-__weak uint32_t HAL_GetTick(void)
-{
-    return uwTick;
-}
+__weak uint32_t HAL_GetTick(void) { return uwTick; }

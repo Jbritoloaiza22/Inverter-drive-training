@@ -157,11 +157,11 @@ g_pfnVectors:
   .word DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
   .word DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler /* DMA1 Channel 4 to Channel 5, DMAMUX1 overrun */
-  .word vIRQ_ADC1IRQHandler                   /* ADC1                        */
+  .word vKernelInterface_ADCIRQHandler               /* ADC1                        */
   .word TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
-  .word vKernelInterface_TIM2IRQHandler                   /* TIM2                         */
-  .word vKernelInterface_TIM3IRQHandler                   /* TIM3                         */
+  .word vKernelInterface_TIM2IRQHandler250us   /* TIM2                         */
+  .word vKernelInterface_TIM3IRQHandler1ms   /* TIM3                         */
   .word LPTIM1_IRQHandler                 /* LPTIM1                       */
   .word LPTIM2_IRQHandler                 /* LPTIM2                       */
   .word TIM14_IRQHandler                  /* TIM14                        */
@@ -172,7 +172,7 @@ g_pfnVectors:
   .word I2C2_IRQHandler                   /* I2C2                         */
   .word SPI1_IRQHandler                   /* SPI1                         */
   .word SPI2_IRQHandler                   /* SPI2                         */
-  .word USART1_IRQHandler                 /* USART1                       */
+  .word vKernelInterface_USART1IRQHandler /* USART1                       */
   .word USART2_IRQHandler                 /* USART2                       */
   .word LPUART1_IRQHandler                /* LPUART1                      */
   .word 0                                 /* reserved                     */
@@ -235,8 +235,8 @@ g_pfnVectors:
   .weak      DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler
   .thumb_set DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler,Default_Handler
 
-  .weak      vIRQ_ADC1IRQHandler
-  .thumb_set vIRQ_ADC1IRQHandler,Default_Handler
+  .weak      vKernelInterface_ADCIRQHandler
+  .thumb_set vKernelInterface_ADCIRQHandler,Default_Handler
 
   .weak      TIM1_BRK_UP_TRG_COM_IRQHandler
   .thumb_set TIM1_BRK_UP_TRG_COM_IRQHandler,Default_Handler
@@ -244,11 +244,11 @@ g_pfnVectors:
   .weak      TIM1_CC_IRQHandler
   .thumb_set TIM1_CC_IRQHandler,Default_Handler
 
-  .weak      vKernelInterface_TIM2IRQHandler
-  .thumb_set vKernelInterface_TIM2IRQHandler,Default_Handler
+  .weak      vKernelInterface_TIM2IRQHandler250us
+  .thumb_set vKernelInterface_TIM2IRQHandler250us,Default_Handler
 
-  .weak      vKernelInterface_TIM3IRQHandler
-  .thumb_set vKernelInterface_TIM3IRQHandler,Default_Handler
+  .weak      vKernelInterface_TIM3IRQHandler1ms
+  .thumb_set vKernelInterface_TIM3IRQHandler1ms,Default_Handler
 
   .weak      LPTIM1_IRQHandler
   .thumb_set LPTIM1_IRQHandler,Default_Handler
@@ -277,8 +277,8 @@ g_pfnVectors:
   .weak      SPI2_IRQHandler
   .thumb_set SPI2_IRQHandler,Default_Handler
 
-  .weak      USART1_IRQHandler
-  .thumb_set USART1_IRQHandler,Default_Handler
+  .weak      vKernelInterface_USART1IRQHandler
+  .thumb_set vKernelInterface_USART1IRQHandler,Default_Handler
 
   .weak      USART2_IRQHandler
   .thumb_set USART2_IRQHandler,Default_Handler

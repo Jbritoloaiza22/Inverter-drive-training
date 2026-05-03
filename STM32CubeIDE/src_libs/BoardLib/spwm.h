@@ -47,12 +47,11 @@
 /**
  * @brief SPWM object structure.
  */
-typedef struct
-{
-    float theta;          /**< Electrical angle (rad) */
-    float step;           /**< Angle increment per update */
-    uint32_t arr;            /**< PWM period (timer ARR) */
-    uint8_t initialized;  /**< Initialization flag */
+typedef struct {
+  float theta;         /**< Electrical angle (rad) */
+  float step;          /**< Angle increment per update */
+  uint32_t arr;        /**< PWM period (timer ARR) */
+  uint8_t initialized; /**< Initialization flag */
 
 } SPWM_t;
 

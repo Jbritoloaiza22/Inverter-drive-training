@@ -41,4 +41,25 @@ void Error_Handler(void);
 }
 #endif
 
+/**
+ * @brief Execute the cooperative scheduler for periodic tasks.
+ *
+ * This function manages the main scheduler loop that executes periodic
+ * tasks based on the time base flags. It coordinates task execution
+ * at different intervals (1ms, 10ms, 20ms, 100ms, 1000ms) without
+ * blocking execution.
+ *
+ * The scheduler is designed for cooperative multitasking where tasks
+ * voluntarily yield control back to the main loop, allowing other
+ * tasks to execute within their respective time slots.
+ *
+ * @note This function should be called repeatedly in the main loop
+ * after system initialization.
+ *
+ * @see TimeBase_GetTick()
+ * @see InterruptTask_GenerateAsyncTasks()
+ */
+void RunScheduler(void);
+
+void incCountertopwmDebug(void);
 #endif /* __KERNEL_H */

@@ -31,7 +31,7 @@
 /**
  * @brief Logical ON value.
  */
-#define dOn  1U
+#define dOn 1U
 
 /**
  * @brief Logical OFF value.
@@ -51,16 +51,15 @@
  * @note This is a lightweight abstraction since hardware
  *       registers are globally accessible.
  */
-typedef struct
-{
-    /**
-     * @brief Initialization flag.
-     *
-     * Indicates whether the RCC has been successfully initialized.
-     * - 0: Not initialized
-     * - 1: Initialized
-     */
-    uint8_t initialized;
+typedef struct {
+  /**
+   * @brief Initialization flag.
+   *
+   * Indicates whether the RCC has been successfully initialized.
+   * - 0: Not initialized
+   * - 1: Initialized
+   */
+  uint8_t initialized;
 
 } RCC_t;
 

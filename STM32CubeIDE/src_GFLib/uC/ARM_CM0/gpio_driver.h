@@ -15,16 +15,13 @@
  *
  * @note    This function bypasses the HAL and manipulates registers directly.
  */
-static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, uint8_t PinState)
-{
-	  if (PinState != 0)
-	  {
-	    GPIOx->BSRR = (uint32_t)GPIO_Pin;
-	  }
-	  else
-	  {
-	    GPIOx->BRR = (uint32_t)GPIO_Pin;
-	  }
+static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin,
+                                 uint8_t PinState) {
+  if (PinState != 0) {
+    GPIOx->BSRR = (uint32_t)GPIO_Pin;
+  } else {
+    GPIOx->BRR = (uint32_t)GPIO_Pin;
+  }
 }
 
 /**
@@ -39,16 +36,14 @@ static inline void GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, uint8_t
  *
  * @note    GPIO_NUMBER must be defined as the bit position of the pin.
  */
-static inline void GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
-{
-	  uint32_t odr;
+static inline void GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+  uint32_t odr;
 
-	  /* get current Output Data Register value */
-	  odr = GPIOx->ODR;
+  /* get current Output Data Register value */
+  odr = GPIOx->ODR;
 
-	  /* Set selected pins that were at low level, and reset ones that were high */
-	  GPIOx->BSRR = ((odr & GPIO_Pin) << GPIO_NUMBER) | (~odr & GPIO_Pin);
-
+  /* Set selected pins that were at low level, and reset ones that were high */
+  GPIOx->BSRR = ((odr & GPIO_Pin) << GPIO_NUMBER) | (~odr & GPIO_Pin);
 }
 
 /**
@@ -59,19 +54,17 @@ static inline void GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
  *
  * @param   GPIOx      Pointer to the GPIO port (e.g., GPIOA, GPIOB)
  * @param   GPIO_Pin   GPIO pin number (e.g., GPIO_PIN_0, GPIO_PIN_1)
- * @return  GPIO_PinState   GPIO_PIN_SET if the pin is high, GPIO_PIN_RESET if low
+ * @return  GPIO_PinState   GPIO_PIN_SET if the pin is high, GPIO_PIN_RESET if
+ * low
  */
-static inline uint16_t GPIO_ReadPin(GPIO_TypeDef const *GPIOx, uint16_t GPIO_Pin)
-{
-	  uint16_t bitstatus;
+static inline uint16_t GPIO_ReadPin(GPIO_TypeDef const *GPIOx,
+                                    uint16_t GPIO_Pin) {
+  uint16_t bitstatus;
 
-	  if ((GPIOx->IDR & GPIO_Pin) != 0x00u)
-	  {
-	    bitstatus = 1;
-	  }
-	  else
-	  {
-	    bitstatus = 0;
-	  }
-	  return bitstatus;
+  if ((GPIOx->IDR & GPIO_Pin) != 0x00u) {
+    bitstatus = 1;
+  } else {
+    bitstatus = 0;
+  }
+  return bitstatus;
 }
