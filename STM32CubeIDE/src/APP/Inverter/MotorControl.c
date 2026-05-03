@@ -114,14 +114,6 @@ bool vMotorControl_IsControlReady(void) {
   return false;
 }
 
-void vMotorControl_SetSampleReady(bool bReady) {
-  MotorControl_State.ui8SampleReady = (uint8_t)bReady;
-
-  if (bReady) {
-    MotorControl_State.ui8RunControlLoop = 1;
-  }
-}
-
 void vMotorControl_RunControl(void) {
   /* 5. Reconstruct phase currents from DC-link current */
 
@@ -135,7 +127,7 @@ void vMotorControl_RunControl(void) {
 
   /* 4. Detect active SVPWM sector (1..6) */
   /* NOTE: Sector detection is handled internally by SVM */
-  
+
   /* 10. SVPWM computation */
   /* Convert alpha-beta voltages to duty cycles */
 
