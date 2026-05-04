@@ -311,8 +311,7 @@ void cbSVPWM(void) { SVM_Init(&svm, &pwm, dSVMPWMPERIOD); }
  * @param[in]     valpha  Alpha-axis voltage reference
  * @param[in]     vbeta   Beta-axis voltage reference
  */
-void SVM_SetAlphaBeta(SVM_t *self, float valpha, float vbeta)
-{
-    self->valpha = valpha;
-    self->vbeta = vbeta;
+void SVM_SetAlphaBeta(SVM_t *self, float valpha, float vbeta) {
+  self->valpha = valpha;
+  self->vbeta = vbeta;
 }

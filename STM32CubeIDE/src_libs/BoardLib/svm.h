@@ -52,13 +52,13 @@ typedef struct {
 
   uint32_t pwmPeriod; /**< PWM timer period (ARR) */
 
-  void *pwm; /**< Pointer to PWM driver (opaque handle) */
-  float valpha; /**< Alpha-axis voltage reference (from Inverse Park) */
-  float vbeta;  /**< Beta-axis voltage reference (from Inverse Park) */
+  void *pwm;      /**< Pointer to PWM driver (opaque handle) */
+  float valpha;   /**< Alpha-axis voltage reference (from Inverse Park) */
+  float vbeta;    /**< Beta-axis voltage reference (from Inverse Park) */
   uint8_t sector; /**< Current SVPWM sector (1..6) */
-  float dutyA; /**< Phase A duty cycle (normalized or ticks) */
-  float dutyB; /**< Phase B duty cycle */
-  float dutyC; /**< Phase C duty cycle */
+  float dutyA;    /**< Phase A duty cycle (normalized or ticks) */
+  float dutyB;    /**< Phase B duty cycle */
+  float dutyC;    /**< Phase C duty cycle */
 
 } SVM_t;
 
