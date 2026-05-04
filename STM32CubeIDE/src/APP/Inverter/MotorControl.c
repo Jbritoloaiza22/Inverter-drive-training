@@ -20,7 +20,9 @@
 
 #include "MotorControl.h"
 #include "CurrentSensing.h"
+#include "FOC.h"
 #include "svm.h"
+#include <math.h>
 #include <stdint.h>
 
 extern SVM_t svm;
@@ -169,6 +171,7 @@ void vMotorControl_RunControl(void) {
   float ialpha, ibeta;
   float sinTheta, cosTheta;
   float id, iq;
+  float vd, vq;
 
   /* 5. Reconstruct phase currents from DC-link current */
   vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
@@ -183,6 +186,11 @@ void vMotorControl_RunControl(void) {
   vFOC_Park(ialpha, ibeta, sinTheta, cosTheta, &id, &iq);
 
   /* 8. Current control (PI controllers) */
+  float id_ref = 0.0f;
+  float iq_ref = 0.5f; /* torque command dummy*/
+
+  /* 8. Current control (PI controllers) */
+  vFOC_CurrentControl(id, iq, id_ref, iq_ref, &vd, &vq);
 
   /* 9. Inverse Park transform (dq -> alpha-beta) */
 
