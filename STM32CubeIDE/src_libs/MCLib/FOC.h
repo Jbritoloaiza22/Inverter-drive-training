@@ -16,6 +16,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <stdbool.h>
 #include <stdint.h>
 
 /**
@@ -59,6 +60,31 @@ typedef struct {
   } adc;
 
 } tFOC_State;
+
+/**
+ * @brief PI controller structure
+ *
+ * Holds parameters and state for a proportional-integral controller
+ * with output saturation.
+ */
+typedef struct {
+
+  /** @brief Proportional gain */
+  float kp;
+
+  /** @brief Integral gain */
+  float ki;
+
+  /** @brief Integrator accumulator */
+  float integrator;
+
+  /** @brief Minimum output limit */
+  float out_min;
+
+  /** @brief Maximum output limit */
+  float out_max;
+
+} PI_Controller_t;
 
 /**
  * @brief Initialize FOC module
@@ -175,4 +201,7 @@ void vFOC_Clarke(float ia, float ib, float ic, float *ialpha, float *ibeta);
  */
 void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
                float *id, float *iq);
+
+void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
+                         float *vd, float *vq);
 #endif /* __FOC_H */
