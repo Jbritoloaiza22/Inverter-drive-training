@@ -23,3 +23,14 @@ void vFOC_Clarke(float ia, float ib, float ic, float *ialpha, float *ibeta) {
   *ialpha = ia;
   *ibeta = (ia + 2.0f * ib) * ONE_BY_SQRT3;
 }
+
+/**
+ * @brief Park transform implementation
+ *
+ * Converts alpha-beta currents into dq frame using provided angle.
+ */
+void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
+               float *id, float *iq) {
+  *id = ialpha * cosTheta + ibeta * sinTheta;
+  *iq = -ialpha * sinTheta + ibeta * cosTheta;
+}
