@@ -221,4 +221,21 @@ void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
  */
 void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
                          float *vd, float *vq);
+
+/**
+ * @brief Perform Inverse Park transformation (dq → αβ)
+ *
+ * Converts rotating frame voltages (d-q) into stationary
+ * alpha-beta frame using electrical angle.
+ *
+ * @param[in]  vd        d-axis voltage reference
+ * @param[in]  vq        q-axis voltage reference
+ * @param[in]  sinTheta  sine of electrical angle
+ * @param[in]  cosTheta  cosine of electrical angle
+ * @param[out] valpha    alpha-axis voltage
+ * @param[out] vbeta     beta-axis voltage
+ */
+void vFOC_InversePark(float vd, float vq,
+                      float sinTheta, float cosTheta,
+                      float *valpha, float *vbeta);
 #endif /* __FOC_H */
