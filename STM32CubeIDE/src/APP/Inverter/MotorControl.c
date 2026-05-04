@@ -204,6 +204,6 @@ void vMotorControl_RunControl(void) {
   SVM_SetAlphaBeta(&svm, valpha, vbeta);
 
   /* 11. Update PWM registers (CCR1, CCR2, CCR3) */
-
+  SVM_Run(&svm);
   /* 12. Prepare next cycle */
 }
