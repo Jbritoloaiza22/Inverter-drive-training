@@ -201,6 +201,7 @@ void vMotorControl_RunControl(void) {
 
   /* 10. SVPWM computation */
   /* Convert alpha-beta voltages to duty cycles */
+  SVM_SetAlphaBeta(&svm, valpha, vbeta);
 
   /* 11. Update PWM registers (CCR1, CCR2, CCR3) */
 
