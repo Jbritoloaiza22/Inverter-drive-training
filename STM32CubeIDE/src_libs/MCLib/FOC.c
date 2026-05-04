@@ -115,10 +115,8 @@ static float fPI_Run(PI_Controller_t *pi, float error) {
  * @param[out] valpha    Alpha-axis voltage output
  * @param[out] vbeta     Beta-axis voltage output
  */
-void vFOC_InversePark(float vd, float vq,
-                      float sinTheta, float cosTheta,
-                      float *valpha, float *vbeta)
-{
-    *valpha = vd * cosTheta - vq * sinTheta;
-    *vbeta  = vd * sinTheta + vq * cosTheta;
+void vFOC_InversePark(float vd, float vq, float sinTheta, float cosTheta,
+                      float *valpha, float *vbeta) {
+  *valpha = vd * cosTheta - vq * sinTheta;
+  *vbeta = vd * sinTheta + vq * cosTheta;
 }

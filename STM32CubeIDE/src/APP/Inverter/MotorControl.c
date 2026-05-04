@@ -174,7 +174,6 @@ void vMotorControl_RunControl(void) {
   float vd, vq;
   float valpha, vbeta;
 
-
   /* 5. Reconstruct phase currents from DC-link current */
   vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
 
@@ -199,7 +198,7 @@ void vMotorControl_RunControl(void) {
 
   /* 4. Detect active SVPWM sector (1..6) */
   /* NOTE: Sector detection is handled internally by SVM */
-   
+
   /* 10. SVPWM computation */
   /* Convert alpha-beta voltages to duty cycles */
 

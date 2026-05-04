@@ -235,7 +235,6 @@ void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
  * @param[out] valpha    alpha-axis voltage
  * @param[out] vbeta     beta-axis voltage
  */
-void vFOC_InversePark(float vd, float vq,
-                      float sinTheta, float cosTheta,
+void vFOC_InversePark(float vd, float vq, float sinTheta, float cosTheta,
                       float *valpha, float *vbeta);
 #endif /* __FOC_H */
