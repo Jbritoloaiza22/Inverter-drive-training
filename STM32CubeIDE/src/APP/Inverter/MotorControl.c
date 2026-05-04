@@ -21,7 +21,9 @@
 #include "MotorControl.h"
 #include "CurrentSensing.h"
 #include <stdint.h>
+#include "svm.h"
 
+extern SVM_t svm;
 /**
  * @brief Internal motor control state
  *
@@ -165,6 +167,8 @@ bool vMotorControl_IsControlReady(void) {
 void vMotorControl_RunControl(void) {
   float ia, ib, ic;
   float ialpha, ibeta;
+  float sinTheta, cosTheta;
+  float id, iq;
 
   /* 5. Reconstruct phase currents from DC-link current */
   vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
@@ -172,7 +176,11 @@ void vMotorControl_RunControl(void) {
   /* 6. Clarke transform (abc -> alpha-beta) */
   vFOC_Clarke(ia, ib, ic, &ialpha, &ibeta);
 
+  sinTheta = sinf(svm.theta);
+  cosTheta = cosf(svm.theta);
+
   /* 7. Park transform (alpha-beta -> dq) */
+  vFOC_Park(ialpha, ibeta, sinTheta, cosTheta, &id, &iq);
 
   /* 8. Current control (PI controllers) */
 

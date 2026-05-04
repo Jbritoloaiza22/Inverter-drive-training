@@ -145,4 +145,34 @@ tFOC_State *vFOC_GetState(void);
  * @note Common in FOC implementations
  */
 void vFOC_Clarke(float ia, float ib, float ic, float *ialpha, float *ibeta);
+
+/**
+ * @brief Perform Park transformation (αβ → dq)
+ *
+ * Converts stationary reference frame currents (alpha-beta) into the
+ * rotating reference frame (d-q) using the electrical angle.
+ *
+ * This transformation aligns the d-axis with the rotor flux, enabling
+ * decoupled control of flux (Id) and torque (Iq).
+ *
+ * Transformation equations:
+ *  - id =  ialpha * cos(theta) + ibeta * sin(theta)
+ *  - iq = -ialpha * sin(theta) + ibeta * cos(theta)
+ *
+ * @param[in]  ialpha    Alpha-axis current component
+ * @param[in]  ibeta     Beta-axis current component
+ * @param[in]  sinTheta  Sine of electrical angle (θ)
+ * @param[in]  cosTheta  Cosine of electrical angle (θ)
+ * @param[out] id        Direct-axis current component (flux)
+ * @param[out] iq        Quadrature-axis current component (torque)
+ *
+ * @note
+ * - Requires precomputed sin(θ) and cos(θ) for efficiency
+ * - Typically used after Clarke transform in FOC pipeline
+ *
+ * @warning
+ * Accuracy depends on the correctness of the electrical angle (θ)
+ */
+void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
+               float *id, float *iq);
 #endif /* __FOC_H */
