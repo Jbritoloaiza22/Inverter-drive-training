@@ -202,6 +202,23 @@ void vFOC_Clarke(float ia, float ib, float ic, float *ialpha, float *ibeta);
 void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
                float *id, float *iq);
 
+/**
+ * @brief Executes current control loop (PI controllers)
+ *
+ * Computes the voltage references (vd, vq) based on the error
+ * between reference currents and measured currents in dq frame.
+ *
+ * This function implements two independent PI controllers:
+ * - d-axis (flux control)
+ * - q-axis (torque control)
+ *
+ * @param[in]  id      Measured d-axis current
+ * @param[in]  iq      Measured q-axis current
+ * @param[in]  id_ref  Reference d-axis current
+ * @param[in]  iq_ref  Reference q-axis current
+ * @param[out] vd      Output d-axis voltage reference
+ * @param[out] vq      Output q-axis voltage reference
+ */
 void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
                          float *vd, float *vq);
 #endif /* __FOC_H */

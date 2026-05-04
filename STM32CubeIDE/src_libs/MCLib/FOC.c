@@ -41,6 +41,9 @@ void vFOC_Park(float ialpha, float ibeta, float sinTheta, float cosTheta,
   *iq = -ialpha * sinTheta + ibeta * cosTheta;
 }
 
+/**
+ * @brief Current control implementation using PI regulators
+ */
 void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
                          float *vd, float *vq) {
   float err_d = id_ref - id;
@@ -50,29 +53,47 @@ void vFOC_CurrentControl(float id, float iq, float id_ref, float iq_ref,
   *vq = fPI_Run(&pi_q, err_q);
 }
 
+/**
+ * @brief PI controller execution with basic anti-windup
+ *
+ * Implements a proportional-integral controller with output saturation
+ * and simple anti-windup correction.
+ *
+ * @param[in,out] pi     Pointer to PI controller structure
+ * @param[in]     error  Control error input
+ * @return Control output (saturated)
+ */
 static float fPI_Run(PI_Controller_t *pi, float error) {
-  /* Proporcional */
+  /* Proportional term */
   float p = pi->kp * error;
 
-  /* Integrador */
+  /* Integral term */
   pi->integrator += pi->ki * error;
 
-  /* Suma */
+  /* Raw output */
   float out = p + pi->integrator;
 
-  /* Saturación + anti-windup simple */
+  /* Saturation + anti-windup */
   if (out > pi->out_max) {
     out = pi->out_max;
-    /* evitar seguir integrando hacia arriba */
+
+    /* Prevent further integration in positive direction */
     if (error > 0.0f) {
       pi->integrator -= pi->ki * error;
+    } else {
+      /*do nothing*/
     }
   } else if (out < pi->out_min) {
     out = pi->out_min;
-    /* evitar seguir integrando hacia abajo */
+
+    /* Prevent further integration in negative direction */
     if (error < 0.0f) {
       pi->integrator -= pi->ki * error;
+    } else {
+      /* do nothing*/
     }
+  } else {
+    /*do nothing*/
   }
 
   return out;
