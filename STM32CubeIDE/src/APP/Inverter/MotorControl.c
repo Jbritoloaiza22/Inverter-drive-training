@@ -20,8 +20,8 @@
 
 #include "MotorControl.h"
 #include "CurrentSensing.h"
-#include <stdint.h>
 #include "svm.h"
+#include <stdint.h>
 
 extern SVM_t svm;
 /**
