@@ -98,3 +98,25 @@ static float fPI_Run(PI_Controller_t *pi, float error) {
 
   return out;
 }
+
+/**
+ * @brief Inverse Park transformation (dq → αβ)
+ *
+ * Converts voltage references from the rotating dq reference frame
+ * into the stationary alpha-beta frame using the electrical angle.
+ *
+ * This function is used in the FOC control loop to generate the
+ * stationary voltage vector required by the SVPWM stage.
+ *
+ * @param[in]  vd        d-axis voltage reference
+ * @param[in]  vq        q-axis voltage reference
+ * @param[in]  sinTheta  Sine of electrical angle θ
+ * @param[in]  cosTheta  Cosine of electrical angle θ
+ * @param[out] valpha    Alpha-axis voltage output
+ * @param[out] vbeta     Beta-axis voltage output
+ */
+void vFOC_InversePark(float vd, float vq, float sinTheta, float cosTheta,
+                      float *valpha, float *vbeta) {
+  *valpha = vd * cosTheta - vq * sinTheta;
+  *vbeta = vd * sinTheta + vq * cosTheta;
+}

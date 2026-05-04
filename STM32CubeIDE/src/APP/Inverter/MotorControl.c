@@ -172,6 +172,7 @@ void vMotorControl_RunControl(void) {
   float sinTheta, cosTheta;
   float id, iq;
   float vd, vq;
+  float valpha, vbeta;
 
   /* 5. Reconstruct phase currents from DC-link current */
   vCurrentSensing_ReconstructABC(&ia, &ib, &ic);
@@ -193,6 +194,7 @@ void vMotorControl_RunControl(void) {
   vFOC_CurrentControl(id, iq, id_ref, iq_ref, &vd, &vq);
 
   /* 9. Inverse Park transform (dq -> alpha-beta) */
+  vFOC_InversePark(vd, vq, sinTheta, cosTheta, &valpha, &vbeta);
 
   /* 4. Detect active SVPWM sector (1..6) */
   /* NOTE: Sector detection is handled internally by SVM */
